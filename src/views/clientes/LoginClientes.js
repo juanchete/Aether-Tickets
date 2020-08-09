@@ -1,8 +1,12 @@
-import React from 'react'
+import React, {useState} from 'react'
 import { useFormik} from 'formik'
 import * as Yup from 'yup'
+import 'firebase/auth'
+import { useFirebaseApp } from 'reactfire'
 
 function LoginClientes() {
+
+    const firebase = useFirebaseApp()
 
 
     const formik = useFormik({
@@ -16,7 +20,20 @@ function LoginClientes() {
                         .required('El email no puede ir vacio'),
             password: Yup.string()
                         .required('El password es obligatorio')
-        })})
+        }),
+        
+
+        onSubmit: async valores => {
+            // console.log(valores);
+            const {email, password} = valores;
+            try {
+                await firebase.auth().signInWithEmailAndPassword(email,password)
+            } catch (error) {
+               
+            }
+        }
+        
+    })
 
     return (
 <div class="bg-black h-screen font-sans">

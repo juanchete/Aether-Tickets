@@ -1,9 +1,17 @@
 import React from 'react'
 import { useFormik} from 'formik'
+import {
+    useUser, useFirebaseApp
+} from 'reactfire'
 import * as Yup from 'yup'
+
 
 function RegistroClientes() {
 
+    const firebase = useFirebaseApp()
+
+    const user = useUser()
+ 
 
     const formik = useFormik({
         initialValues: {
@@ -26,7 +34,28 @@ function RegistroClientes() {
                           .required('El apellido es obligatorio'),
             telephone: Yup.number()
             
-        })})
+        }),
+        
+
+        onSubmit: async valores => {
+            // console.log(valores);
+            const {email, password,name, lastName, telephone} = valores;
+            try {
+                await firebase.auth().createUserWithEmailAndPassword(email,password).then(
+                    await firebase.database.ref('usuarios/' + user.uid).set({
+                        name,
+                        email,
+                        lastName,
+                        telephone
+                      })
+                )
+
+                
+
+            } catch (error) {
+               console.log(error);
+            }
+        }})
 
     return (
 <div class="bg-black h-screen font-sans">
