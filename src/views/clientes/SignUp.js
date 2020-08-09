@@ -191,7 +191,7 @@ const StyledLogin = styled.nav`
   .container-login {
     padding: 2rem;
     width: 40%;
-    height: 85%;
+    height: 90%;
     background: white;
     border: 3px solid #2f2519;
     border-radius: 20px;
@@ -352,17 +352,17 @@ const StyledLogin = styled.nav`
 
   @media only screen and (max-height: 900px) and (min-height: 800px)   {
     .container-login {
-        height:75%;
+        height:80%;
     }
   }
   @media only screen and (max-height: 1000px) and (min-height: 901px)   {
     .container-login {
-        height:65%;
+        height:70%;
     }
   }
-  @media only screen and (max-height: 1500px) and (min-height: 1001px)   {
+  @media only screen and (min-height: 1001px)   {
     .container-login {
-        height:600px;
+        height:700px;
     }
   }
   @media only screen and (max-width: 1290px) and (min-width: 1024px)   {
