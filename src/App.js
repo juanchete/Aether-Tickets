@@ -1,6 +1,6 @@
 import React from "react";
 import Login from "./views/clientes/Login";
-import RegistroClientes from "./views/clientes/RegistroClientes";
+import RegistroClientes from "./views/clientes/SignUp";
 import Home from "./views/clientes/Home";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import { useFirebaseApp } from "reactfire";

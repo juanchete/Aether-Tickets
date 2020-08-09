@@ -13,12 +13,20 @@ export default function InputLogin({
   min,
   max,
   error,
+  fontSize,
   marginBottom,
+  marginRight,
   children,
   ...rest
 }) {
   return (
-    <Input marginBottom={marginBottom} color={color} color2={color2}>
+    <Input
+      marginBottom={marginBottom}
+      color={color}
+      color2={color2}
+      fontSize={fontSize}
+      marginRight={marginRight}
+    >
       <label>{label}</label>
       <input
         type={type}
@@ -43,10 +51,11 @@ const Input = styled.div`
   outline: none;
   margin-bottom: ${(props) =>
     props.marginBottom ? props.marginBottom : "0px"};
+  margin-right: ${(props) => (props.marginRight ? props.marginRight : "0px")};
 
   label {
     font-family: "Raleway", sans-serif;
-    font-size: 12px;
+    font-size: ${(props) => (props.fontSize ? props.fontSize : "12px")};
     font-weight: 200;
     letter-spacing: 0.1em;
     color: ${(props) => (props.color ? props.color : "#fa7d09")};
@@ -83,5 +92,19 @@ const Input = styled.div`
 
   &:focus {
     outline: none;
+  }
+
+  @media only screen and (max-width: 629px) {
+    margin-bottom: 0px;
+    label {
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+    input {
+      font-size: 20px;
+    }
+    h4 {
+      font-size: 15px;
+    }
   }
 `;

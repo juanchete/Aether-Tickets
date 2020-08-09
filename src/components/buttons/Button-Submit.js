@@ -43,4 +43,15 @@ const Button = styled.button`
     outline: none;
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
   }
+
+  @media only screen and (max-width: 629px) {
+    width: 90px;
+    height: 90px;
+    margin-top: ${(props) => (props.marginTop ? props.marginTop : "0px")};
+    .arrow-icon {
+      width: 45px;
+      height: 45px;
+      color: ${(props) => (props.color ? props.color : "#fa7d09")};
+    }
+  }
 `;
