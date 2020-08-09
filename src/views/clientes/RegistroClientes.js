@@ -4,22 +4,31 @@ import {
     useUser, useFirebaseApp
 } from 'reactfire'
 import * as Yup from 'yup'
+import 'firebase'
 
 
 function RegistroClientes() {
 
+    
+
     const firebase = useFirebaseApp()
 
+    const db = firebase.firestore()
+
     const user = useUser()
+
+    
+
+    
  
 
     const formik = useFormik({
         initialValues: {
-            email: '',
-            password: '',
-            name:'',
-            lastName:'',
-            telephone: ''
+            email: 'prueba1@email.com',
+            password: 'password',
+            name:'prueba',
+            lastName:'test',
+            telephone: '555'
         }, 
         validationSchema: Yup.object({
             email: Yup.string()
@@ -42,13 +51,13 @@ function RegistroClientes() {
             const {email, password,name, lastName, telephone} = valores;
             try {
                 await firebase.auth().createUserWithEmailAndPassword(email,password).then(
-                    await firebase.database.ref('usuarios/' + user.uid).set({
+                     db.collection("usuarios").add({
                         name,
                         email,
                         lastName,
                         telephone
                       })
-                )
+                ).then(console.log('Creado con exito'))
 
                 
 
