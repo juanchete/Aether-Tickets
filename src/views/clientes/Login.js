@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
-import { useFormik } from "formik";
+import { useFormik, Field } from "formik";
 import * as Yup from "yup";
 import "firebase/auth";
 import { useFirebaseApp } from "reactfire";
@@ -8,11 +8,21 @@ import ButtonSubmit from "../../components/buttons/Button-Submit";
 import Input from "../../components/inputs/InputLogin";
 
 export default function LoginClientes() {
+
+  const [remember, setRemember] = useState(false)
+
+  useEffect(() => {
+    console.log(remember);
+  }, [remember])
+
+  
+
   const firebase = useFirebaseApp();
   const formik = useFormik({
     initialValues: {
-      email: "",
+      email: localStorage.getItem('remember-email') || "",
       password: "",
+      remember: false
     },
     validationSchema: Yup.object({
       email: Yup.string().email("Invalid Email").required("Required Field"),
@@ -22,10 +32,26 @@ export default function LoginClientes() {
     onSubmit: async (valores) => {
       const { email, password } = valores;
       try {
-        await firebase.auth().signInWithEmailAndPassword(email, password);
+         firebase.auth().signInWithEmailAndPassword(email, password);
+         if (remember) {
+          localStorage.setItem('remember-email', email);
+         }else{
+           localStorage.removeItem('remember-email')
+         }
       } catch (error) {}
     },
   });
+
+  const forgotPassword = ( () =>{
+    const mail = formik.values.email
+
+    firebase.auth().sendPasswordResetEmail(mail).then(() => {
+      console.log('Email Sent');
+    }).catch((error) =>{
+      console.log(error);
+    });
+  })
+
   return (
     <StyledLogin>
       <div className="container">
@@ -75,12 +101,15 @@ export default function LoginClientes() {
                   : null
               }
             />
-            <label className="forgot-password">
+            <label className="forgot-password" onClick={forgotPassword}>
               <h4>Forgot Password?</h4>
             </label>
 
+            
+
+
             <div className="remember-me">
-              <input type="checkbox" />
+              <input type="checkbox" value={remember} onChange={evt => setRemember(!remember)}/>
               <h4>Remember me</h4>
             </div>
             <div className="button-error">

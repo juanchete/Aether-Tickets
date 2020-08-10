@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -6,8 +6,10 @@ import "firebase";
 import { useUser, useFirebaseApp } from "reactfire";
 import ButtonSubmit from "../../components/buttons/Button-Submit";
 import Input from "../../components/inputs/InputLogin";
+import  { Redirect } from 'react-router-dom'
 
-export default function SignUpClientes() {
+
+export default function SignUpAsesor() {
   const firebase = useFirebaseApp();
 
   const db = firebase.firestore();
@@ -42,7 +44,7 @@ export default function SignUpClientes() {
           .auth()
           .createUserWithEmailAndPassword(email, password)
           .then(
-            db.collection("usuarios").add({
+            db.collection("asesores").add({
               name,
               email,
               lastName,
@@ -55,6 +57,25 @@ export default function SignUpClientes() {
       }
     },
   });
+
+  const confirmSignIn = (url) => {
+    try {
+        console.log(url);
+      if (firebase.auth().isSignInWithEmailLink(url)) {
+
+        
+      }else{
+          console.log('Aja y entonces');
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+     useEffect(() => {
+    
+    confirmSignIn(window.location.href)
+    }, [])
 
   return (
     <StyledLogin>

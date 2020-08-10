@@ -1,7 +1,8 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import {
     useUser, useFirebaseApp
 } from 'reactfire'
+import { useLocation } from 'react-router-dom'
 
 function Home() {
 
@@ -10,6 +11,9 @@ function Home() {
     const logout = async () =>{
         await firebase.auth().signOut()
     }
+
+
+    
     
   const user = useUser()
     return (

@@ -2,129 +2,56 @@ import React, { useState } from "react";
 import styled, { keyframes } from "styled-components";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import "firebase";
-import { useUser, useFirebaseApp } from "reactfire";
+import "firebase/auth";
+import { useFirebaseApp } from "reactfire";
 import ButtonSubmit from "../../components/buttons/Button-Submit";
 import Input from "../../components/inputs/InputLogin";
 
-export default function SignUpClientes() {
+export default function ForgotPassword() {
   const firebase = useFirebaseApp();
-
-  const db = firebase.firestore();
-
-  const user = useUser();
-
   const formik = useFormik({
     initialValues: {
-      email: "prueba1@email.com",
-      password: "password",
-      name: "prueba",
-      lastName: "test",
-      telephone: "555",
+      email: "",
+      password: "",
+      confirm_password:''
     },
     validationSchema: Yup.object({
-      email: Yup.string()
-        .email("El email no es válido")
-        .required("El email no puede ir vacio"),
-      password: Yup.string()
-        .required("El password es obligatorio")
-        .min(6, "La contraseña debe ser de al menos 6 caracteres"),
-      name: Yup.string().required("El nombre es obligatorio"),
-      lastName: Yup.string().required("El apellido es obligatorio"),
-      telephone: Yup.number(),
+      email: Yup.string().email("Invalid Email").required("Required Field"),
+      password: Yup.string().required("Required Field"),
+      confirm_password: Yup.string().when("password", {
+        is: val => (val && val.length > 0 ? true : false),
+        then: Yup.string().oneOf(
+          [Yup.ref("password")],
+          "Both password need to be the same"
+        )
+      })
     }),
 
     onSubmit: async (valores) => {
-      // console.log(valores);
-      const { email, password, name, lastName, telephone } = valores;
+      const { email, password } = valores;
       try {
-         await firebase
-          .auth()
-          .createUserWithEmailAndPassword(email, password)
-          .then(
-            db.collection("usuarios").add({
-              name,
-              email,
-              lastName,
-              telephone,
-            })
-          )
-          .then(console.log("Creado con exito"));
-      } catch (error) {
-        console.log(error);
-      }
+         firebase.auth().signInWithEmailAndPassword(email, password);
+      } catch (error) {}
     },
   });
+
+  const forgotPassword = ( () =>{
+    const mail = formik.values.email
+
+    firebase.auth().sendPasswordResetEmail(mail).then(() => {
+      console.log('Email Sent');
+    }).catch((error) =>{
+      console.log(error);
+    });
+  })
 
   return (
     <StyledLogin>
       <div className="container">
         <div className="container-login">
-          <h1>Sign Up</h1>
-          <button className="sign-in-google">
-            <img className="google-icon" src="google.png" />
-            <h3>Sign up with google</h3>
-          </button>
-          <div className="sign-in-option">
-            <div className="line"></div>
-            <h3>or</h3>
-            <div className="line"></div>
-          </div>
+          <h1>Restore Password</h1>
+          
           <form onSubmit={formik.handleSubmit}>
-            <div className="input-name">
-              <Input
-                color="#2f2519"
-                color2="#ff4301"
-                label="Name"
-                id="name"
-                type="text"
-                placeholder="Name"
-                fontSize="10px"
-                marginRight="20px"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.name}
-                error={
-                  formik.touched.name && formik.errors.name
-                    ? `${formik.errors.name}`
-                    : null
-                }
-              />
-              <Input
-                color="#2f2519"
-                color2="#ff4301"
-                label="Last Name"
-                id="lastName"
-                type="text"
-                fontSize="10px"
-                placeholder="Last Name"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.lastName}
-                error={
-                  formik.touched.lastName && formik.errors.lastName
-                    ? `${formik.errors.lastName}`
-                    : null
-                }
-              />
-            </div>
-            <Input
-              color="#2f2519"
-              color2="#ff4301"
-              label="Telephone"
-              id="telephone"
-              type="telephone"
-              fontSize="10px"
-              placeholder="Telephone"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.telephone}
-              error={
-                formik.touched.telephone && formik.errors.telephone
-                  ? `${formik.errors.telephone}`
-                  : null
-              }
-            />
             <Input
               color="#2f2519"
               color2="#ff4301"
@@ -132,23 +59,23 @@ export default function SignUpClientes() {
               id="email"
               type="email"
               placeholder="Email"
-              fontSize="10px"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.email}
+              marginBottom="15px"
               error={
                 formik.touched.email && formik.errors.email
                   ? `${formik.errors.email}`
                   : null
               }
             />
+
             <Input
               color="#2f2519"
               color2="#ff4301"
               label="Password"
               id="password"
               type="password"
-              fontSize="10px"
               placeholder="Password"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -160,13 +87,31 @@ export default function SignUpClientes() {
               }
             />
 
+            <Input
+              color="#2f2519"
+              color2="#ff4301"
+              label="Confirm Password"
+              id="confirm_password"
+              type="Password"
+              placeholder="confirm_password"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.confirm_password}
+              error={
+                formik.touched.confirm_password && formik.errors.confirm_password
+                  ? `${formik.errors.confirm_password}`
+                  : null
+              }
+            />
+
+            
             <div className="button-error">
               <ButtonSubmit color="#ff4301" />
 
               {/* <h4>Erroooooooooooooooor</h4> */}
             </div>
           </form>
-          <label className="sign-up-label">Have an account? Sign In Now.</label>
+          
         </div>
       </div>
     </StyledLogin>
@@ -176,7 +121,6 @@ const StyledLogin = styled.nav`
   background: #2f2519;
   height: 100vh;
   width: 100vw;
-  overflow-x:hidden;
   font-family: "Raleway", sans-serif;
   .container {
     width: 100%;
@@ -185,13 +129,12 @@ const StyledLogin = styled.nav`
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow-x:hidden;
   }
 
   .container-login {
     padding: 2rem;
     width: 40%;
-    height: 85%;
+    height: 80%;
     background: white;
     border: 3px solid #2f2519;
     border-radius: 20px;
@@ -199,7 +142,6 @@ const StyledLogin = styled.nav`
     align-items: center;
     flex-direction: column;
     text-align: center;
-    overflow-x:hidden;
 
     h1 {
       text-align: center;
@@ -222,7 +164,7 @@ const StyledLogin = styled.nav`
       align-items: center;
       justify-content: center;
       width: 60%;
-      margin-top: 10px;
+      margin-top: 15px;
       .google-icon {
         width: 40px;
         height: 35px;
@@ -266,40 +208,76 @@ const StyledLogin = styled.nav`
       form {
         padding-right: 2rem;
         padding-left: 2rem;
-        padding-top: 1rem;
-        padding-bottom: 0.5rem;
-        margin-bottom: 0.2rem;
+        padding-top: 1.5rem;
+        padding-bottom: 1rem;
+        margin-bottom: 0.4rem;
         width: 100%;
         display:flex;
         flex-direction:column;
         justify-content:center;
         align-items:center;
-        
-    .input-name{
-        display:flex;
-        flex-direction:row;
-        width:100%;
-    }
 
-
-    .button-error{
-        display:flex;
-        flex-direction:column;
-        justify-content:flex-end;
-        width:100%;
-        height:100%;
-        align-items:center;
-
-        h4{
-            font-family: "Raleway", sans-serif;
-            font-size: 12px;
-            font-weight:200;
-            letter-spacing: 0.1em;
-            color: #FF4301;
-            margin-top: 5px;
-            
+        .remember-me{
+          display:flex;
+            flex-direction:row;
+            justify-content:flex-start;
+            width:100%;
+            height:100%;
+            align-items:center;
+            h4{
+              font-family: "Raleway", sans-serif;
+              font-size: 12px;
+              font-weight:200;
+              letter-spacing: 0.1em;
+              color: #2f2519;
+              margin-top: 5px;
+              margin-bottom: 5px;
+              margin-left: 10px;
+              text-transform:uppercase;
+              
+          }
         }
-    }
+        .forgot-password{
+          display:flex;
+            flex-direction:row;
+            justify-content:flex-end;
+            width:100%;
+            height:100%;
+            align-items:center;
+            margin-bottom: 5px;
+
+            h4{
+                font-family: "Raleway", sans-serif;
+                font-size: 12px;
+                font-weight:200;
+                letter-spacing: 0.1em;
+                color: #ff4301;
+                margin-top: 0px;
+                text-transform:uppercase;
+                
+            }
+
+        }
+        .button-error{
+            display:flex;
+            flex-direction:column;
+            justify-content:flex-end;
+            width:100%;
+            height:100%;
+            align-items:center;
+            padding-bottom: 2px;
+            padding-top: 2px;
+
+            h4{
+                font-family: "Raleway", sans-serif;
+                font-size: 12px;
+                font-weight:200;
+                letter-spacing: 0.1em;
+                color: #FF4301;
+                margin-top: 5px;
+                
+            }
+        }
 
        
       }
@@ -308,7 +286,7 @@ const StyledLogin = styled.nav`
       display: flex;
       flex-direction: row;
       width: 100%;
-      margin-top: 10px;
+      margin-top: 15px;
       align-items: center;
       justify-content: center;
 
@@ -407,11 +385,6 @@ const StyledLogin = styled.nav`
       form {
         padding-right: 0.2rem;
         padding-left: 0.2rem;
-        .input-name{
-            display:flex;
-            flex-direction:column;
-            width:100%;
-        }
       }
     }
     .sign-in-option {
@@ -428,7 +401,6 @@ const StyledLogin = styled.nav`
     .container-login {
       width: 100%;
       height: 100%;
-      overflow-x:hidden;
 
       .sign-in-google {
         margin-top: 5px;
@@ -443,11 +415,6 @@ const StyledLogin = styled.nav`
       form {
         padding-right: 0.2rem;
         padding-left: 0.2rem;
-        .input-name{
-            display:flex;
-            flex-direction:column;
-            width:100%;
-        }
       }
     }
     .sign-in-option {
@@ -463,17 +430,13 @@ const StyledLogin = styled.nav`
     .container-login {
       width: 100%;
       height: 100%;
-    h1 {
-        font-size: 40px;
-      }
-      form {
-        .input-name{
-            display:flex;
-            flex-direction:column;
-            width:100%;
+
+      form{
+        .remember-me{
+          margin-bottom: 20px;
+          margin-top: 20px;
         }
       }
-
       .sign-in-google {
         margin-top: 30px;
         margin-bottom: 0;
