@@ -180,7 +180,7 @@ const Sidebar = styled.div`
         .icon {
           width: 30px;
           height: 30px;
-          color: #ee220c;
+          color: #ff4301;
         }
         h4 {
           font-family: "Raleway", sans-serif;
@@ -188,7 +188,7 @@ const Sidebar = styled.div`
           font-weight: 400;
           font-size: 7px;
           font-style: normal;
-          color: #ee220c;
+          color: #ff4301;
           text-transform: uppercase;
           text-align: center;
           margin-top: 2px;
@@ -217,7 +217,7 @@ const Sidebar = styled.div`
         .icon {
           width: 30px;
           height: 30px;
-          color: #ee220c;
+          color: #ff4301;
         }
         h4 {
           font-family: "Raleway", sans-serif;
@@ -225,7 +225,7 @@ const Sidebar = styled.div`
           font-weight: 400;
           font-size: 7px;
           font-style: normal;
-          color: #ee220c;
+          color: #ff4301;
           text-transform: uppercase;
           text-align: center;
           margin-top: 2px;
@@ -254,7 +254,7 @@ const Sidebar = styled.div`
         font-weight: 300;
         margin-left: 20px;
         font-style: normal;
-        color: #ee220c;
+        color: #ff4301;
         text-transform: uppercase;
         width: 100%;
       }
@@ -273,7 +273,7 @@ const Sidebar = styled.div`
         justify-content: flex-end;
         align-items: center;
         width: auto;
-        border: 2px solid #ee220c;
+        border: 2px solid #ff4301;
         border-radius: 5px;
         height: 40px;
         padding-left: 5px;
@@ -284,7 +284,7 @@ const Sidebar = styled.div`
           letter-spacing: 0.2em;
           font-weight: 500;
           font-style: normal;
-          color: #ee220c;
+          color: #ff4301;
           text-transform: uppercase;
           width: 100%;
           margin-right: 5px;
@@ -321,7 +321,7 @@ const Sidebar = styled.div`
 
         .counter {
           width: auto;
-          background: #ee220c;
+          background: #ff4301;
           margin-left: 10px;
           padding-left: 10px;
           padding-right: 10px;
@@ -389,7 +389,7 @@ const Sidebar = styled.div`
           .icon {
             width: 30px;
             height: 30px;
-            color: #ee220c;
+            color: #ff4301;
           }
           h4 {
             display: none;
@@ -409,7 +409,7 @@ const Sidebar = styled.div`
           .icon {
             width: 30px;
             height: 30px;
-            color: #ee220c;
+            color: #ff4301;
           }
           h4 {
             display: none;
@@ -438,7 +438,7 @@ const Sidebar = styled.div`
           font-weight: 300;
           margin-left: 20px;
           font-style: normal;
-          color: #ee220c;
+          color: #ff4301;
           text-transform: uppercase;
           width: 100%;
         }
@@ -462,7 +462,7 @@ const Sidebar = styled.div`
 
           .counter {
             width: auto;
-            background: #ee220c;
+            background: #ff4301;
             margin-left: 10px;
             padding-left: 10px;
             padding-right: 10px;
@@ -510,7 +510,7 @@ const Sidebar = styled.div`
 
           .counter {
             width: auto;
-            background: #ee220c;
+            background: #ff4301;
             margin-left: 10px;
             padding-left: 10px;
             padding-right: 10px;
@@ -580,7 +580,7 @@ const Sidebar = styled.div`
           .icon {
             width: 30px;
             height: 30px;
-            color: #ee220c;
+            color: #ff4301;
           }
           h4 {
             display: none;
@@ -600,7 +600,7 @@ const Sidebar = styled.div`
           .icon {
             width: 30px;
             height: 30px;
-            color: #ee220c;
+            color: #ff4301;
           }
           h4 {
             display: none;
@@ -629,7 +629,7 @@ const Sidebar = styled.div`
           font-weight: 300;
           margin-left: 20px;
           font-style: normal;
-          color: #ee220c;
+          color: #ff4301;
           text-transform: uppercase;
           width: 100%;
         }
@@ -653,7 +653,7 @@ const Sidebar = styled.div`
 
           .counter {
             width: auto;
-            background: #ee220c;
+            background: #ff4301;
             margin-left: 10px;
             padding-left: 10px;
             padding-right: 10px;
@@ -701,7 +701,7 @@ const Sidebar = styled.div`
 
           .counter {
             width: auto;
-            background: #ee220c;
+            background: #ff4301;
             margin-left: 10px;
             padding-left: 10px;
             padding-right: 10px;
