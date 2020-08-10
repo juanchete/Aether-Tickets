@@ -1,23 +1,25 @@
-import React from 'react'
-import {
-    useUser, useFirebaseApp
-} from 'reactfire'
+import React from "react";
+import { useUser, useFirebaseApp } from "reactfire";
+import styled from "styled-components";
+import SidebarAdmin from "../../components/sidebars/SidebarAdmin";
 
-function Home() {
+export default function Home() {
+  const firebase = useFirebaseApp();
 
-    const firebase = useFirebaseApp()
+  const logout = async () => {
+    await firebase.auth().signOut();
+  };
 
-    const logout = async () =>{
-        await firebase.auth().signOut()
-    }
-    
-  const user = useUser()
-    return (
-        <div>
-            <h1>Bienvenidos al oasis Bienvenidos</h1>
-            <button onClick={logout}> Log Out </button>
-        </div>
-    )
+  const user = useUser();
+  return (
+    <HomeStyle>
+      <SidebarAdmin />
+      {/* <h1>Bienvenidos al oasis Bienvenidos</h1>
+      <button onClick={logout}> Log Out </button> */}
+    </HomeStyle>
+  );
 }
-
-export default Home
+const HomeStyle = styled.div`
+  width: 100vw;
+  background: pink;
+`;
