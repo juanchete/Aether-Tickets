@@ -7,11 +7,15 @@ import { FaUserAlt } from "react-icons/fa";
 import { FaEdit } from "react-icons/fa";
 import { FaChartBar } from "react-icons/fa";
 import { IoMdSettings } from "react-icons/io";
+import AddCategory from "../../views/Asesor/AddCategory";
+import AddSuggestion from "../../views/Asesor/AddSuggestion";
 
 export default function SidebarAdmin() {
   const [tickets, setTickets] = React.useState(true);
   const [asesors, setAsesors] = React.useState(false);
   const [categories, setCategories] = React.useState(false);
+  const [categoryShow, setCategoryShow] = React.useState(false);
+  const [suggestionShow, setSuggestionShow] = React.useState(false);
   const [reports, setReports] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const firebase = useFirebaseApp();
@@ -20,119 +24,82 @@ export default function SidebarAdmin() {
     await firebase.auth().signOut();
   };
 
+  const showCategory = (e) => {
+    setCategoryShow(!categoryShow);
+  };
+  const showSuggestion = (e) => {
+    setSuggestionShow(!suggestionShow);
+  };
+
   const user = useUser();
   return (
-    <Sidebar>
-      <div className="navbar">
-        <ul className="utilities">
-          <li className="utilities-item"></li>
-          <li
-            className="utilities-item"
-            onClick={(event) => {
-              setAsesors(false);
-              setCategories(false);
-              setTickets(true);
-              setOpen(!open);
-            }}
-          >
-            <FaTicketAlt className="icon" />
-            <h4>Tickets</h4>
-          </li>
-          <li
-            className="utilities-item"
-            onClick={(event) => {
-              setTickets(false);
-              setCategories(false);
-              setAsesors(true);
-              setOpen(!open);
-            }}
-          >
-            <FaUsers className="icon" />
-            <h4>Asesors</h4>
-          </li>
-          <li
-            className="utilities-item"
-            onClick={(event) => {
-              setTickets(false);
-              setAsesors(false);
-              setCategories(true);
-              setOpen(!open);
-            }}
-          >
-            <FaEdit className="icon" />
-            <h4>Categories & Suggestions</h4>
-          </li>
-          <li className="utilities-item">
-            <FaChartBar className="icon" />
-            <h4>Reports</h4>
-          </li>
-        </ul>
-        <ul className="user">
-          <li className="user-item">
-            <IoMdSettings className="icon" />
-            <h4>Settings</h4>
-          </li>
-          <li
-            className="user-item"
-            onClick={(event) => {
-              logout();
-            }}
-          >
-            <FaUserAlt className="icon" />
-            <h4>User</h4>
-          </li>
-        </ul>
-      </div>
-      {tickets ? (
-        <>
-          <div className="navbar-especific">
-            <div className="navbar-title">
-              <h2>Tickets</h2>
-            </div>
-            <ul className="nav-links">
-              <li className="link-1">
-                <h3>All Tickets</h3>
-                <div className="counter">
-                  <h4>4</h4>
-                </div>
-              </li>
-              <li className="link-1">
-                <h3>Tickets to Handle</h3>
-                <div className="counter">
-                  <h4>4</h4>
-                </div>
-              </li>
-            </ul>
-            <ul className="nav-links2">
-              <h2>My Tickets</h2>
-              <li className="link-1">
-                <h3>My Open Tickets</h3>
-                <div className="counter">
-                  <h4>4</h4>
-                </div>
-              </li>
-              <li className="link-1">
-                <h3>My tickets in the last week</h3>
-              </li>
-            </ul>
-            <ul className="nav-links3">
-              <h2>Statuses</h2>
-              <li className="link-1">
-                <h3>Open</h3>
-              </li>
-              <li className="link-1">
-                <h3>Solved</h3>
-              </li>
-              <li className="link-1">
-                <h3>Pending</h3>
-              </li>
-              <li className="link-1">
-                <h3>Unsolved</h3>
-              </li>
-            </ul>
-          </div>
-          {open ? (
-            <div className="navbar-especific-phone">
+    <>
+      <AddCategory show={categoryShow} showCategory={showCategory} />
+      <AddSuggestion show={suggestionShow} showSuggestion={showSuggestion} />
+      <Sidebar>
+        <div className="navbar">
+          <ul className="utilities">
+            <li className="utilities-item"></li>
+            <li
+              className="utilities-item"
+              onClick={(event) => {
+                setAsesors(false);
+                setCategories(false);
+                setTickets(true);
+                setOpen(!open);
+              }}
+            >
+              <FaTicketAlt className="icon" />
+              <h4>Tickets</h4>
+            </li>
+            <li
+              className="utilities-item"
+              onClick={(event) => {
+                setTickets(false);
+                setCategories(false);
+                setAsesors(true);
+                setOpen(!open);
+              }}
+            >
+              <FaUsers className="icon" />
+              <h4>Asesors</h4>
+            </li>
+            <li
+              className="utilities-item"
+              onClick={(event) => {
+                setTickets(false);
+                setAsesors(false);
+                setCategories(true);
+                setOpen(!open);
+              }}
+            >
+              <FaEdit className="icon" />
+              <h4>Categories & Suggestions</h4>
+            </li>
+            <li className="utilities-item">
+              <FaChartBar className="icon" />
+              <h4>Reports</h4>
+            </li>
+          </ul>
+          <ul className="user">
+            <li className="user-item">
+              <IoMdSettings className="icon" />
+              <h4>Settings</h4>
+            </li>
+            <li
+              className="user-item"
+              onClick={(event) => {
+                logout();
+              }}
+            >
+              <FaUserAlt className="icon" />
+              <h4>User</h4>
+            </li>
+          </ul>
+        </div>
+        {tickets ? (
+          <>
+            <div className="navbar-especific">
               <div className="navbar-title">
                 <h2>Tickets</h2>
               </div>
@@ -178,26 +145,59 @@ export default function SidebarAdmin() {
                 </li>
               </ul>
             </div>
-          ) : null}
-        </>
-      ) : null}
-      {asesors ? (
-        <>
-          <div className="navbar-especific">
-            <div className="navbar-title">
-              <h2>Asesors</h2>
-            </div>
-            <ul className="nav-links">
-              <li className="link-1">
-                <h3>All Asesors</h3>
-                <div className="counter">
-                  <h4>4</h4>
+            {open ? (
+              <div className="navbar-especific-phone">
+                <div className="navbar-title">
+                  <h2>Tickets</h2>
                 </div>
-              </li>
-            </ul>
-          </div>
-          {open ? (
-            <div className="navbar-especific-phone">
+                <ul className="nav-links">
+                  <li className="link-1">
+                    <h3>All Tickets</h3>
+                    <div className="counter">
+                      <h4>4</h4>
+                    </div>
+                  </li>
+                  <li className="link-1">
+                    <h3>Tickets to Handle</h3>
+                    <div className="counter">
+                      <h4>4</h4>
+                    </div>
+                  </li>
+                </ul>
+                <ul className="nav-links2">
+                  <h2>My Tickets</h2>
+                  <li className="link-1">
+                    <h3>My Open Tickets</h3>
+                    <div className="counter">
+                      <h4>4</h4>
+                    </div>
+                  </li>
+                  <li className="link-1">
+                    <h3>My tickets in the last week</h3>
+                  </li>
+                </ul>
+                <ul className="nav-links3">
+                  <h2>Statuses</h2>
+                  <li className="link-1">
+                    <h3>Open</h3>
+                  </li>
+                  <li className="link-1">
+                    <h3>Solved</h3>
+                  </li>
+                  <li className="link-1">
+                    <h3>Pending</h3>
+                  </li>
+                  <li className="link-1">
+                    <h3>Unsolved</h3>
+                  </li>
+                </ul>
+              </div>
+            ) : null}
+          </>
+        ) : null}
+        {asesors ? (
+          <>
+            <div className="navbar-especific">
               <div className="navbar-title">
                 <h2>Asesors</h2>
               </div>
@@ -210,41 +210,26 @@ export default function SidebarAdmin() {
                 </li>
               </ul>
             </div>
-          ) : null}
-        </>
-      ) : null}
-      {categories ? (
-        <>
-          <div className="navbar-especific">
-            <div className="navbar-title">
-              <h2>Categories & Suggestions</h2>
-            </div>
-            <ul className="nav-links">
-              <li className="link-1">
-                <h3>All Categories</h3>
-                <div className="counter">
-                  <h4>4</h4>
+            {open ? (
+              <div className="navbar-especific-phone">
+                <div className="navbar-title">
+                  <h2>Asesors</h2>
                 </div>
-              </li>
-              <li className="link-1">
-                <h3>All Suggestions</h3>
-                <div className="counter">
-                  <h4>4</h4>
-                </div>
-              </li>
-            </ul>
-            <ul className="nav-links2">
-              <h2>Create</h2>
-              <li className="link-1">
-                <h3>Category</h3>
-              </li>
-              <li className="link-1">
-                <h3>Suggestion</h3>
-              </li>
-            </ul>
-          </div>
-          {open ? (
-            <div className="navbar-especific-phone">
+                <ul className="nav-links">
+                  <li className="link-1">
+                    <h3>All Asesors</h3>
+                    <div className="counter">
+                      <h4>4</h4>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            ) : null}
+          </>
+        ) : null}
+        {categories ? (
+          <>
+            <div className="navbar-especific">
               <div className="navbar-title">
                 <h2>Categories & Suggestions</h2>
               </div>
@@ -264,18 +249,68 @@ export default function SidebarAdmin() {
               </ul>
               <ul className="nav-links2">
                 <h2>Create</h2>
-                <li className="link-1">
+                <li
+                  className="link-1"
+                  onClick={(event) => {
+                    showCategory();
+                  }}
+                >
                   <h3>Category</h3>
                 </li>
-                <li className="link-1">
+                <li
+                  className="link-1"
+                  onClick={(event) => {
+                    showSuggestion();
+                  }}
+                >
                   <h3>Suggestion</h3>
                 </li>
               </ul>
             </div>
-          ) : null}
-        </>
-      ) : null}
-    </Sidebar>
+            {open ? (
+              <div className="navbar-especific-phone">
+                <div className="navbar-title">
+                  <h2>Categories & Suggestions</h2>
+                </div>
+                <ul className="nav-links">
+                  <li className="link-1">
+                    <h3>All Categories</h3>
+                    <div className="counter">
+                      <h4>4</h4>
+                    </div>
+                  </li>
+                  <li className="link-1">
+                    <h3>All Suggestions</h3>
+                    <div className="counter">
+                      <h4>4</h4>
+                    </div>
+                  </li>
+                </ul>
+                <ul className="nav-links2">
+                  <h2>Create</h2>
+                  <li
+                    className="link-1"
+                    onClick={(event) => {
+                      showCategory();
+                    }}
+                  >
+                    <h3>Category</h3>
+                  </li>
+                  <li
+                    className="link-1"
+                    onClick={(event) => {
+                      showSuggestion();
+                    }}
+                  >
+                    <h3>Suggestion</h3>
+                  </li>
+                </ul>
+              </div>
+            ) : null}
+          </>
+        ) : null}
+      </Sidebar>
+    </>
   );
 }
 const Sidebar = styled.div`
@@ -374,6 +409,8 @@ const Sidebar = styled.div`
     display: flex;
     flex-direction: column;
     .navbar-title {
+      width: 80%;
+      position: fixed;
       display: flex;
       align-items: center;
       height: 80px;
@@ -386,18 +423,21 @@ const Sidebar = styled.div`
         margin-left: 20px;
         font-style: normal;
         color: #fa7d09;
+        display: flex;
+        align-self: center;
         text-transform: uppercase;
         width: 100%;
       }
     }
     .nav-links {
       width: 100%;
-      margin-top: 40px;
+      margin-top: 120px;
       .link-1 {
         margin-bottom: 20px;
         display: flex;
         align-items: center;
         width: 100%;
+        cursor: pointer;
         h3 {
           font-size: 18px;
           font-family: "Raleway", sans-serif;
@@ -446,6 +486,7 @@ const Sidebar = styled.div`
         display: flex;
         align-items: center;
         width: 100%;
+        cursor: pointer;
         h3 {
           font-size: 18px;
           font-family: "Raleway", sans-serif;
@@ -494,6 +535,7 @@ const Sidebar = styled.div`
         display: flex;
         align-items: center;
         width: 100%;
+        cursor: pointer;
         h3 {
           font-size: 18px;
           font-family: "Raleway", sans-serif;

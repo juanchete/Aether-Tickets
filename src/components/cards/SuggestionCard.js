@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import Tags from "../Tags";
 
 export default function SuggestionCard({ color, color2, title }) {
   return (
