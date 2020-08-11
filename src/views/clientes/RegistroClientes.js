@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useFormik} from 'formik'
 import {
     useUser, useFirebaseApp
@@ -9,7 +9,7 @@ import 'firebase'
 
 function RegistroClientes() {
 
-    
+    const [flag, setFlag] = useState(false)
 
     const firebase = useFirebaseApp()
 

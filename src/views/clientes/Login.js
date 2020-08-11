@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import styled, { keyframes } from "styled-components";
 import { useFormik, Field } from "formik";
 import * as Yup from "yup";
@@ -7,17 +7,25 @@ import { useFirebaseApp, useFirestore } from "reactfire";
 import ButtonSubmit from "../../components/buttons/Button-Submit";
 import Input from "../../components/inputs/InputLogin";
 import Swal from 'sweetalert2';
-import { Link } from "react-router-dom";
+import { Link, Router, Redirect } from "react-router-dom";
+import Cookies from 'js-cookie'
+import { UserContext } from "../../CreateContext";
 
 export default function LoginClientes() {
 
   const [remember, setRemember] = useState(false)
 
+  const [flag, setFlag] = useState(false)
+
+  const {setUser} = useContext(UserContext)
+
+  
+
   useEffect(() => {
     console.log(remember);
   }, [remember])
 
-  let a = []
+  
   
 
   const firebase = useFirebaseApp();
@@ -34,21 +42,42 @@ export default function LoginClientes() {
     }),
 
     onSubmit: async (valores) => {
+      let usuario = null
       const { email, password } = valores;
       try {
 
         await firestore.collection('usuarios').where('email','==',email).get().then(function(querySnapshot) {
           querySnapshot.forEach(function(doc) {
               // doc.data() is never undefined for query doc snapshots
-              a.push(doc.data()) 
+              usuario=doc.data()
           });
         
           
       })
 
-      if (a.length>0) {
+      if (usuario !== null) {
+
+        const { name, email, lastName } = usuario
 
         await firebase.auth().signInWithEmailAndPassword(email, password);
+
+
+        setUser({
+          name ,
+          lastName ,
+          email,
+          role:'usuario'
+
+        })
+
+         Cookies.set('user', {
+          name ,
+          lastName ,
+          email,
+          role:'usuario'
+
+        }, { expires: 7 });
+
      
      if (remember) {
       localStorage.setItem('remember-email', email);
@@ -60,11 +89,13 @@ export default function LoginClientes() {
       'Inicio sesion Correcctamente',
       'success'
   )
-        
+
+  setFlag(true)
+   
       }else {
         Swal.fire(
           'Error',
-          'No se encuentra registrado como cliente',
+          'No se encuentra registrado como asesor',
           'error'
       )
       }
@@ -89,7 +120,7 @@ export default function LoginClientes() {
     });
   })
 
-  return (
+  return flag  ? <Redirect to="/"/> : ( 
     <StyledLogin>
       <div className="container">
         <div className="container-login">

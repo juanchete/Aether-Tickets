@@ -6,11 +6,15 @@ import "firebase";
 import { useUser, useFirebaseApp } from "reactfire";
 import ButtonSubmit from "../../components/buttons/Button-Submit";
 import Input from "../../components/inputs/InputLogin";
+import { Redirect } from "react-router";
+import Swal from 'sweetalert2';
 
 export default function SignUpClientes() {
   const firebase = useFirebaseApp();
 
   const db = firebase.firestore();
+
+  const [flag, setFlag] = useState(false);
 
   const user = useUser();
 
@@ -41,22 +45,32 @@ export default function SignUpClientes() {
          await firebase
           .auth()
           .createUserWithEmailAndPassword(email, password)
-          .then(
-            db.collection("usuarios").add({
+          
+          await  db.collection("usuarios").add({
               name,
               email,
               lastName,
               telephone,
             })
+          
+          
+            Swal.fire(
+              'Correcto',
+              'Inicio sesion Correcctamente',
+              'success'
           )
-          .then(console.log("Creado con exito"));
+            setFlag(true);
       } catch (error) {
-        console.log(error);
+        Swal.fire(
+          'Correcto',
+          error.message,
+          'error'
+      )
       }
     },
   });
 
-  return (
+  return flag ? <Redirect to='/'/> :(
     <StyledLogin>
       <div className="container">
         <div className="container-login">

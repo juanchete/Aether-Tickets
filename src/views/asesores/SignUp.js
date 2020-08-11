@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -14,6 +14,8 @@ export default function SignUpAsesor() {
   const firebase = useFirebaseApp();
 
   const db = firebase.firestore();
+
+  const [flag, setFlag] = useState(false)
 
   const user = useUser();
 
@@ -47,6 +49,7 @@ export default function SignUpAsesor() {
               name,
               email,
               lastName,
+              role: 'asesor'
             })
           )
           
@@ -55,6 +58,8 @@ export default function SignUpAsesor() {
             'Se Registro Correcctamente',
             'success'
         )
+
+        setFlag(true)
 
       } catch (error) {
         Swal.fire(
@@ -85,7 +90,7 @@ export default function SignUpAsesor() {
     confirmSignIn(window.location.href)
     }, [])
 
-  return (
+  return flag ? <Redirect to='/'/> :  (
     <StyledLogin>
       <div className="container">
         <div className="container-login">

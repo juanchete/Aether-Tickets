@@ -7,13 +7,15 @@ import { useFirebaseApp, useFirestore } from "reactfire";
 import ButtonSubmit from "../../components/buttons/Button-Submit";
 import Input from "../../components/inputs/InputLogin";
 import Swal from 'sweetalert2';
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { UserContext } from "../../CreateContext";
 import Cookies from 'js-cookie'
 
 export default function LoginAsesores() {
 
   const {user, setUser} = useContext(UserContext)
+
+  const [flag, setFlag] = useState(false);
 
   
 
@@ -53,7 +55,7 @@ export default function LoginAsesores() {
 
       if (usuario !== null) {
 
-        const { name, email, lastName } = usuario
+        const { name, email, lastName,role } = usuario
 
         await firebase.auth().signInWithEmailAndPassword(email, password);
 
@@ -62,7 +64,7 @@ export default function LoginAsesores() {
           name ,
           lastName ,
           email,
-          role: 'usuario'
+          role
 
         })
 
@@ -70,7 +72,7 @@ export default function LoginAsesores() {
           name ,
           lastName ,
           email,
-          role: 'usuario'
+          role
 
         }, { expires: 7 });
 
@@ -85,6 +87,8 @@ export default function LoginAsesores() {
       'Inicio sesion Correcctamente',
       'success'
   )
+
+  setFlag(true);
         
       }else {
         Swal.fire(
@@ -113,7 +117,7 @@ export default function LoginAsesores() {
     });
   })
 
-  return (
+  return flag ? <Redirect to='/'/> : (
     <StyledLogin>
       <div className="container">
         <div className="container-login">
