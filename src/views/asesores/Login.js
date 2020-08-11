@@ -1,65 +1,132 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import styled, { keyframes } from "styled-components";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import "firebase/auth";
-import { useFirebaseApp } from "reactfire";
+import { useFirebaseApp, useFirestore } from "reactfire";
 import ButtonSubmit from "../../components/buttons/Button-Submit";
 import Input from "../../components/inputs/InputLogin";
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
+import { Link } from "react-router-dom";
+import { UserContext } from "../../CreateContext";
+import Cookies from 'js-cookie'
 
-export default function InviteToRegister() {
+export default function LoginAsesores() {
+
+  const {user, setUser} = useContext(UserContext)
+
+  
+
+  const [remember, setRemember] = useState(false)
+
+  useEffect(() => {
+    console.log(remember);
+  }, [remember])
+
+  
+
   const firebase = useFirebaseApp();
+  const firestore = useFirestore();
   const formik = useFormik({
     initialValues: {
-      email: "juan.lopez@correo.unimet.edu.ve",
-      confirm_email:'juan.lopez@correo.unimet.edu.ve'
+      email: localStorage.getItem('remember-email') || "",
+      password: "",
+      remember: false
     },
     validationSchema: Yup.object({
       email: Yup.string().email("Invalid Email").required("Required Field"),
-      confirm_email: Yup.string().when("email", {
-        is: val => (val && val.length > 0 ? true : false),
-        then: Yup.string().oneOf(
-          [Yup.ref("email")],
-          "Both emails need to be the same"
-        )
-      })
+      password: Yup.string().required("Required Field"),
     }),
 
     onSubmit: async (valores) => {
-      var actionCodeSettings = {
-        // URL you want to redirect back to. The domain (www.example.com) for this
-        // URL must be whitelisted in the Firebase Console.
-        url: 'http://localhost:3000/sign-up-asesores',
-        // This must be true.
-        handleCodeInApp: true
-      };
+      let usuario = null
+      const { email, password } = valores;
       try {
-
+        await firestore.collection('asesores').where('email','==',email).get().then(function(querySnapshot) {
+          querySnapshot.forEach(function(doc) {
+              // doc.data() is never undefined for query doc snapshots
+              usuario=doc.data()
+          });
         
-          await firebase.auth().sendSignInLinkToEmail(valores.email, actionCodeSettings).then(console.log('completado'))
+          
+      })
 
-         Swal.fire(
-          'Correcto',
-          'Se envio la invitacion correctamente',
-          'success'
+      if (usuario !== null) {
+
+        const { name, email, lastName } = usuario
+
+        await firebase.auth().signInWithEmailAndPassword(email, password);
+
+
+        setUser({
+          name ,
+          lastName ,
+          email,
+          role: 'usuario'
+
+        })
+
+        Cookies.set('user', {
+          name ,
+          lastName ,
+          email,
+          role: 'usuario'
+
+        }, { expires: 7 });
+
+     
+     if (remember) {
+      localStorage.setItem('remember-email', email);
+     }else{
+       localStorage.removeItem('remember-email')
+     }
+     Swal.fire(
+      'Correcto',
+      'Inicio sesion Correcctamente',
+      'success'
+  )
+        
+      }else {
+        Swal.fire(
+          'Error',
+          'No se encuentra registrado como asesor',
+          'error'
       )
-        
-
+      }
       } catch (error) {
-        console.log(error);
+        Swal.fire(
+          'Correcto',
+          error.message,
+          'error'
+      )
       }
     },
   });
 
-  
+  const forgotPassword = ( () =>{
+    const mail = formik.values.email
+
+    firebase.auth().sendPasswordResetEmail(mail).then(() => {
+      console.log('Email Sent');
+    }).catch((error) =>{
+      console.log(error);
+    });
+  })
 
   return (
     <StyledLogin>
       <div className="container">
         <div className="container-login">
-          <h1>Invite Register</h1>
-          
+          <h1>Login</h1>
+          <button className="sign-in-google">
+            <img className="google-icon" src="google.png" />
+            <h3>Sign in with google</h3>
+          </button>
+          <div className="sign-in-option">
+            <div className="line"></div>
+            <h3>or</h3>
+            <div className="line"></div>
+          </div>
           <form onSubmit={formik.handleSubmit}>
             <Input
               color="#2f2519"
@@ -82,28 +149,38 @@ export default function InviteToRegister() {
             <Input
               color="#2f2519"
               color2="#ff4301"
-              label="Confirm Email"
-              id="confirm_email"
-              type="email"
-              placeholder="confirm email"
+              label="Password"
+              id="password"
+              type="password"
+              placeholder="Password"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              value={formik.values.confirm_email}
+              value={formik.values.password}
               error={
-                formik.touched.confirm_email && formik.errors.confirm_email
-                  ? `${formik.errors.confirm_email}`
+                formik.touched.password && formik.errors.password
+                  ? `${formik.errors.password}`
                   : null
               }
             />
+            <label className="forgot-password" onClick={forgotPassword}>
+              <Link to='/forgot-password'>Forgot Password?</Link>
+            </label>
 
             
+
+
+            <div className="remember-me">
+              <input type="checkbox" value={remember} onChange={evt => setRemember(!remember)}/>
+              <h4>Remember me</h4>
+            </div>
             <div className="button-error">
               <ButtonSubmit color="#ff4301" />
 
-              {/* <h4>Erroooooooooooooooor</h4> */}
             </div>
           </form>
-          
+          <label className="sign-up-label">
+            <Link to='signup'>Do not have an account? Sign Up Now.</Link>
+          </label>
         </div>
       </div>
     </StyledLogin>
@@ -257,8 +334,6 @@ const StyledLogin = styled.nav`
             width:100%;
             height:100%;
             align-items:center;
-            padding-bottom: 2px;
-            padding-top: 2px;
 
             h4{
                 font-family: "Raleway", sans-serif;

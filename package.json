@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^7.1.2",
     "firebase": "^7.17.2",
     "formik": "^2.1.5",
+    "js-cookie": "^2.2.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-icons": "^3.10.0",
@@ -16,6 +17,7 @@
     "react-scripts": "3.4.1",
     "reactfire": "^2.0.3",
     "styled-components": "^5.1.1",
+    "sweetalert2": "^9.17.1",
     "yup": "^0.29.3"
   },
   "scripts": {

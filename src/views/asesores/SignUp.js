@@ -6,7 +6,8 @@ import "firebase";
 import { useUser, useFirebaseApp } from "reactfire";
 import ButtonSubmit from "../../components/buttons/Button-Submit";
 import Input from "../../components/inputs/InputLogin";
-import  { Redirect } from 'react-router-dom'
+import  { Redirect } from 'react-router-dom';
+import Swal from 'sweetalert2'
 
 
 export default function SignUpAsesor() {
@@ -21,8 +22,7 @@ export default function SignUpAsesor() {
       email: "prueba1@email.com",
       password: "password",
       name: "prueba",
-      lastName: "test",
-      telephone: "555",
+      lastName: "test"
     },
     validationSchema: Yup.object({
       email: Yup.string()
@@ -32,13 +32,12 @@ export default function SignUpAsesor() {
         .required("El password es obligatorio")
         .min(6, "La contraseña debe ser de al menos 6 caracteres"),
       name: Yup.string().required("El nombre es obligatorio"),
-      lastName: Yup.string().required("El apellido es obligatorio"),
-      telephone: Yup.number(),
+      lastName: Yup.string().required("El apellido es obligatorio")
     }),
 
     onSubmit: async (valores) => {
       // console.log(valores);
-      const { email, password, name, lastName, telephone } = valores;
+      const { email, password, name, lastName } = valores;
       try {
          await firebase
           .auth()
@@ -48,12 +47,21 @@ export default function SignUpAsesor() {
               name,
               email,
               lastName,
-              telephone,
             })
           )
-          .then(console.log("Creado con exito"));
+          
+          Swal.fire(
+            'Correcto',
+            'Se Registro Correcctamente',
+            'success'
+        )
+
       } catch (error) {
-        console.log(error);
+        Swal.fire(
+          'Correcto',
+          error.message,
+          'error'
+      )
       }
     },
   });
@@ -129,23 +137,6 @@ export default function SignUpAsesor() {
                 }
               />
             </div>
-            <Input
-              color="#2f2519"
-              color2="#ff4301"
-              label="Telephone"
-              id="telephone"
-              type="telephone"
-              fontSize="10px"
-              placeholder="Telephone"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.telephone}
-              error={
-                formik.touched.telephone && formik.errors.telephone
-                  ? `${formik.errors.telephone}`
-                  : null
-              }
-            />
             <Input
               color="#2f2519"
               color2="#ff4301"

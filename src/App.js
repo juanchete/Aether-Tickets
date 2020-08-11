@@ -1,27 +1,27 @@
-import React from "react";
-import Login from "./views/clientes/Login";
-import RegistroClientes from "./views/clientes/SignUp";
-import ForgotPassword from "./views/clientes/Forgot-Password";
-import InviteToRegister from './views/asesores/Invite-To-Register';
-import SignUpAsesor from './views/asesores/SignUp'
-import Home from "./views/clientes/Home";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import { useFirebaseApp } from "reactfire";
+import AppRouter from "./AppRouter";
+import { UserContext } from "./CreateContext";
+
+import Cookies from 'js-cookie';
 
 function App() {
-  const fire = useFirebaseApp();
-  console.log(fire);
+  
+  const [user, setUser] = useState()
+
+  const usuario = Cookies.getJSON('user');
+
+  useEffect(() => {
+    setUser( usuario)
+  }, [])
+  
   return (
-    <Router>
-      <div>
-        <Route exact path="/" component={Home} />
-        <Route exact path="/login" component={Login} />
-        <Route exact path="/signup" component={RegistroClientes} />
-        <Route exact path="/forgot-password" component={ForgotPassword} />
-        <Route exact path="/invite-register" component={InviteToRegister} />
-        <Route exact path="/sign-up-asesores" component={SignUpAsesor} />
-      </div>
-    </Router>
+    <UserContext.Provider value={{
+      user,
+      setUser
+    }}>
+      <AppRouter/>
+    </UserContext.Provider>
   );
 }
 

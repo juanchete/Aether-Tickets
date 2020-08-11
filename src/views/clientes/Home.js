@@ -1,26 +1,32 @@
-import React, {useEffect} from 'react'
+import React, {useEffect,useContext} from 'react'
 import {
     useUser, useFirebaseApp
 } from 'reactfire'
-import { useLocation } from 'react-router-dom'
+import  { UserContext }  from '../../CreateContext'
 
 function Home() {
 
-    const firebase = useFirebaseApp()
 
-    const logout = async () =>{
-        await firebase.auth().signOut()
+
+    const {user, setUser} = useContext(UserContext)
+    console.log(user);
+
+    const logout =  () =>{
+        // setUser({})
     }
 
 
-    
-    
-  const user = useUser()
+
     return (
+        <>
         <div>
             <h1>Bienvenidos al oasis Bienvenidos</h1>
             <button onClick={logout}> Log Out </button>
         </div>
+        <pre>
+            {JSON.stringify(user, null , 3)}
+        </pre>
+        </>
     )
 }
 

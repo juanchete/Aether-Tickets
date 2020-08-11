@@ -6,44 +6,60 @@ import "firebase/auth";
 import { useFirebaseApp } from "reactfire";
 import ButtonSubmit from "../../components/buttons/Button-Submit";
 import Input from "../../components/inputs/InputLogin";
+import Swal from 'sweetalert2';
 
 export default function ForgotPassword() {
   const firebase = useFirebaseApp();
   const formik = useFormik({
     initialValues: {
       email: "",
-      password: "",
-      confirm_password:''
+      // password: "",
+      // confirm_password:''
     },
     validationSchema: Yup.object({
       email: Yup.string().email("Invalid Email").required("Required Field"),
-      password: Yup.string().required("Required Field"),
-      confirm_password: Yup.string().when("password", {
-        is: val => (val && val.length > 0 ? true : false),
-        then: Yup.string().oneOf(
-          [Yup.ref("password")],
-          "Both password need to be the same"
-        )
-      })
+      // password: Yup.string().required("Required Field"),
+      // confirm_password: Yup.string().when("password", {
+      //   is: val => (val && val.length > 0 ? true : false),
+      //   then: Yup.string().oneOf(
+      //     [Yup.ref("password")],
+      //     "Both password need to be the same"
+      //   )
+      // })
     }),
 
     onSubmit: async (valores) => {
       const { email, password } = valores;
-      try {
-         firebase.auth().signInWithEmailAndPassword(email, password);
-      } catch (error) {}
+      
+        firebase.auth().sendPasswordResetEmail(email).then(() => {
+          Swal.fire(
+            'Correcto',
+            'Se envio al email el beta',
+            'success'
+        )
+        }).catch((error) =>{
+          Swal.fire(
+            'Correcto',
+            error.message,
+            'error'
+        )
+        });
+      
+       
+        
+      
     },
   });
 
-  const forgotPassword = ( () =>{
-    const mail = formik.values.email
+  // const forgotPassword = ( () =>{
+  //   const mail = formik.values.email
 
-    firebase.auth().sendPasswordResetEmail(mail).then(() => {
-      console.log('Email Sent');
-    }).catch((error) =>{
-      console.log(error);
-    });
-  })
+  //   firebase.auth().sendPasswordResetEmail(mail).then(() => {
+  //     console.log('Email Sent');
+  //   }).catch((error) =>{
+  //     console.log(error);
+  //   });
+  // })
 
   return (
     <StyledLogin>
@@ -70,7 +86,7 @@ export default function ForgotPassword() {
               }
             />
 
-            <Input
+            {/* <Input
               color="#2f2519"
               color2="#ff4301"
               label="Password"
@@ -102,7 +118,7 @@ export default function ForgotPassword() {
                   ? `${formik.errors.confirm_password}`
                   : null
               }
-            />
+            /> */}
 
             
             <div className="button-error">

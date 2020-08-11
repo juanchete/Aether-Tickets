@@ -3,9 +3,11 @@ import styled, { keyframes } from "styled-components";
 import { useFormik, Field } from "formik";
 import * as Yup from "yup";
 import "firebase/auth";
-import { useFirebaseApp } from "reactfire";
+import { useFirebaseApp, useFirestore } from "reactfire";
 import ButtonSubmit from "../../components/buttons/Button-Submit";
 import Input from "../../components/inputs/InputLogin";
+import Swal from 'sweetalert2';
+import { Link } from "react-router-dom";
 
 export default function LoginClientes() {
 
@@ -15,9 +17,11 @@ export default function LoginClientes() {
     console.log(remember);
   }, [remember])
 
+  let a = []
   
 
   const firebase = useFirebaseApp();
+  const firestore = useFirestore();
   const formik = useFormik({
     initialValues: {
       email: localStorage.getItem('remember-email') || "",
@@ -32,13 +36,46 @@ export default function LoginClientes() {
     onSubmit: async (valores) => {
       const { email, password } = valores;
       try {
-         firebase.auth().signInWithEmailAndPassword(email, password);
-         if (remember) {
-          localStorage.setItem('remember-email', email);
-         }else{
-           localStorage.removeItem('remember-email')
-         }
-      } catch (error) {}
+
+        await firestore.collection('usuarios').where('email','==',email).get().then(function(querySnapshot) {
+          querySnapshot.forEach(function(doc) {
+              // doc.data() is never undefined for query doc snapshots
+              a.push(doc.data()) 
+          });
+        
+          
+      })
+
+      if (a.length>0) {
+
+        await firebase.auth().signInWithEmailAndPassword(email, password);
+     
+     if (remember) {
+      localStorage.setItem('remember-email', email);
+     }else{
+       localStorage.removeItem('remember-email')
+     }
+     Swal.fire(
+      'Correcto',
+      'Inicio sesion Correcctamente',
+      'success'
+  )
+        
+      }else {
+        Swal.fire(
+          'Error',
+          'No se encuentra registrado como cliente',
+          'error'
+      )
+      }
+
+      } catch (error) {
+        Swal.fire(
+          'Correcto',
+          error.message,
+          'error'
+      )
+      }
     },
   });
 
@@ -102,7 +139,7 @@ export default function LoginClientes() {
               }
             />
             <label className="forgot-password" onClick={forgotPassword}>
-              <h4>Forgot Password?</h4>
+              <Link to='/forgot-password'>Forgot Password?</Link>
             </label>
 
             
@@ -115,11 +152,10 @@ export default function LoginClientes() {
             <div className="button-error">
               <ButtonSubmit color="#ff4301" />
 
-              {/* <h4>Erroooooooooooooooor</h4> */}
             </div>
           </form>
           <label className="sign-up-label">
-            Do not have an account? Sign Up Now.
+            <Link to='signup'>Do not have an account? Sign Up Now.</Link>
           </label>
         </div>
       </div>
