@@ -15,7 +15,6 @@ export default function NewTicket() {
     setText(value);
     console.log(text);
   };
-
   const onFilesChange = (files) => {
     setFiles(files);
   };
@@ -26,18 +25,16 @@ export default function NewTicket() {
       lastName: "",
       email: "",
       category: "",
-      content: "",
     },
     validationSchema: Yup.object({
       email: Yup.string().email("Invalid Email").required("Required Field"),
-      password: Yup.string().required("Required Field"),
       subject: Yup.string().required("Required Field"),
       name: Yup.string().required("Required Field"),
       lastName: Yup.string().required("Required Field"),
     }),
 
-    onSubmit: (valores) => {
-      console.log("Submitted");
+    onSubmit: async (valores) => {
+      console.log(valores);
     },
   });
   return (
@@ -55,11 +52,28 @@ export default function NewTicket() {
             <Input
               color="#2f2519"
               color2="#ff4301"
-              label="Subject"
-              id="subject"
+              label="Email"
               fontSize="10px"
-              type="subject"
+              placeholder="email"
+              id="email"
+              type="email"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.email}
+              error={
+                formik.touched.email && formik.errors.email
+                  ? `${formik.errors.email}`
+                  : null
+              }
+            />
+            <Input
+              color="#2f2519"
+              color2="#ff4301"
+              label="Subject"
+              fontSize="10px"
               placeholder="subject"
+              id="subject"
+              type="text"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.subject}
@@ -74,11 +88,11 @@ export default function NewTicket() {
                 color="#2f2519"
                 color2="#ff4301"
                 label="Name"
+                fontSize="10px"
+                placeholder="name"
+                marginRight="20px"
                 id="name"
                 type="text"
-                placeholder="Name"
-                fontSize="10px"
-                marginRight="20px"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.name}
@@ -92,10 +106,10 @@ export default function NewTicket() {
                 color="#2f2519"
                 color2="#ff4301"
                 label="Last Name"
+                fontSize="10px"
+                placeholder="lastName"
                 id="lastName"
                 type="text"
-                fontSize="10px"
-                placeholder="Last Name"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.lastName}
@@ -106,30 +120,13 @@ export default function NewTicket() {
                 }
               />
             </div>
-            <Input
-              color="#2f2519"
-              color2="#ff4301"
-              label="Email"
-              id="email"
-              fontSize="10px"
-              type="email"
-              placeholder="email"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.email}
-              error={
-                formik.touched.email && formik.errors.email
-                  ? `${formik.errors.email}`
-                  : null
-              }
-            />
             <Select
               color="#2f2519"
               color2="#ff4301"
               label="Category"
               id="category"
               fontSize="10px"
-              type="category"
+              type="select"
               placeholder="category"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}

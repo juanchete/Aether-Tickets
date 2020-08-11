@@ -62,7 +62,7 @@ VideoBlot.blotName = "video";
 VideoBlot.tagName = "video";
 Quill.register(VideoBlot);
 
-class QuillEditor extends React.Component {
+export default class QuillEditor extends React.Component {
   bandId;
   onEditorChange;
   onFilesChange;
@@ -249,87 +249,91 @@ class QuillEditor extends React.Component {
 
   render() {
     return (
-      <div>
-        <div
-          id="toolbar"
-          style={{
-            backgroundColor: "#2f2519",
-            border: "2px solid #2f2519",
-            borderRadius: "5px",
-            color: "#434343",
-          }}
-        >
-          <select
-            className="ql-header"
-            defaultValue={""}
-            onChange={(e) => e.persist()}
+      <textEditorStyle>
+        <div>
+          <div
+            id="toolbar"
+            style={{
+              backgroundColor: "#2f2519",
+              border: "2px solid #2f2519",
+              borderRadius: "5px",
+              color: "#434343",
+            }}
           >
-            <option value="1" />
-            <option value="2" />
-            <option value="" />
-          </select>
-          <button className="ql-bold" />
-          <button className="ql-italic" />
-          <button className="ql-underline" />
-          <button className="ql-strike" />
-          <button className="ql-insertImage">I</button>
-          <button className="ql-insertVideo">V</button>
-          <button className="ql-link" />
-          <button className="ql-code-block" />
-          <button className="ql-video" />
-          <button className="ql-blockquote" />
-          <button className="ql-clean" />
-          <select
-            className="ql-color"
-            defaultValue={""}
-            onChange={(e) => e.persist()}
-          >
-            <option selected value="white" />
-            <option value="#ff4301" />
-            <option value="#fa7d09" />
-            <option value="#29E2F3" />
-          </select>
-          <select
-            className="ql-align"
-            defaultValue={""}
-            onChange={(e) => e.persist()}
-          >
-            <option value="center" />
-            <option value="justify" />
-            <option value="right" />
-          </select>
-          <button className="ql-list" value="ordered" />
+            <select
+              className="ql-header"
+              defaultValue={""}
+              onChange={(e) => e.persist()}
+            >
+              <option value="1" />
+              <option value="2" />
+              <option value="" />
+            </select>
+            <button className="ql-bold" />
+            <button className="ql-italic" />
+            <button className="ql-underline" />
+            <button className="ql-strike" />
+            <button className="ql-insertImage">I</button>
+            <button className="ql-insertVideo">V</button>
+            <button className="ql-link" />
+            <button className="ql-code-block" />
+            <button className="ql-video" />
+            <button className="ql-blockquote" />
+            <button className="ql-clean" />
+            <select
+              className="ql-color"
+              defaultValue={"white"}
+              onChange={(e) => e.persist()}
+            >
+              <option selected="selected" value="white" />
+              <option value="#ff4301" />
+              <option value="#fa7d09" />
+              <option value="#29E2F3" />
+            </select>
+            <select
+              className="ql-align"
+              defaultValue={""}
+              onChange={(e) => e.persist()}
+            >
+              <option value="center" />
+              <option value="justify" />
+              <option value="right" />
+            </select>
+            <button className="ql-list" value="ordered" />
+          </div>
+          <ReactQuill
+            ref={(el) => {
+              this.reactQuillRef = el;
+            }}
+            theme={"snow"}
+            onChange={this.handleChange}
+            modules={this.modules}
+            formats={this.formats}
+            value={this.state.editorHtml}
+            className="font"
+            style={{
+              backgroundColor: "#4A3F35",
+              border: "2px solid #4A3F35",
+              borderRadius: "5px",
+              color: "white",
+            }}
+          />
+          <input
+            type="file"
+            accept="image/*"
+            ref={this.inputOpenImageRef}
+            style={{ display: "none" }}
+            onChange={this.insertImage}
+          />
+          <input
+            type="file"
+            accept="video/*"
+            ref={this.inputOpenVideoRef}
+            style={{ display: "none" }}
+            onChange={this.insertVideo}
+          />
         </div>
-        <ReactQuill
-          ref={(el) => {
-            this.reactQuillRef = el;
-          }}
-          theme={"snow"}
-          onChange={this.handleChange}
-          modules={this.modules}
-          formats={this.formats}
-          value={this.state.editorHtml}
-          style={{
-            backgroundColor: "#4A3F35",
-            border: "2px solid #4A3F35",
-            borderRadius: "5px",
-          }}
-        />
-        <input
-          type="file"
-          accept="image/*"
-          ref={this.inputOpenImageRef}
-          style={{ display: "none" }}
-          onChange={this.insertImage}
-        />
-        <input
-          type="file"
-          accept="video/*"
-          ref={this.inputOpenVideoRef}
-          style={{ display: "none" }}
-          onChange={this.insertVideo}
-        />
-      </div>
+      </textEditorStyle>
     );
   }
 
@@ -363,5 +367,8 @@ class QuillEditor extends React.Component {
     "list",
   ];
 }
-
-export default QuillEditor;
+const textEditorStyle = styled.div`
+  .font {
+    font-family: "Raleway", sans-serif;
+  }
+`;

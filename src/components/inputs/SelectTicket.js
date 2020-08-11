@@ -30,8 +30,8 @@ export default function SelectTicket({
       <label>{label}</label>
       <select id={id} onChange={onChange} onBlur={onBlur} value={value}>
         <option value="" label="" />
-        <option value="Hatillo" label="El Hatillo" />
-        <option value="Baruta" label="Baruta" />
+        <option value="Login" label="Login" />
+        <option value="Register" label="Register" />
       </select>
       {error ? <h4>{error}</h4> : <h4 style={{ color: "white" }}>h</h4>}
     </Select>
