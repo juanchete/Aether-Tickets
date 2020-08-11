@@ -152,7 +152,7 @@ const Sidebar = styled.div`
   width: 30%;
   display: flex;
   flex-direction: row;
-
+  position: fixed;
   .navbar {
     height: 100%;
     width: 20%;
@@ -245,7 +245,7 @@ const Sidebar = styled.div`
     .navbar-title {
       display: flex;
       align-items: center;
-      height: 10%;
+      height: 80px;
       border-bottom: 1px solid #2f2519;
       h2 {
         font-size: 22px;
@@ -373,6 +373,7 @@ const Sidebar = styled.div`
     height: auto;
     width: 100vw;
     display: flex;
+    z-index: 50;
     flex-direction: column;
     .navbar {
       height: 90px;
@@ -380,7 +381,7 @@ const Sidebar = styled.div`
       flex-direction: row;
       .utilities {
         height: 100%;
-        width: 60%;
+        width: 60vw;
         display: flex;
         flex-direction: row;
         .utilities-item {
@@ -398,7 +399,7 @@ const Sidebar = styled.div`
       }
       .user {
         height: 100%;
-        width: 40%;
+        width: 40vw;
         display: flex;
         flex-direction: row;
         .user-item {
@@ -563,6 +564,7 @@ const Sidebar = styled.div`
     height: auto;
     width: 100vw;
     display: flex;
+    z-index: 50;
     flex-direction: column;
     .navbar {
       height: 90px;
@@ -570,7 +572,7 @@ const Sidebar = styled.div`
       flex-direction: row;
       .utilities {
         height: 100%;
-        width: 70%;
+        width: 70vw;
         display: flex;
         flex-direction: row;
 
@@ -589,7 +591,7 @@ const Sidebar = styled.div`
       }
       .user {
         height: 100%;
-        width: 30%;
+        width: 30vw;
         display: flex;
         flex-direction: row;
         .user-item {
