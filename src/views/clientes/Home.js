@@ -60,10 +60,12 @@ const HomeStyle = styled.div`
   display: flex;
   flex-direction: row;
   .home-view {
-    width: 100%;
+    width: 70%;
+    margin-left: 30%;
 
     .home-view-title {
-      width: 100%;
+      width: 70%;
+      position: fixed;
       display: flex;
       flex-direction: row;
       align-items: center;

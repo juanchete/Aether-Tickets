@@ -3,6 +3,7 @@ import Login from "./views/clientes/Login";
 import RegistroClientes from "./views/clientes/SignUp";
 import Home from "./views/clientes/Home";
 import NewTicket from "./views/clientes/NewTicket";
+import Categories from "./views/Asesor/Categories";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import { useFirebaseApp } from "reactfire";
 
@@ -16,6 +17,7 @@ function App() {
         <Route exact path="/login" component={Login} />
         <Route exact path="/signup" component={RegistroClientes} />
         <Route exact path="/newticket" component={NewTicket} />
+        <Route exact path="/categories" component={Categories} />
       </div>
     </Router>
   );
