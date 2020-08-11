@@ -43,15 +43,15 @@ export default function CategoriySuggestionCard({ color, color2, title }) {
 const Card = styled.div`
   width: 260px;
   height: 220px;
-  background: #2f2519;
+  background: ${(props) => (props.color ? props.color : "#2f2519")};
   margin: 10px;
-  border: 1px solid #2f2519;
+  border: 1px solid ${(props) => (props.color ? props.color : "#2f2519")};
   border-radius: 5px;
 
   .card-title {
     width: 100%;
     height: 40px;
-    background: #2f2519;
+    background: ${(props) => (props.color ? props.color : "#2f2519")};
     display: flex;
     align-items: flex-end;
     padding-left: 10px;
@@ -62,7 +62,7 @@ const Card = styled.div`
       letter-spacing: 0.2em;
       font-weight: 300;
       font-style: normal;
-      color: #fa7d09;
+      color: ${(props) => (props.color2 ? props.color2 : "#fa7d09")};
       text-transform: uppercase;
       width: 100%;
       margin-right: 5px;

@@ -2,7 +2,7 @@ import React from "react";
 import { useUser, useFirebaseApp } from "reactfire";
 import styled from "styled-components";
 import SidebarAdmin from "../../components/sidebars/SidebarAdmin";
-import Card from "../../components/cards/Category&SuggestionCard";
+import Card from "../../components/cards/SuggestionCard";
 
 export default function Categories() {
   const firebase = useFirebaseApp();
@@ -19,7 +19,7 @@ export default function Categories() {
         <div className="home-view-title">
           <div style={{ display: "flex", flexDirection: "row" }}>
             <h2>All</h2>
-            <h1>Categories</h1>
+            <h1>Suggestions</h1>
           </div>
         </div>
         <div className="container">
