@@ -209,7 +209,7 @@ const StyledLogin = styled.nav`
   height: 100vh;
   width: 100vw;
   overflow-x:hidden;
-  font-family: "Raleway", sans-serif;
+  font-family: 'Raleway', sans-serif;
   .container {
     width: 100%;
     margin: auto;
@@ -235,7 +235,7 @@ const StyledLogin = styled.nav`
 
     h1 {
       text-align: center;
-      font-family: "Raleway", sans-serif;
+      font-family: 'Raleway', sans-serif;
       letter-spacing: 0.3em;
       font-weight: 400;
       font-size: 48px;
@@ -323,7 +323,7 @@ const StyledLogin = styled.nav`
         align-items:center;
 
         h4{
-            font-family: "Raleway", sans-serif;
+            font-family: 'Raleway', sans-serif;
             font-size: 12px;
             font-weight:200;
             letter-spacing: 0.1em;
@@ -351,7 +351,7 @@ const StyledLogin = styled.nav`
       }
 
       h3 {
-        font-family: "Raleway", sans-serif;
+        font-family: 'Raleway', sans-serif;
         font-size: 20px;
         letter-spacing: 0.1em;
         color: #2f2519;
@@ -366,7 +366,7 @@ const StyledLogin = styled.nav`
     width: 100vw;
     
 
-    font-family: "Raleway", sans-serif;
+    font-family: 'Raleway', sans-serif;
     .container {
       width: 100%;
       margin: auto;
