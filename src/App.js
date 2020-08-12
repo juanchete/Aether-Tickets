@@ -5,7 +5,7 @@ import Home from "./views/clientes/Home";
 import NewTicket from "./views/clientes/NewTicket";
 import Categories from "./views/Asesor/Categories";
 import Suggestions from "./views/Asesor/Suggestions";
-import AddSuggestion from "./views/Asesor/AddSuggestion";
+import Faq from "./views/clientes/Faq";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import { useFirebaseApp } from "reactfire";
 
@@ -21,7 +21,7 @@ function App() {
         <Route exact path="/newticket" component={NewTicket} />
         <Route exact path="/categories" component={Categories} />
         <Route exact path="/suggestions" component={Suggestions} />
-        <Route exact path="/addcategory" component={AddSuggestion} />
+        <Route exact path="/faqs" component={Faq} />
       </div>
     </Router>
   );

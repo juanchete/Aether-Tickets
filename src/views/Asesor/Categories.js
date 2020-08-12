@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useUser, useFirebaseApp } from "reactfire";
 import styled from "styled-components";
 import SidebarAdmin from "../../components/sidebars/SidebarAdmin";
@@ -45,6 +45,31 @@ const HomeStyle = styled.div`
     width: 70%;
     margin-left: 30%;
 
+    .faqs {
+      width: 100%;
+      margin: 0 auto;
+      padding: 15px;
+
+      .faq-title {
+        width: 100%;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        h2 {
+          font-size: 20px;
+          font-family: "Raleway", sans-serif;
+          letter-spacing: 0.2em;
+          font-weight: 400;
+          font-style: normal;
+          color: #fa7d09;
+          text-transform: uppercase;
+          width: 100%;
+          margin-right: 5px;
+        }
+      }
+    }
+
     .home-view-title {
       width: 70%;
       position: fixed;
@@ -62,7 +87,7 @@ const HomeStyle = styled.div`
         letter-spacing: 0.2em;
         font-weight: 500;
         font-style: normal;
-        color: #3a343c;
+        color: #2f2519;
         text-transform: uppercase;
         width: 100%;
       }

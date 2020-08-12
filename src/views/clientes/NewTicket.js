@@ -177,7 +177,7 @@ const HomeStyle = styled.div`
         letter-spacing: 0.2em;
         font-weight: 500;
         font-style: normal;
-        color: #3a343c;
+        color: #2f2519;
         text-transform: uppercase;
         width: 100%;
       }
