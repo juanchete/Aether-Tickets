@@ -1,7 +1,7 @@
 import React from "react";
 import { useUser, useFirebaseApp } from "reactfire";
 import styled from "styled-components";
-import SidebarAdmin from "../../components/sidebars/SidebarAdmin";
+import SidebarUser from "../../components/sidebars/SidebarUser";
 import TicketCard from "../../components/cards/TicketCard";
 
 export default function Home() {
@@ -14,13 +14,13 @@ export default function Home() {
   const user = useUser();
   return (
     <HomeStyle>
-      <SidebarAdmin ticket={true} />
+      <SidebarUser ticket={true} />
       {/* <h1>Bienvenidos al oasis Bienvenidos</h1>
       <button onClick={logout}> Log Out </button> */}
       <div className="home-view">
         <div className="home-view-title">
           <div style={{ display: "flex", flexDirection: "row" }}>
-            <h2>All</h2>
+            <h2>All My</h2>
             <h1>Tickets</h1>
           </div>
         </div>
@@ -50,7 +50,7 @@ export default function Home() {
           </li>
         </ul>
 
-        <TicketCard />
+        <TicketCard color="#ff4301" />
       </div>
     </HomeStyle>
   );
@@ -71,7 +71,7 @@ const HomeStyle = styled.div`
       align-items: center;
       justify-content: center;
       text-align: center;
-      height: 10%;
+      height: 80px;
       background: #4a3f35;
       border-bottom: 1px solid #2f2519;
       h1 {
@@ -90,7 +90,7 @@ const HomeStyle = styled.div`
         letter-spacing: 0.2em;
         font-weight: 300;
         font-style: normal;
-        color: #fa7d09;
+        color: #ff4301;
         text-transform: uppercase;
         width: 100%;
         margin-right: 5px;
@@ -98,6 +98,7 @@ const HomeStyle = styled.div`
     }
 
     .filters {
+      margin-top: 80px;
       width: 100%;
       height: 50px;
       border-bottom: 1px solid #2f2519;
@@ -107,7 +108,7 @@ const HomeStyle = styled.div`
       align-items: center;
 
       .add-filter {
-        border: 2px solid #fa7d09;
+        border: 2px solid #ff4301;
         border-radius: 5px;
         height: 40px;
         margin-left: 10px;
@@ -119,7 +120,7 @@ const HomeStyle = styled.div`
           letter-spacing: 0.2em;
           font-weight: 500;
           font-style: normal;
-          color: #fa7d09;
+          color: #ff4301;
           text-transform: uppercase;
           width: 100%;
           margin-right: 5px;

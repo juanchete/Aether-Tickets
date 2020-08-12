@@ -14,7 +14,7 @@ export default function Categories() {
   const user = useUser();
   return (
     <HomeStyle>
-      <SidebarAdmin />
+      <SidebarAdmin category={true} />
       <div className="home-view">
         <div className="home-view-title">
           <div style={{ display: "flex", flexDirection: "row" }}>

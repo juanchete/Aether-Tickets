@@ -8,11 +8,8 @@ import { FaEdit } from "react-icons/fa";
 import { FaChartBar } from "react-icons/fa";
 import { IoMdSettings } from "react-icons/io";
 
-export default function SidebarUser() {
-  const [tickets, setTickets] = React.useState(true);
-  const [asesors, setAsesors] = React.useState(false);
-  const [categories, setCategories] = React.useState(false);
-  const [reports, setReports] = React.useState(false);
+export default function SidebarUser({ ticket }) {
+  const [tickets, setTickets] = React.useState(ticket ? true : false);
   const [open, setOpen] = React.useState(false);
   const firebase = useFirebaseApp();
 
@@ -29,8 +26,6 @@ export default function SidebarUser() {
           <li
             className="utilities-item"
             onClick={(event) => {
-              setAsesors(false);
-              setCategories(false);
               setTickets(true);
               setOpen(!open);
             }}

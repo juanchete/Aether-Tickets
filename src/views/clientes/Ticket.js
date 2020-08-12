@@ -18,7 +18,7 @@ export default function Ticket() {
   };
   return (
     <HomeStyle toggleDet={toggleDet} screenWidth={window.innerWidth}>
-      <SidebarUser />
+      <SidebarUser ticket={true} />
       <div className="home-view">
         <div className="home-view-title">
           <div style={{ display: "flex", flexDirection: "row" }}>
