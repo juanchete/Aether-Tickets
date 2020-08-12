@@ -120,7 +120,7 @@ export default function LoginClientes() {
     });
   })
 
-  return flag  ? <Redirect to="/"/> : ( 
+  return flag  ? <Redirect to="/faq"/> : ( 
     <StyledLogin>
       <div className="container">
         <div className="container-login">

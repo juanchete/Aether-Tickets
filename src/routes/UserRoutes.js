@@ -12,7 +12,7 @@ function UserRoutes({ component: Component, ...rest}) {
     return (
         <Route
         {...rest}
-        render = { () => user !== undefined && user.role=='usuario' ? (<Component/>) 
+        render = { () => !user || (user.role !== 'asesor' && user.role=='admin') ? (<Component/>) 
             : (
                 <Redirect to='/'/>
             )

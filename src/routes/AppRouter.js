@@ -2,9 +2,9 @@ import React, { useContext } from "react";
 import Login from "../views/clientes/Login";
 import RegistroClientes from "../views/clientes/SignUp";
 import ForgotPassword from "../views/clientes/Forgot-Password";
-import InviteToRegister from '../views/asesores/Invite-To-Register';
-import SignUpAsesor from '../views/asesores/SignUp';
-import LoginAsesores from '../views/asesores/Login';
+import InviteToRegister from '../views/Asesor/Invite-To-Register';
+import SignUpAsesor from '../views/Asesor/SignUp';
+import LoginAsesores from '../views/Asesor/Login';
 import Faq from '../views/clientes/Faq';
 import NewTicket from '../views/clientes/NewTicket';
 import AddCategory from '../views/Asesor/AddCategory';
@@ -26,12 +26,11 @@ function AppRouter() {
   return (
     <Router>
       <Switch>
-        <Route exact path="/" component={Home} />
         <Route exact path="/login" component={Login} />
         <Route exact path="/signup" component={RegistroClientes} />
         <Route exact path="/forgot-password" component={ForgotPassword} />
-        <Route exact path="/new-ticket" component={NewTicket} />      
-        <Route exact path="/faq" component={Faq} />
+        <UserRoutes exact path="/new-ticket" component={NewTicket} />      
+        <UserRoutes exact path="/faq" component={Faq} />
 
         <AdminRoutes exact path="/invite-register" component={InviteToRegister} />
         <InviteRoutes exact path="/sign-up-asesores" component={SignUpAsesor} />
@@ -41,6 +40,7 @@ function AppRouter() {
         <AsesorRoutes exact path="/asesores/categories" component={Categories} />
         <AsesorRoutes exact path="/asesores/add-suggestion" component={AddSuggestion} />
         <AsesorRoutes exact path="/asesores/suggestion" component={Suggestions} />
+        <AsesorRoutes exact path="/" component={Home} />
       </Switch>
     </Router>
   );

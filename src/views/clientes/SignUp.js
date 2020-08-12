@@ -88,7 +88,7 @@ export default function SignUpClientes() {
     },
   });
 
-  return flag ? <Redirect to='/'/> :(
+  return flag ? <Redirect to='/faq'/> :(
     <StyledLogin>
       <div className="container">
         <div className="container-login">
