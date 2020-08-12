@@ -17,11 +17,15 @@ export default function SidebarAdmin() {
   const [tickets, setTickets] = React.useState(true);
   const [asesors, setAsesors] = React.useState(false);
   const [categories, setCategories] = React.useState(false);
+  const [settings, setSettings] = React.useState(false);
+  const [currentUser, setCurrentUser] = React.useState(false);
   const [categoryShow, setCategoryShow] = React.useState(false);
   const [suggestionShow, setSuggestionShow] = React.useState(false);
   const [reports, setReports] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const firebase = useFirebaseApp();
+
+  
   const {user, setUser} = useContext(UserContext);
 
   const logout = async () => {
@@ -59,6 +63,8 @@ export default function SidebarAdmin() {
               onClick={(event) => {
                 setAsesors(false);
                 setCategories(false);
+                setSettings(false);
+                setCurrentUser(false);
                 setTickets(true);
                 setOpen(!open);
               }}
@@ -71,6 +77,8 @@ export default function SidebarAdmin() {
               onClick={(event) => {
                 setTickets(false);
                 setCategories(false);
+                setSettings(false);
+                setCurrentUser(false);
                 setAsesors(true);
                 setOpen(!open);
               }}
@@ -83,6 +91,8 @@ export default function SidebarAdmin() {
               onClick={(event) => {
                 setTickets(false);
                 setAsesors(false);
+                setSettings(false);
+                setCurrentUser(false);
                 setCategories(true);
                 setOpen(!open);
               }}
@@ -96,15 +106,29 @@ export default function SidebarAdmin() {
             </li>
           </ul>
           <ul className="user">
-            <li className="user-item">
+            <li className="user-item"
+            onClick={(event) => {
+              setTickets(false);
+              setAsesors(false);
+              setCurrentUser(false);
+              setCategories(false);
+              setSettings(true);
+              setOpen(!open);
+            }}>
               <IoMdSettings className="icon" />
               <h4>Settings</h4>
             </li>
             <li
               className="user-item"
               onClick={(event) => {
-                logout();
+                setTickets(false);
+                setAsesors(false);
+                setCategories(false);
+                setSettings(false);
+                setCurrentUser(true);
+                setOpen(!open);
               }}
+              
             >
               <FaUserAlt className="icon" />
               <h4>Log Out</h4>
@@ -317,6 +341,70 @@ export default function SidebarAdmin() {
                     }}
                   >
                     <h3>Suggestion</h3>
+                  </li>
+                </ul>
+              </div>
+            ) : null}
+          </>
+        ) : null}
+        {settings ? (
+          <>
+            <div className="navbar-especific">
+              <div className="navbar-title">
+                <h2>Settings</h2>
+              </div>
+              <ul className="nav-links">
+                <li className="link-1">
+                  <h3>Log Out</h3>
+                  <div className="counter">
+                    <h4>4</h4>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            {open ? (
+              <div className="navbar-especific-phone">
+                <div className="navbar-title">
+                  <h2>Asesors</h2>
+                </div>
+                <ul className="nav-links">
+                  <li className="link-1">
+                    <h3>All Asesors</h3>
+                    <div className="counter">
+                      <h4>4</h4>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            ) : null}
+          </>
+        ) : null}
+        {currentUser ? (
+          <>
+            <div className="navbar-especific">
+              <div className="navbar-title">
+                <h2>Hola {user.name}</h2>
+              </div>
+              <ul className="nav-links">
+                <li className="link-1">
+                  <h3>All Asesors</h3>
+                  <div className="counter">
+                    <h4>4</h4>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            {open ? (
+              <div className="navbar-especific-phone">
+                <div className="navbar-title">
+                  <h2>Asesors</h2>
+                </div>
+                <ul className="nav-links">
+                  <li className="link-1">
+                    <h3>All Asesors</h3>
+                    <div className="counter">
+                      <h4>4</h4>
+                    </div>
                   </li>
                 </ul>
               </div>
