@@ -10,6 +10,7 @@ import { IoMdSettings } from "react-icons/io";
 import AddCategory from "../../views/Asesor/AddCategory";
 import AddSuggestion from "../../views/Asesor/AddSuggestion";
 import { UserContext } from "../../CreateContext";
+import Cookies from 'js-cookie'
 
 
 export default function SidebarAdmin() {
@@ -24,7 +25,18 @@ export default function SidebarAdmin() {
   const {user, setUser} = useContext(UserContext);
 
   const logout = async () => {
-    console.log(user);
+    try {
+
+      await firebase.auth().signOut()
+
+      setUser({})
+
+      Cookies.remove('user')
+      
+          
+      } catch (error) {
+          console.log(error);
+      }
   };
 
   const showCategory = (e) => {
