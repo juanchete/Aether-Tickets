@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import styled from "styled-components";
 import { useUser, useFirebaseApp } from "reactfire";
 import { FaTicketAlt } from "react-icons/fa";
@@ -9,6 +9,8 @@ import { FaChartBar } from "react-icons/fa";
 import { IoMdSettings } from "react-icons/io";
 import AddCategory from "../../views/Asesor/AddCategory";
 import AddSuggestion from "../../views/Asesor/AddSuggestion";
+import { UserContext } from "../../CreateContext";
+
 
 export default function SidebarAdmin() {
   const [tickets, setTickets] = React.useState(true);
@@ -19,9 +21,10 @@ export default function SidebarAdmin() {
   const [reports, setReports] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const firebase = useFirebaseApp();
+  const {user, setUser} = useContext(UserContext);
 
   const logout = async () => {
-    await firebase.auth().signOut();
+    console.log(user);
   };
 
   const showCategory = (e) => {
@@ -31,7 +34,6 @@ export default function SidebarAdmin() {
     setSuggestionShow(!suggestionShow);
   };
 
-  const user = useUser();
   return (
     <>
       <AddCategory show={categoryShow} showCategory={showCategory} />
@@ -93,7 +95,7 @@ export default function SidebarAdmin() {
               }}
             >
               <FaUserAlt className="icon" />
-              <h4>User</h4>
+              <h4>Log Out</h4>
             </li>
           </ul>
         </div>
