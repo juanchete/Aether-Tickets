@@ -37,22 +37,23 @@ function Home() {
 
     return (
         <div>
-        { user && 
+        { user ?  (
              <>
-             {user.email}
+             {sesion.email}
              <div>
                <h1>Bienvenidos al oasis Bienvenidos</h1>
                <button onClick={logout}> Log Out </button>
              </div>
              <pre>
                {JSON.stringify(user, null , 3)}
-             </pre></>
+             </pre></>) : (
+                 <>
+                 <h1>Registrate pana</h1>
+                </>
+              )
         }
 
-        { !user &&
-        <>
-         <h1>Registrate pana</h1>
-        </>}
+        
         
         </div>
     )

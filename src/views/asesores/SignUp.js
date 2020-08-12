@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import styled, { keyframes } from "styled-components";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -8,6 +8,8 @@ import ButtonSubmit from "../../components/buttons/Button-Submit";
 import Input from "../../components/inputs/InputLogin";
 import  { Redirect } from 'react-router-dom';
 import Swal from 'sweetalert2'
+import { UserContext } from "../../CreateContext";
+import Cookies from 'js-cookie'
 
 
 export default function SignUpAsesor() {
@@ -17,7 +19,7 @@ export default function SignUpAsesor() {
 
   const [flag, setFlag] = useState(false)
 
-  const user = useUser();
+  const {setUser} = useContext(UserContext);
 
   const formik = useFormik({
     initialValues: {
@@ -58,6 +60,22 @@ export default function SignUpAsesor() {
             'Se Registro Correcctamente',
             'success'
         )
+
+        setUser({
+          name ,
+          lastName ,
+          email,
+          role:'asesor'
+
+        })
+
+        Cookies.set('user', {
+          name ,
+          lastName ,
+          email,
+          role:'asesor'
+
+        });
 
         setFlag(true)
 

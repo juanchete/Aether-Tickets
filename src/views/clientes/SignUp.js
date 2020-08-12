@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import styled, { keyframes } from "styled-components";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -8,6 +8,8 @@ import ButtonSubmit from "../../components/buttons/Button-Submit";
 import Input from "../../components/inputs/InputLogin";
 import { Redirect } from "react-router";
 import Swal from 'sweetalert2';
+import { UserContext } from "../../CreateContext";
+import Cookies from 'js-cookie'
 
 export default function SignUpClientes() {
   const firebase = useFirebaseApp();
@@ -16,7 +18,7 @@ export default function SignUpClientes() {
 
   const [flag, setFlag] = useState(false);
 
-  const user = useUser();
+  const {setUser} = useContext(UserContext);
 
   const formik = useFormik({
     initialValues: {
@@ -52,6 +54,22 @@ export default function SignUpClientes() {
               lastName,
               telephone,
             })
+
+            setUser({
+              name ,
+              lastName ,
+              email,
+              role:'usuario'
+    
+            })
+    
+            Cookies.set('user', {
+              name ,
+              lastName ,
+              email,
+              role:'usuario'
+    
+            });
           
           
             Swal.fire(

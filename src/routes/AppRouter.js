@@ -10,6 +10,7 @@ import { BrowserRouter as Router, Route , Switch} from "react-router-dom";
 import AdminRoutes from '../routes/AdminRoutes'
 import UserRoutes from '../routes/UserRoutes'
 import AsesorRoutes from '../routes/AsesorRoutes'
+import InviteRoutes from '../routes/InviteRoutes'
 
 
 
@@ -24,7 +25,7 @@ function AppRouter() {
         <Route exact path="/signup" component={RegistroClientes} />
         <Route exact path="/forgot-password" component={ForgotPassword} />
         <AdminRoutes exact path="/invite-register" component={InviteToRegister} />
-        <Route exact path="/sign-up-asesores" component={SignUpAsesor} />
+        <InviteRoutes exact path="/sign-up-asesores" component={SignUpAsesor} />
         <Route exact path="/asesores/login" component={LoginAsesores} />
       </Switch>
     </Router>
