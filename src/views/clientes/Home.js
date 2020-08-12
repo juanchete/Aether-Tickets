@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, {useEffect,useContext} from 'react'
 import {
     useUser, useFirebaseApp
@@ -6,13 +5,11 @@ import {
 import  { UserContext }  from '../../CreateContext'
 
 import Cookies from 'js-cookie'
-=======
 import React from "react";
 import { useUser, useFirebaseApp } from "reactfire";
 import styled from "styled-components";
 import SidebarAdmin from "../../components/sidebars/SidebarAdmin";
 import TicketCard from "../../components/cards/TicketCard";
->>>>>>> feature/addCategoryDesign
 
 export default function Home() {
   const firebase = useFirebaseApp();
