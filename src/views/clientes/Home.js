@@ -1,10 +1,3 @@
-import React, {useEffect,useContext} from 'react'
-import {
-    useUser, useFirebaseApp
-} from 'reactfire'
-import  { UserContext }  from '../../CreateContext'
-
-import Cookies from 'js-cookie'
 import React from "react";
 import { useUser, useFirebaseApp } from "reactfire";
 import styled from "styled-components";
@@ -18,51 +11,23 @@ export default function Home() {
     await firebase.auth().signOut();
   };
 
-    const sesion = useUser()
-
-
-    const {user, setUser} = useContext(UserContext)
-    console.log(user);
-
-    const logout = async () =>{
-
-        try {
-
-        await firebase.auth().signOut()
-
-        setUser({})
-
-        Cookies.remove('user')
-        
-            
-        } catch (error) {
-            console.log(error);
-        }
-        
-    }
-
-
-
-    return (
-        <div>
-        { user ?  (
-             <>
-             {sesion.email}
-             <div>
-               <h1>Bienvenidos al oasis Bienvenidos</h1>
-               <button onClick={logout}> Log Out </button>
-             </div>
-             <pre>
-               {JSON.stringify(user, null , 3)}
-             </pre></>) : (
-                 <>
-                 <h1>Registrate pana</h1>
-                </>
-              )
-        }
-
-        
-        
+  const user = useUser();
+  return (
+    <HomeStyle>
+      <SidebarAdmin />
+      {/* <h1>Bienvenidos al oasis Bienvenidos</h1>
+      <button onClick={logout}> Log Out </button> */}
+      <div className="home-view">
+        <div className="home-view-title">
+          <div style={{ display: "flex", flexDirection: "row" }}>
+            <h2>All</h2>
+            <h1>Tickets</h1>
+          </div>
+        </div>
+        <div className="filters">
+          <button className="add-filter">
+            <h2>Add Filter</h2>
+          </button>
         </div>
         <ul className="labels">
           <li className="label">
