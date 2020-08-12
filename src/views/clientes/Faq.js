@@ -39,7 +39,7 @@ export default function Faq() {
   };
   return (
     <HomeStyle>
-      <SidebarUser />
+      <SidebarUser ticket={true} />
       <div className="home-view">
         <div className="home-view-title">
           <div style={{ display: "flex", flexDirection: "row" }}>

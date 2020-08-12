@@ -54,7 +54,7 @@ const Card = styled.div`
       font-family: "Raleway", sans-serif;
       font-weight: 500;
       font-style: normal;
-      color: #fa7d09;
+      color: ${(props) => (props.color ? props.color : "#fa7d09")};
       width: 100%;
       margin-right: 5px;
     }

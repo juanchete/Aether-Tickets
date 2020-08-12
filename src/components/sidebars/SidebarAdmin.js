@@ -13,15 +13,16 @@ import { UserContext } from "../../CreateContext";
 import Cookies from 'js-cookie'
 
 
-export default function SidebarAdmin() {
-  const [tickets, setTickets] = React.useState(true);
-  const [asesors, setAsesors] = React.useState(false);
-  const [categories, setCategories] = React.useState(false);
-  const [settings, setSettings] = React.useState(false);
-  const [currentUser, setCurrentUser] = React.useState(false);
+  
+export default function SidebarAdmin({ ticket, asesor, category, report }) {
   const [categoryShow, setCategoryShow] = React.useState(false);
   const [suggestionShow, setSuggestionShow] = React.useState(false);
-  const [reports, setReports] = React.useState(false);
+  const [tickets, setTickets] = React.useState(ticket ? true : false);
+  const [asesors, setAsesors] = React.useState(asesor ? true : false);
+  const [settings, setSettings] = React.useState(false);
+  const [currentUser, setCurrentUser] = React.useState(false);
+  const [categories, setCategories] = React.useState(category ? true : false);
+  const [reports, setReports] = React.useState(report ? true : false);
   const [open, setOpen] = React.useState(false);
   const firebase = useFirebaseApp();
 
@@ -54,7 +55,7 @@ export default function SidebarAdmin() {
     <>
       <AddCategory show={categoryShow} showCategory={showCategory} />
       <AddSuggestion show={suggestionShow} showSuggestion={showSuggestion} />
-      <Sidebar>
+      <Sidebar categories={category}>
         <div className="navbar">
           <ul className="utilities">
             <li className="utilities-item"></li>
@@ -511,14 +512,13 @@ const Sidebar = styled.div`
     display: flex;
     flex-direction: column;
     .navbar-title {
-      width: 80%;
-      position: fixed;
+      width: 100%;
       display: flex;
       align-items: center;
       height: 80px;
       border-bottom: 1px solid #2f2519;
       h2 {
-        font-size: 22px;
+        font-size: ${(props) => (props.categories ? "20px" : "22px")};
         font-family: "Raleway", sans-serif;
         letter-spacing: 0.2em;
         font-weight: 300;
@@ -533,7 +533,7 @@ const Sidebar = styled.div`
     }
     .nav-links {
       width: 100%;
-      margin-top: 120px;
+      margin-top: 30px;
       .link-1 {
         margin-bottom: 20px;
         display: flex;
