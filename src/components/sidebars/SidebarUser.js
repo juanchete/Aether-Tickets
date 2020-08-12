@@ -374,14 +374,15 @@ const Sidebar = styled.div`
     width: 100vw;
     display: flex;
     z-index: 50;
+    overflow-x: hidden;
     flex-direction: column;
     .navbar {
       height: 90px;
-      width: 100vw;
+      width: 100%;
       flex-direction: row;
       .utilities {
         height: 100%;
-        width: 60vw;
+        width: 60%;
         display: flex;
         flex-direction: row;
         .utilities-item {
@@ -399,7 +400,7 @@ const Sidebar = styled.div`
       }
       .user {
         height: 100%;
-        width: 40vw;
+        width: 40%;
         display: flex;
         flex-direction: row;
         .user-item {
