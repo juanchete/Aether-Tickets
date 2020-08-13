@@ -1,4 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import "firebase";
+import { useUser, useFirebaseApp } from "reactfire";
+import * as admin from "firebase-admin";
 import styled from "styled-components";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -9,6 +12,27 @@ import TextArea from "../../components/inputs/TextAreaInput";
 import { IoMdClose } from "react-icons/io";
 
 export default function AddSuggestion({ color, color2, show, showSuggestion }) {
+  const firebase = useFirebaseApp();
+  const db = firebase.firestore();
+  const [categories, setCategories] = useState();
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    setLoading(true);
+
+    const db = firebase.firestore();
+    return db
+      .collection("categories")
+      .orderBy("createdAt", "desc")
+      .onSnapshot((snapshot) => {
+        const categoryData = [];
+        snapshot.forEach((doc) =>
+          categoryData.push({ ...doc.data(), id: doc.id })
+        );
+        console.log(categoryData); // <------
+        setCategories(categoryData);
+        setLoading(false);
+      });
+  }, []);
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -22,7 +46,28 @@ export default function AddSuggestion({ color, color2, show, showSuggestion }) {
     }),
 
     onSubmit: async (valores) => {
-      console.log("Submitted");
+      const { name, category, suggestion } = valores;
+
+      try {
+        await db
+          .collection("suggestions")
+          .add({
+            name: name,
+            suggestion: suggestion,
+            createdAt: new Date(),
+            available: true,
+          })
+          .then(async function (docRef) {
+            let array = db
+              .collection("categories")
+              .doc(category)
+              .update({
+                suggestions: admin.firestore.FieldValue.arrayUnion(docRef),
+              });
+
+            console.log(array);
+          });
+      } catch (error) {}
     },
   });
 
@@ -46,62 +91,65 @@ export default function AddSuggestion({ color, color2, show, showSuggestion }) {
               />
             </div>
             <h1>Create Suggestion</h1>
-            <form onSubmit={formik.handleSubmit}>
-              <Input
-                color="#2f2519"
-                color2="#fa7d09"
-                label="Name"
-                id="name"
-                type="text"
-                placeholder="name"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.name}
-                error={
-                  formik.touched.name && formik.errors.name
-                    ? `${formik.errors.name}`
-                    : null
-                }
-              />
-              <Select
-                color="#2f2519"
-                color2="#fa7d09"
-                label="Category"
-                id="category"
-                fontSize="10px"
-                type="select"
-                placeholder="category"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.category}
-                error={
-                  formik.touched.category && formik.errors.category
-                    ? `${formik.errors.category}`
-                    : null
-                }
-              />
-              <TextArea
-                color="#2f2519"
-                color2="#fa7d09"
-                label="Suggestion"
-                id="suggestion"
-                placeholder="suggestion"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.suggestion}
-                error={
-                  formik.touched.suggestion && formik.errors.suggestion
-                    ? `${formik.errors.suggestion}`
-                    : null
-                }
-              />
+            {!loading ? (
+              <form onSubmit={formik.handleSubmit}>
+                <Input
+                  color="#2f2519"
+                  color2="#fa7d09"
+                  label="Name"
+                  id="name"
+                  type="text"
+                  placeholder="name"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.name}
+                  error={
+                    formik.touched.name && formik.errors.name
+                      ? `${formik.errors.name}`
+                      : null
+                  }
+                />
+                <Select
+                  color="#2f2519"
+                  color2="#fa7d09"
+                  label="Category"
+                  id="category"
+                  fontSize="10px"
+                  type="select"
+                  placeholder="category"
+                  options={categories}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.category}
+                  error={
+                    formik.touched.category && formik.errors.category
+                      ? `${formik.errors.category}`
+                      : null
+                  }
+                />
+                <TextArea
+                  color="#2f2519"
+                  color2="#fa7d09"
+                  label="Suggestion"
+                  id="suggestion"
+                  placeholder="suggestion"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.suggestion}
+                  error={
+                    formik.touched.suggestion && formik.errors.suggestion
+                      ? `${formik.errors.suggestion}`
+                      : null
+                  }
+                />
 
-              <div className="button-error">
-                <ButtonSubmit color="#fa7d09" />
+                <div className="button-error">
+                  <ButtonSubmit color="#fa7d09" />
 
-                {/* <h4>Erroooooooooooooooor</h4> */}
-              </div>
-            </form>
+                  {/* <h4>Erroooooooooooooooor</h4> */}
+                </div>
+              </form>
+            ) : null}
           </div>
         </div>
       </div>

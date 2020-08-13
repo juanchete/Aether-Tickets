@@ -7,9 +7,7 @@ import SignUpAsesor from "../views/Asesor/SignUp";
 import LoginAsesores from "../views/Asesor/Login";
 import Faq from "../views/clientes/Faq";
 import NewTicket from "../views/clientes/NewTicket";
-import AddCategory from "../views/Asesor/AddCategory";
-import Categories from "../views/Asesor/AddCategory";
-import AddSuggestion from "../views/Asesor/AddSuggestion";
+import Categories from "../views/Asesor/Categories";
 import Suggestions from "../views/Asesor/Suggestions";
 import ShowTickets from "../views/Asesor/ShowTicketsByStatus";
 import Home from "../views/clientes/Home";
@@ -37,26 +35,8 @@ function AppRouter() {
         <InviteRoutes exact path="/sign-up-asesores" component={SignUpAsesor} />
 
         <Route exact path="/asesores/login" component={LoginAsesores} />
-        <AsesorRoutes
-          exact
-          path="/asesores/add-categories"
-          component={AddCategory}
-        />
-        <AsesorRoutes
-          exact
-          path="/asesores/categories"
-          component={Categories}
-        />
-        <AsesorRoutes
-          exact
-          path="/asesores/add-suggestion"
-          component={AddSuggestion}
-        />
-        <AsesorRoutes
-          exact
-          path="/asesores/suggestion"
-          component={Suggestions}
-        />
+        <Route exact path="/asesores/categories" component={Categories} />
+        <Route exact path="/asesores/suggestion" component={Suggestions} />
         <Route exact path="/" component={Home} />
         <Route
           exact

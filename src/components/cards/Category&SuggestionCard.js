@@ -2,11 +2,11 @@ import React from "react";
 import styled from "styled-components";
 import Tags from "../Tags";
 
-export default function CategoriySuggestionCard({ color, color2, title }) {
+export default function CategoriySuggestionCard({ color, color2, category }) {
   return (
     <Card color={color} color2={color2}>
       <div className="card-title">
-        <h2>Categories</h2>
+        <h2>{category.name}</h2>
       </div>
       <ul className="card-content">
         <li className="card-content-item">
@@ -57,7 +57,7 @@ const Card = styled.div`
     padding-left: 10px;
 
     h2 {
-      font-size: 20px;
+      font-size: 15px;
       font-family: "Raleway", sans-serif;
       letter-spacing: 0.2em;
       font-weight: 300;

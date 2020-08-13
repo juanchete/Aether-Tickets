@@ -13,6 +13,7 @@ export default function SelectTicket({
   min,
   max,
   error,
+  options,
   fontSize,
   marginBottom,
   marginRight,
@@ -30,8 +31,9 @@ export default function SelectTicket({
       <label>{label}</label>
       <select id={id} onChange={onChange} onBlur={onBlur} value={value}>
         <option value="" label="" />
-        <option value="Login" label="Login" />
-        <option value="Register" label="Register" />
+        {options.map((option) => (
+          <option value={option.id} label={option.name} />
+        ))}
       </select>
       {error ? <h4>{error}</h4> : <h4 style={{ color: "white" }}>h</h4>}
     </Select>

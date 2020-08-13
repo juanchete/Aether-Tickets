@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import "firebase";
 import { useUser, useFirebaseApp } from "reactfire";
 import styled from "styled-components";
 import SidebarAdmin from "../../components/sidebars/SidebarAdmin";
@@ -6,11 +7,25 @@ import Card from "../../components/cards/Category&SuggestionCard";
 
 export default function Categories() {
   const firebase = useFirebaseApp();
+  const [categories, setCategories] = useState();
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    setLoading(true);
 
-  const logout = async () => {
-    await firebase.auth().signOut();
-  };
-
+    const db = firebase.firestore();
+    return db
+      .collection("categories")
+      .orderBy("createdAt", "desc")
+      .onSnapshot((snapshot) => {
+        const categoryData = [];
+        snapshot.forEach((doc) =>
+          categoryData.push({ ...doc.data(), id: doc.id })
+        );
+        console.log(categoryData); // <------
+        setCategories(categoryData);
+        setLoading(false);
+      });
+  }, []);
   const user = useUser();
   return (
     <HomeStyle>
@@ -23,15 +38,22 @@ export default function Categories() {
           </div>
         </div>
         <div className="container">
-          <Card color="#2f2519" color2="#fa7d09" />
-          <Card color="#2f2519" color2="#fa7d09" />
-          <Card color="#2f2519" color2="#fa7d09" />
-          <Card color="#2f2519" color2="#fa7d09" />
-          <Card color="#2f2519" color2="#fa7d09" />
-          <Card color="#2f2519" color2="#fa7d09" />
-          <Card color="#2f2519" color2="#fa7d09" />
-          <Card color="#2f2519" color2="#fa7d09" />
-          <Card color="#2f2519" color2="#fa7d09" />
+          {!loading ? (
+            <>
+              {categories ? (
+                <>
+                  {" "}
+                  {categories.map((category) => (
+                    <Card
+                      category={category}
+                      color="#2f2519"
+                      color2="#fa7d09"
+                    />
+                  ))}
+                </>
+              ) : null}{" "}
+            </>
+          ) : null}
         </div>
       </div>
     </HomeStyle>

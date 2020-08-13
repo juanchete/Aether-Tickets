@@ -1,4 +1,6 @@
 import React from "react";
+import "firebase";
+import { useUser, useFirebaseApp } from "reactfire";
 import styled from "styled-components";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -7,6 +9,8 @@ import Input from "../../components/inputs/InputLogin";
 import { IoMdClose } from "react-icons/io";
 
 export default function AddCategory({ color, color2, show, showCategory }) {
+  const firebase = useFirebaseApp();
+  const db = firebase.firestore();
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -16,7 +20,16 @@ export default function AddCategory({ color, color2, show, showCategory }) {
     }),
 
     onSubmit: async (valores) => {
-      console.log("Submitted");
+      const { name } = valores;
+
+      try {
+        await db.collection("categories").add({
+          name: name,
+          suggestions: [],
+          createdAt: new Date(),
+          available: true,
+        });
+      } catch (error) {}
     },
   });
 
