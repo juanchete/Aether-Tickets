@@ -7,12 +7,14 @@ function AsesorRoutes({ component: Component, ...rest}) {
     
     const {user, setUser} = useContext(UserContext)
 
+
+
   console.log(user);
     
     return (
         <Route
         {...rest}
-        render = { () => user !== undefined && (user.role=='asesor' || user.role=='admin')  ? (<Component/>) 
+        render = { () => user && (user.role=='asesor' || user.role=='admin')  ? (<Component/>) 
             : (
                 <Redirect to='/faq'/>
             )

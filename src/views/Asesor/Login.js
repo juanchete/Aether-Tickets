@@ -57,7 +57,30 @@ export default function LoginAsesores() {
 
         const { name, email, lastName,role } = usuario
 
-        await firebase.auth().signInWithEmailAndPassword(email, password);
+        if (remember) {
+          await firebase.auth().signInWithEmailAndPassword(email, password);
+          Cookies.set('user', {
+            name ,
+            lastName ,
+            email,
+            role
+  
+          });
+         }else{
+           
+          await firebase.auth().setPersistence('session');
+          
+          await firebase.auth().signInWithEmailAndPassword(email, password);
+
+          sessionStorage.setItem('user', JSON.stringify({
+            name ,
+            lastName ,
+            email,
+            role
+  
+          }) )
+        
+         }
 
 
         setUser({
@@ -68,20 +91,7 @@ export default function LoginAsesores() {
 
         })
 
-        Cookies.set('user', {
-          name ,
-          lastName ,
-          email,
-          role
 
-        }, { expires: 7 });
-
-     
-     if (remember) {
-      localStorage.setItem('remember-email', email);
-     }else{
-       localStorage.removeItem('remember-email')
-     }
      Swal.fire(
       'Correcto',
       'Inicio sesion Correcctamente',

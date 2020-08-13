@@ -3,7 +3,7 @@ import styled, { keyframes } from "styled-components";
 import { useFormik, Field } from "formik";
 import * as Yup from "yup";
 import "firebase/auth";
-import { useFirebaseApp, useFirestore } from "reactfire";
+import { useFirebaseApp, useFirestore, useUser, useAuth } from "reactfire";
 import ButtonSubmit from "../../components/buttons/Button-Submit";
 import Input from "../../components/inputs/InputLogin";
 import Swal from 'sweetalert2';
@@ -19,11 +19,11 @@ export default function LoginClientes() {
 
   const {setUser} = useContext(UserContext)
 
-  
+  const usuario = useUser()
 
-  useEffect(() => {
-    console.log(remember);
-  }, [remember])
+  console.log(usuario);
+
+  const auth = useAuth()
 
   
   
@@ -59,7 +59,32 @@ export default function LoginClientes() {
 
         const { name, email, lastName } = usuario
 
-        await firebase.auth().signInWithEmailAndPassword(email, password);
+        if (remember) {
+          await firebase.auth().signInWithEmailAndPassword(email, password);
+          Cookies.set('user', {
+            name ,
+            lastName ,
+            email,
+            role:'usuario'
+  
+          }, { expires: 7 });
+         }else{
+           
+          await firebase.auth().setPersistence('session');
+          
+          await firebase.auth().signInWithEmailAndPassword(email, password);
+
+          sessionStorage.setItem('user', JSON.stringify({
+            name ,
+            lastName ,
+            email,
+            role:'usuario'
+  
+          }))
+        
+         }
+
+        
 
 
         setUser({
@@ -70,20 +95,8 @@ export default function LoginClientes() {
 
         })
 
-         Cookies.set('user', {
-          name ,
-          lastName ,
-          email,
-          role:'usuario'
-
-        }, { expires: 7 });
-
      
-     if (remember) {
-      localStorage.setItem('remember-email', email);
-     }else{
-       localStorage.removeItem('remember-email')
-     }
+     
      Swal.fire(
       'Correcto',
       'Inicio sesion Correcctamente',
