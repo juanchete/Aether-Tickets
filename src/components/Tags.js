@@ -1,9 +1,41 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
-export default function Tags({ color, color2, title }) {
+export default function Tags({ title }) {
+  const [color, setColor] = useState();
+  const [color2, setColor2] = useState();
+  const getColor = () => {
+    if (title === "High" || title === "Urgent") {
+      return "#EE220C";
+    }
+    if (title === "Medium") {
+      return "#FEAE00";
+    }
+    if (title === "Low") {
+      return "#61D836";
+    }
+    if (title === "Solved") {
+      return "#29E2F3";
+    }
+    if (title === "Pending") {
+      return "#2F2519";
+    }
+    if (title === "Open") {
+      return "#fa7d09";
+    }
+    if (title === "Unsolved") {
+      return "#ff4301";
+    }
+  };
+  const getColor2 = () => {
+    if (title === "Urgent") {
+      return "black";
+    } else {
+      return null;
+    }
+  };
   return (
-    <Tag color={color} color2={color2}>
+    <Tag color={getColor()} color2={getColor2()}>
       <h2 color={color}>{title}</h2>
     </Tag>
   );

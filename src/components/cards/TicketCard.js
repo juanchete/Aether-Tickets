@@ -2,29 +2,39 @@ import React from "react";
 import styled from "styled-components";
 import Tags from "../Tags";
 
-export default function TicketCard({ color, color2, title }) {
+export default function TicketCard({ color, color2, tickets }) {
   return (
-    <Card color={color} color2={color2}>
-      <li className="data">
-        <h2>Valeska Silva</h2>
-        <h3>vekasilva@gmail.com</h3>
-      </li>
-      <li className="data">
-        <h2>Prueba</h2>
-      </li>
-      <li className="data">
-        <h2>Juan Lopez</h2>
-      </li>
-      <li className="data">
-        <Tags title="High" color="#EE220C" />
-      </li>
-      <li className="data">
-        <Tags title="Solved" color="#29E2F3" />
-      </li>
-      <li className="data">
-        <h2>5 hours ago</h2>
-      </li>
-    </Card>
+    <>
+      {tickets.map((ticket) => (
+        <Card color={color} color2={color2}>
+          <li className="data">
+            <h2>
+              {ticket.usuario.name} {ticket.usuario.lastName}
+            </h2>
+            <h3>{ticket.usuario.email}</h3>
+          </li>
+          <li className="data">
+            <h2>{ticket.subject}</h2>
+          </li>
+          <li className="data">
+            {ticket.asesors.length > 0 ? (
+              <h2>{ticket.asesors[ticket.asesors.length - 1]}</h2>
+            ) : (
+              <h2>Unnasigned</h2>
+            )}
+          </li>
+          <li className="data">
+            <Tags title={ticket.priority} color="#EE220C" />
+          </li>
+          <li className="data">
+            <Tags title={ticket.status} color="#29E2F3" />
+          </li>
+          <li className="data">
+            <h2>CREATED AT</h2>
+          </li>
+        </Card>
+      ))}
+    </>
   );
 }
 const Card = styled.div`

@@ -164,7 +164,7 @@ export default class QuillEditor extends React.Component {
                         files: [...this.state.files, file],
                       },
                       () => {
-                        this.props.onFilesChange(this.state.files);
+                        this.props.onFilesChange(url);
                       }
                     );
                   }
@@ -236,7 +236,7 @@ export default class QuillEditor extends React.Component {
                     files: [...this.state.files, file],
                   },
                   () => {
-                    this.props.onFilesChange(this.state.files);
+                    this.props.onFilesChange(url);
                   }
                 );
               }

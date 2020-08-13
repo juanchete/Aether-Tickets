@@ -6,34 +6,29 @@ import "firebase/auth";
 import { useFirebaseApp, useFirestore } from "reactfire";
 import ButtonSubmit from "../../components/buttons/Button-Submit";
 import Input from "../../components/inputs/InputLogin";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import { Link, Redirect } from "react-router-dom";
 import { UserContext } from "../../CreateContext";
-import Cookies from 'js-cookie'
+import Cookies from "js-cookie";
 
 export default function LoginAsesores() {
-
-  const {user, setUser} = useContext(UserContext)
+  const { user, setUser } = useContext(UserContext);
 
   const [flag, setFlag] = useState(false);
 
-  
-
-  const [remember, setRemember] = useState(false)
+  const [remember, setRemember] = useState(false);
 
   useEffect(() => {
     console.log(remember);
-  }, [remember])
-
-  
+  }, [remember]);
 
   const firebase = useFirebaseApp();
   const firestore = useFirestore();
   const formik = useFormik({
     initialValues: {
-      email: localStorage.getItem('remember-email') || "",
+      email: localStorage.getItem("remember-email") || "",
       password: "",
-      remember: false
+      remember: false,
     },
     validationSchema: Yup.object({
       email: Yup.string().email("Invalid Email").required("Required Field"),
@@ -41,83 +36,77 @@ export default function LoginAsesores() {
     }),
 
     onSubmit: async (valores) => {
-      let usuario = null
+      let usuario = null;
       const { email, password } = valores;
       try {
-        await firestore.collection('asesores').where('email','==',email).get().then(function(querySnapshot) {
-          querySnapshot.forEach(function(doc) {
+        await firestore
+          .collection("asesores")
+          .where("email", "==", email)
+          .get()
+          .then(function (querySnapshot) {
+            querySnapshot.forEach(function (doc) {
               // doc.data() is never undefined for query doc snapshots
-              usuario=doc.data()
+              usuario = doc.data();
+            });
           });
-        
-          
-      })
 
-      if (usuario !== null) {
+        if (usuario !== null) {
+          const { name, email, lastName, role } = usuario;
 
-        const { name, email, lastName,role } = usuario
+          await firebase.auth().signInWithEmailAndPassword(email, password);
 
-        await firebase.auth().signInWithEmailAndPassword(email, password);
+          setUser({
+            name,
+            lastName,
+            email,
+            role,
+          });
 
+          Cookies.set(
+            "user",
+            {
+              name,
+              lastName,
+              email,
+              role,
+            },
+            { expires: 7 }
+          );
 
-        setUser({
-          name ,
-          lastName ,
-          email,
-          role
+          if (remember) {
+            localStorage.setItem("remember-email", email);
+          } else {
+            localStorage.removeItem("remember-email");
+          }
+          Swal.fire("Correcto", "Inicio sesion Correcctamente", "success");
 
-        })
-
-        Cookies.set('user', {
-          name ,
-          lastName ,
-          email,
-          role
-
-        }, { expires: 7 });
-
-     
-     if (remember) {
-      localStorage.setItem('remember-email', email);
-     }else{
-       localStorage.removeItem('remember-email')
-     }
-     Swal.fire(
-      'Correcto',
-      'Inicio sesion Correcctamente',
-      'success'
-  )
-
-  setFlag(true);
-        
-      }else {
-        Swal.fire(
-          'Error',
-          'No se encuentra registrado como asesor',
-          'error'
-      )
-      }
+          setFlag(true);
+        } else {
+          Swal.fire("Error", "No se encuentra registrado como asesor", "error");
+        }
       } catch (error) {
-        Swal.fire(
-          'Correcto',
-          error.message,
-          'error'
-      )
+        Swal.fire("Correcto", error.message, "error");
       }
     },
   });
 
-  const forgotPassword = ( () =>{
-    const mail = formik.values.email
+  const forgotPassword = () => {
+    const mail = formik.values.email;
 
-    firebase.auth().sendPasswordResetEmail(mail).then(() => {
-      console.log('Email Sent');
-    }).catch((error) =>{
-      console.log(error);
-    });
-  })
+    firebase
+      .auth()
+      .sendPasswordResetEmail(mail)
+      .then(() => {
+        console.log("Email Sent");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
-  return flag ? <Redirect to='/'/> : (
+  return flag ? (
+    <Redirect to="/" />
+  ) : (
     <StyledLogin>
       <div className="container">
         <div className="container-login">
@@ -167,23 +156,23 @@ export default function LoginAsesores() {
               }
             />
             <label className="forgot-password" onClick={forgotPassword}>
-              <Link to='/forgot-password'>Forgot Password?</Link>
+              <Link to="/forgot-password">Forgot Password?</Link>
             </label>
 
-            
-
-
             <div className="remember-me">
-              <input type="checkbox" value={remember} onChange={evt => setRemember(!remember)}/>
+              <input
+                type="checkbox"
+                value={remember}
+                onChange={(evt) => setRemember(!remember)}
+              />
               <h4>Remember me</h4>
             </div>
             <div className="button-error">
               <ButtonSubmit color="#ff4301" />
-
             </div>
           </form>
           <label className="sign-up-label">
-            <Link to='signup'>Do not have an account? Sign Up Now.</Link>
+            <Link to="signup">Do not have an account? Sign Up Now.</Link>
           </label>
         </div>
       </div>

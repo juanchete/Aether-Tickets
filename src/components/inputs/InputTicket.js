@@ -17,6 +17,7 @@ export default function InputTicket({
   marginBottom,
   marginRight,
   children,
+  disable,
   ...rest
 }) {
   return (
@@ -37,6 +38,7 @@ export default function InputTicket({
         min={min}
         max={max}
         onChange={onChange}
+        disabled={disable ? true : false}
       />
       {error ? <h4>{error}</h4> : <h4 style={{ color: "white" }}>h</h4>}
     </Input>

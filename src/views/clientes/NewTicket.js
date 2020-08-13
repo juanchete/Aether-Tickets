@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import "firebase";
 import { useUser, useFirebaseApp } from "reactfire";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -7,23 +8,31 @@ import SidebarUser from "../../components/sidebars/SidebarUser";
 import Input from "../../components/inputs/InputTicket";
 import Select from "../../components/inputs/SelectTicket";
 import TextEditor from "../../components/inputs/TextEditor";
+import parse from "html-react-parser";
+import { UserContext } from "../../CreateContext";
 
 export default function NewTicket() {
+  const { user, setUser } = useContext(UserContext);
+  const firebase = useFirebaseApp();
+  const db = firebase.firestore();
+
   const [text, setText] = useState("");
   const [files, setFiles] = useState([]);
   const onEditorChange = (value) => {
     setText(value);
-    console.log(text);
+    let texto = text;
+    texto = texto.replace(/(<([^>]+)>)/gi, "");
+    console.log(texto);
   };
-  const onFilesChange = (files) => {
-    setFiles(files);
+  const onFilesChange = (file) => {
+    setFiles([...files, file]);
   };
   const formik = useFormik({
     initialValues: {
       subject: "",
-      name: "",
-      lastName: "",
-      email: "",
+      name: user ? user.name : "",
+      lastName: user ? user.lastName : "",
+      email: user ? user.email : "",
       category: "",
     },
     validationSchema: Yup.object({
@@ -35,6 +44,32 @@ export default function NewTicket() {
 
     onSubmit: async (valores) => {
       console.log(valores);
+      const { subject, name, lastName, email, category } = valores;
+      const description = parse(text);
+
+      try {
+        await db
+          .collection("messages")
+          .add({
+            sender: email,
+            content: text,
+            files: files,
+            date: new Date(),
+          })
+          .then(async function (docRef) {
+            await db.collection("tickets").add({
+              usuario: { email: email, name: name, lastName: lastName },
+              subject: subject,
+              category: category,
+              description: description.props.children,
+              asesors: [],
+              messages: [docRef],
+              status: "Pending",
+              priority: "Low",
+              createdAt: new Date(),
+            });
+          });
+      } catch (error) {}
     },
   });
   return (
@@ -65,6 +100,7 @@ export default function NewTicket() {
                   ? `${formik.errors.email}`
                   : null
               }
+              disable={user ? true : false}
             />
             <Input
               color="#2f2519"
@@ -96,6 +132,7 @@ export default function NewTicket() {
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.name}
+                disable={user ? true : false}
                 error={
                   formik.touched.name && formik.errors.name
                     ? `${formik.errors.name}`
@@ -113,6 +150,7 @@ export default function NewTicket() {
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.lastName}
+                disable={user ? true : false}
                 error={
                   formik.touched.lastName && formik.errors.lastName
                     ? `${formik.errors.lastName}`
