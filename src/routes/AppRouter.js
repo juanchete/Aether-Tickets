@@ -11,6 +11,7 @@ import AddCategory from "../views/Asesor/AddCategory";
 import Categories from "../views/Asesor/AddCategory";
 import AddSuggestion from "../views/Asesor/AddSuggestion";
 import Suggestions from "../views/Asesor/Suggestions";
+import ShowTickets from "../views/Asesor/ShowTicketsByStatus";
 import Home from "../views/clientes/Home";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import AdminRoutes from "../routes/AdminRoutes";
@@ -57,6 +58,26 @@ function AppRouter() {
           component={Suggestions}
         />
         <Route exact path="/" component={Home} />
+        <Route
+          exact
+          path="/tickets/pending"
+          component={() => <ShowTickets filter="Pending" />}
+        />
+        <Route
+          exact
+          path="/tickets/open"
+          component={() => <ShowTickets filter="Open" />}
+        />
+        <Route
+          exact
+          path="/tickets/solved"
+          component={() => <ShowTickets filter="Solved" />}
+        />
+        <Route
+          exact
+          path="/tickets/unsolved"
+          component={() => <ShowTickets filter="Unsolved" />}
+        />
       </Switch>
     </Router>
   );

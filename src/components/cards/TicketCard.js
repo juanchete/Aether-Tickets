@@ -1,39 +1,55 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Tags from "../Tags";
 
-export default function TicketCard({ color, color2, tickets }) {
+export default function TicketCard({ color, color2, tickets, filter }) {
+  const [ticketsFiltered, setTickets] = useState();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    if (filter) {
+      setTickets(tickets.filter((ticket) => ticket.status === filter));
+    } else {
+      setTickets(tickets);
+    }
+    setLoading(false);
+  }, [filter]);
   return (
     <>
-      {tickets.map((ticket) => (
-        <Card color={color} color2={color2}>
-          <li className="data">
-            <h2>
-              {ticket.usuario.name} {ticket.usuario.lastName}
-            </h2>
-            <h3>{ticket.usuario.email}</h3>
-          </li>
-          <li className="data">
-            <h2>{ticket.subject}</h2>
-          </li>
-          <li className="data">
-            {ticket.asesors.length > 0 ? (
-              <h2>{ticket.asesors[ticket.asesors.length - 1]}</h2>
-            ) : (
-              <h2>Unnasigned</h2>
-            )}
-          </li>
-          <li className="data">
-            <Tags title={ticket.priority} color="#EE220C" />
-          </li>
-          <li className="data">
-            <Tags title={ticket.status} color="#29E2F3" />
-          </li>
-          <li className="data">
-            <h2>CREATED AT</h2>
-          </li>
-        </Card>
-      ))}
+      {!loading ? (
+        <>
+          {ticketsFiltered.map((ticket) => (
+            <Card color={color} color2={color2}>
+              <li className="data">
+                <h2>
+                  {ticket.usuario.name} {ticket.usuario.lastName}
+                </h2>
+                <h3>{ticket.usuario.email}</h3>
+              </li>
+              <li className="data">
+                <h2>{ticket.subject}</h2>
+              </li>
+              <li className="data">
+                {ticket.asesors.length > 0 ? (
+                  <h2>{ticket.asesors[ticket.asesors.length - 1]}</h2>
+                ) : (
+                  <h2>Unnasigned</h2>
+                )}
+              </li>
+              <li className="data">
+                <Tags title={ticket.priority} color="#EE220C" />
+              </li>
+              <li className="data">
+                <Tags title={ticket.status} color="#29E2F3" />
+              </li>
+              <li className="data">
+                <h2>CREATED AT</h2>
+              </li>
+            </Card>
+          ))}
+        </>
+      ) : null}
     </>
   );
 }

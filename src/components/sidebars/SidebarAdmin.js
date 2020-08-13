@@ -10,10 +10,9 @@ import { IoMdSettings } from "react-icons/io";
 import AddCategory from "../../views/Asesor/AddCategory";
 import AddSuggestion from "../../views/Asesor/AddSuggestion";
 import { UserContext } from "../../CreateContext";
-import Cookies from 'js-cookie'
+import { NavLink, withRouter } from "react-router-dom";
+import Cookies from "js-cookie";
 
-
-  
 export default function SidebarAdmin({ ticket, asesor, category, report }) {
   const [categoryShow, setCategoryShow] = React.useState(false);
   const [suggestionShow, setSuggestionShow] = React.useState(false);
@@ -26,22 +25,18 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
   const [open, setOpen] = React.useState(false);
   const firebase = useFirebaseApp();
 
-  
-  const {user, setUser} = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
 
   const logout = async () => {
     try {
+      await firebase.auth().signOut();
 
-      await firebase.auth().signOut()
+      setUser({});
 
-      setUser({})
-
-      Cookies.remove('user')
-      
-          
-      } catch (error) {
-          console.log(error);
-      }
+      Cookies.remove("user");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const showCategory = (e) => {
@@ -107,15 +102,17 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
             </li>
           </ul>
           <ul className="user">
-            <li className="user-item"
-            onClick={(event) => {
-              setTickets(false);
-              setAsesors(false);
-              setCurrentUser(false);
-              setCategories(false);
-              setSettings(true);
-              setOpen(!open);
-            }}>
+            <li
+              className="user-item"
+              onClick={(event) => {
+                setTickets(false);
+                setAsesors(false);
+                setCurrentUser(false);
+                setCategories(false);
+                setSettings(true);
+                setOpen(!open);
+              }}
+            >
               <IoMdSettings className="icon" />
               <h4>Settings</h4>
             </li>
@@ -129,7 +126,6 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
                 setCurrentUser(true);
                 setOpen(!open);
               }}
-              
             >
               <FaUserAlt className="icon" />
               <h4>Log Out</h4>
@@ -170,18 +166,18 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
               </ul>
               <ul className="nav-links3">
                 <h2>Statuses</h2>
-                <li className="link-1">
+                <NavLink to="/tickets/open" className="link-1">
                   <h3>Open</h3>
-                </li>
-                <li className="link-1">
+                </NavLink>
+                <NavLink to="/tickets/solved" className="link-1">
                   <h3>Solved</h3>
-                </li>
-                <li className="link-1">
+                </NavLink>
+                <NavLink to="/tickets/pending" className="link-1">
                   <h3>Pending</h3>
-                </li>
-                <li className="link-1">
+                </NavLink>
+                <NavLink to="/tickets/unsolved" className="link-1">
                   <h3>Unsolved</h3>
-                </li>
+                </NavLink>
               </ul>
             </div>
             {open ? (
