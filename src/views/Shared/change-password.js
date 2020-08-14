@@ -1,160 +1,104 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useContext } from "react";
 import styled, { keyframes } from "styled-components";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import "firebase/auth";
-import { useFirebaseApp, useFirestore } from "reactfire";
+import { useFirebaseApp, useAuth, FirebaseAppProvider } from "reactfire";
 import ButtonSubmit from "../../components/buttons/Button-Submit";
 import Input from "../../components/inputs/InputLogin";
-import Swal from "sweetalert2";
-import { Link, Redirect } from "react-router-dom";
+import Swal from 'sweetalert2';
 import { UserContext } from "../../CreateContext";
-import Cookies from "js-cookie";
+import firebase from "firebase";
 
-export default function LoginAsesores() {
-  const { user, setUser } = useContext(UserContext);
 
-  const [flag, setFlag] = useState(false);
 
-  const [remember, setRemember] = useState(false);
-
-  useEffect(() => {
-    console.log(remember);
-  }, [remember]);
-
-  const firebase = useFirebaseApp();
-  const firestore = useFirestore();
+export default function ChangePassword () {
+  const auth = useAuth();
+  const {user} = useContext(UserContext)
   const formik = useFormik({
     initialValues: {
-      email: localStorage.getItem("remember-email") || "",
+      old_password: '',
       password: "",
-      remember: false,
+      confirm_password:''
     },
     validationSchema: Yup.object({
-      email: Yup.string().email("Invalid Email").required("Required Field"),
+       old_password: Yup.string().required("Required Field"),
       password: Yup.string().required("Required Field"),
+      confirm_password: Yup.string().when("password", {
+        is: val => (val && val.length > 0 ? true : false),
+        then: Yup.string().oneOf(
+          [Yup.ref("password")],
+          "Both password need to be the same"
+        )
+      })
     }),
 
     onSubmit: async (valores) => {
-      let usuario = null;
-      const { email, password } = valores;
+      const { old_password, password } = valores;
+
+
+      const {email} = user;
+
+      const credential = firebase.auth.EmailAuthProvider.credential(
+            email,
+            old_password
+         )
+    
+
       try {
-        await firestore
-          .collection("asesores")
-          .where("email", "==", email)
-          .get()
-          .then(function (querySnapshot) {
-            querySnapshot.forEach(function (doc) {
-              // doc.data() is never undefined for query doc snapshots
-              usuario = doc.data();
-            });
-          });
-
-      if (usuario !== null) {
-
-        const { name, email, lastName,role } = usuario
-
-        if (remember) {
-          await firebase.auth().signInWithEmailAndPassword(email, password);
-          Cookies.set('user', {
-            name ,
-            lastName ,
-            email,
-            role
-  
-          });
-         }else{
-           
-          await firebase.auth().setPersistence('session');
-          
-          await firebase.auth().signInWithEmailAndPassword(email, password);
-
-          sessionStorage.setItem('user', JSON.stringify({
-            name ,
-            lastName ,
-            email,
-            role
-  
-          }) )
-        
-         }
 
 
-        setUser({
-          name ,
-          lastName ,
-          email,
-          role
+        await auth.currentUser.reauthenticateWithCredential(credential)
 
-        })
+        await auth.currentUser.updatePassword(password)
 
 
-     Swal.fire(
-      'Correcto',
-      'Inicio sesion Correcctamente',
-      'success'
-  )
-
-  setFlag(true);
-        
-      }else {
         Swal.fire(
-          'Error',
-          'No se encuentra registrado como asesor',
-          'error'
-      )
-      }
+            'Correcto',
+            'Contraseña Cambiada Correcctamente',
+            'success'
+        )
+          
       } catch (error) {
-        Swal.fire("Correcto", error.message, "error");
+
+        Swal.fire(
+            'Error',
+            error.message,
+            'error'
+        )
+          
       }
+      
+        
+      
+       
+        
+      
     },
   });
 
-  const forgotPassword = () => {
-    const mail = formik.values.email;
 
-    firebase
-      .auth()
-      .sendPasswordResetEmail(mail)
-      .then(() => {
-        console.log("Email Sent");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  return flag ? (
-    <Redirect to="/" />
-  ) : (
+  return (
     <StyledLogin>
       <div className="container">
         <div className="container-login">
-          <h1>Login</h1>
-          <button className="sign-in-google">
-            <img className="google-icon" src="google.png" />
-            <h3>Sign in with google</h3>
-          </button>
-          <div className="sign-in-option">
-            <div className="line"></div>
-            <h3>or</h3>
-            <div className="line"></div>
-          </div>
+          <h1>Restore Password</h1>
+          
           <form onSubmit={formik.handleSubmit}>
             <Input
               color="#2f2519"
               color2="#ff4301"
-              label="Email"
-              id="email"
-              type="email"
-              placeholder="Email"
+              label="Current Password"
+              id="old_password"
+              type="password"
+              placeholder="Current Password"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              value={formik.values.email}
+              value={formik.values.old_password}
               marginBottom="15px"
               error={
-                formik.touched.email && formik.errors.email
-                  ? `${formik.errors.email}`
+                formik.touched.old_password && formik.errors.old_password
+                  ? `${formik.errors.old_password}`
                   : null
               }
             />
@@ -175,25 +119,32 @@ export default function LoginAsesores() {
                   : null
               }
             />
-            <label className="forgot-password" onClick={forgotPassword}>
-              <Link to="/forgot-password">Forgot Password?</Link>
-            </label>
 
-            <div className="remember-me">
-              <input
-                type="checkbox"
-                value={remember}
-                onChange={(evt) => setRemember(!remember)}
-              />
-              <h4>Remember me</h4>
-            </div>
+            <Input
+              color="#2f2519"
+              color2="#ff4301"
+              label="Confirm Password"
+              id="confirm_password"
+              type="Password"
+              placeholder="confirm_password"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.confirm_password}
+              error={
+                formik.touched.confirm_password && formik.errors.confirm_password
+                  ? `${formik.errors.confirm_password}`
+                  : null
+              }
+            />
+
+            
             <div className="button-error">
               <ButtonSubmit color="#ff4301" />
+
+              {/* <h4>Erroooooooooooooooor</h4> */}
             </div>
           </form>
-          <label className="sign-up-label">
-            <Link to="signup">Do not have an account? Sign Up Now.</Link>
-          </label>
+          
         </div>
       </div>
     </StyledLogin>
@@ -347,6 +298,8 @@ const StyledLogin = styled.nav`
             width:100%;
             height:100%;
             align-items:center;
+            padding-bottom: 2px;
+            padding-top: 2px;
 
             h4{
                 font-family: "Raleway", sans-serif;

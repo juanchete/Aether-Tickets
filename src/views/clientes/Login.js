@@ -3,13 +3,15 @@ import styled, { keyframes } from "styled-components";
 import { useFormik, Field } from "formik";
 import * as Yup from "yup";
 import "firebase/auth";
-import { useFirebaseApp, useFirestore } from "reactfire";
+import { useFirebaseApp, useFirestore, useUser, useAuth } from "reactfire";
 import ButtonSubmit from "../../components/buttons/Button-Submit";
 import Input from "../../components/inputs/InputLogin";
 import Swal from "sweetalert2";
 import { Link, Router, Redirect } from "react-router-dom";
 import Cookies from "js-cookie";
 import { UserContext } from "../../CreateContext";
+import firebase from "firebase";
+
 
 export default function LoginClientes() {
   const [remember, setRemember] = useState(false);
@@ -22,7 +24,7 @@ export default function LoginClientes() {
     console.log(remember);
   }, [remember]);
 
-  const firebase = useFirebaseApp();
+  const firebaseReact = useFirebaseApp();
   const firestore = useFirestore();
   const formik = useFormik({
     initialValues: {
@@ -50,10 +52,63 @@ export default function LoginClientes() {
             });
           });
 
-        if (usuario !== null) {
-          const { name, email, lastName } = usuario;
+      if (usuario !== null) {
 
-          await firebase.auth().signInWithEmailAndPassword(email, password);
+        const { name, email, lastName } = usuario
+
+        if (remember) {
+          await firebaseReact.auth().signInWithEmailAndPassword(email, password);
+          Cookies.set('user', {
+            name ,
+            lastName ,
+            email,
+            role:'usuario'
+  
+          });
+         }else{
+           
+          await firebaseReact.auth().setPersistence('session');
+          
+          await firebaseReact.auth().signInWithEmailAndPassword(email, password);
+
+          sessionStorage.setItem('user', JSON.stringify({
+            name ,
+            lastName ,
+            email,
+            role:'usuario'
+  
+          }))
+        
+         }
+
+        
+
+
+        setUser({
+          name ,
+          lastName ,
+          email,
+          role:'usuario'
+
+        })
+
+     
+     
+     Swal.fire(
+      'Correcto',
+      'Inicio sesion Correcctamente',
+      'success'
+  )
+
+  setFlag(true)
+   
+      }else {
+        Swal.fire(
+          'Error',
+          'No se encuentra registrado como asesor',
+          'error'
+      )
+      }
 
           setUser({
             name,
@@ -81,14 +136,13 @@ export default function LoginClientes() {
           Swal.fire("Correcto", "Inicio sesion Correcctamente", "success");
 
           setFlag(true);
-        } else {
-          Swal.fire("Error", "No se encuentra registrado como asesor", "error");
+        } 
+        catch (error) {
+          Swal.fire("Correcto", error.message, "error");
         }
-      } catch (error) {
-        Swal.fire("Correcto", error.message, "error");
-      }
+      } 
     },
-  });
+  );
 
   const forgotPassword = () => {
     const mail = formik.values.email;
@@ -111,7 +165,9 @@ export default function LoginClientes() {
       <div className="container">
         <div className="container-login">
           <h1>Login</h1>
-          <button className="sign-in-google">
+          <button className="sign-in-google"
+                  // onClick={(event) => {googleSignIn()}}
+                  >
             <img className="google-icon" src="google.png" />
             <h3>Sign in with google</h3>
           </button>

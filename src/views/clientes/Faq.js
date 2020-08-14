@@ -37,6 +37,10 @@ export default function Faq() {
       })
     );
   };
+
+  const usuario = useUser()
+
+
   return (
     <HomeStyle>
       <SidebarUser ticket={true} />

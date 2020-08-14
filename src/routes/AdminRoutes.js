@@ -6,18 +6,17 @@ import Cookies from "js-cookie";
 function AdminRoutes({ component: Component, ...rest }) {
   const { user, setUser } = useContext(UserContext);
 
-  return (
-    <Route
-      {...rest}
-      render={() =>
-        user !== undefined && user.role == "admin" ? (
-          <Component />
-        ) : (
-          <Redirect to="/faq" />
-        )
-      }
-    />
-  );
+  console.log(user);
+    
+    return (
+        <Route
+        {...rest}
+        render = { () => user && user.role=='admin' ? (<Component/>) 
+            : (
+                <Redirect to='/faq'/>
+            )
+        }/>
+    )
 }
 
 export default AdminRoutes;

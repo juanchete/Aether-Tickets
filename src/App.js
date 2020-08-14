@@ -11,7 +11,9 @@ function App() {
 
   const usuario = Cookies.getJSON('user')
 
-  const [user, setUser] = useState( usuario )
+  const session =JSON.parse( sessionStorage.getItem('user'))
+
+  const [user, setUser] = useState( usuario==undefined? session : usuario )
  
 
   

@@ -12,6 +12,7 @@ import AddSuggestion from "../../views/Asesor/AddSuggestion";
 import { UserContext } from "../../CreateContext";
 import { NavLink, withRouter } from "react-router-dom";
 import Cookies from "js-cookie";
+import { Redirect } from "react-router-dom";
 
 export default function SidebarAdmin({ ticket, asesor, category, report }) {
   const [categoryShow, setCategoryShow] = React.useState(false);
@@ -22,10 +23,24 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
   const [currentUser, setCurrentUser] = React.useState(false);
   const [categories, setCategories] = React.useState(category ? true : false);
   const [reports, setReports] = React.useState(report ? true : false);
+  const [changePassword, setChangePassword] = React.useState(false);
   const [open, setOpen] = React.useState(false);
+  const [flag, setFlag] = React.useState(false);
   const firebase = useFirebaseApp();
 
   const { user, setUser } = useContext(UserContext);
+
+  const renderRedirect = () => {
+    if (flag) {
+      return <Redirect to='/invite-register' />
+    }
+  }
+
+  const renderRedirectPassword = () => {
+    if (changePassword) {
+      return <Redirect to='/asesores/change-password' />
+    }
+  }
 
   const logout = async () => {
     try {
@@ -51,6 +66,8 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
       <AddCategory show={categoryShow} showCategory={showCategory} />
       <AddSuggestion show={suggestionShow} showSuggestion={showSuggestion} />
       <Sidebar categories={category}>
+      {renderRedirect()} 
+     {renderRedirectPassword()}
         <div className="navbar">
           <ul className="utilities">
             <li className="utilities-item"></li>
@@ -128,7 +145,7 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
               }}
             >
               <FaUserAlt className="icon" />
-              <h4>Log Out</h4>
+              <h4>User</h4>
             </li>
           </ul>
         </div>
@@ -351,11 +368,17 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
                 <h2>Settings</h2>
               </div>
               <ul className="nav-links">
-                <li className="link-1">
+              <li className="link-1"
+                 onClick={(event) => {
+                 setChangePassword(true);
+                  }}>
+                <h3>Change Passwword</h3>
+              </li>
+                <li className="link-1"
+                onClick={(event) => {
+                  logout();
+                }}>
                   <h3>Log Out</h3>
-                  <div className="counter">
-                    <h4>4</h4>
-                  </div>
                 </li>
               </ul>
             </div>
@@ -382,14 +405,27 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
               <div className="navbar-title">
                 <h2>Hola {user.name}</h2>
               </div>
-              <ul className="nav-links">
-                <li className="link-1">
-                  <h3>All Asesors</h3>
-                  <div className="counter">
-                    <h4>4</h4>
-                  </div>
+              { user.role == 'admin' ? (<ul className="nav-links">
+                <li className="link-1"
+                onClick={(event) => {
+                  setFlag(true);
+                }}>
+                  <h3>Invitar a Asesor</h3>
                 </li>
-              </ul>
+                <li className="link-1"
+                 onClick={(event) => {
+                 setChangePassword(true);
+                  }}>
+                <h3>Change Passwword</h3>
+              </li>
+                <li className="link-1"
+                onClick={(event) => {
+                  logout();
+                }}>
+                  <h3>Log Out</h3>
+                </li>
+              </ul>) : (<></>)}
+              
             </div>
             {open ? (
               <div className="navbar-especific-phone">
