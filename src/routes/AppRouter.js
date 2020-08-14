@@ -1,4 +1,6 @@
 import React, { useContext } from "react";
+import { BrowserRouter as Router, Route , Switch} from "react-router-dom";
+
 import Login from "../views/clientes/Login";
 import RegistroClientes from "../views/clientes/SignUp";
 import ForgotPassword from "../views/clientes/Forgot-Password";
@@ -12,7 +14,8 @@ import Categories from '../views/Asesor/AddCategory';
 import AddSuggestion from '../views/Asesor/AddSuggestion';
 import Suggestions from '../views/Asesor/Suggestions';
 import Home from "../views/clientes/Home";
-import { BrowserRouter as Router, Route , Switch} from "react-router-dom";
+import ChangePassword from '../views/Shared/change-password'
+
 import AdminRoutes from '../routes/AdminRoutes'
 import UserRoutes from '../routes/UserRoutes'
 import AsesorRoutes from '../routes/AsesorRoutes'
@@ -31,6 +34,7 @@ function AppRouter() {
         <Route exact path="/forgot-password" component={ForgotPassword} />
         <UserRoutes exact path="/new-ticket" component={NewTicket} />      
         <UserRoutes exact path="/faq" component={Faq} />
+        <UserRoutes exact path='/user/change-password' component={ChangePassword} />
 
         <AdminRoutes exact path="/invite-register" component={InviteToRegister} />
         <InviteRoutes exact path="/sign-up-asesores" component={SignUpAsesor} />
@@ -40,6 +44,7 @@ function AppRouter() {
         <AsesorRoutes exact path="/asesores/categories" component={Categories} />
         <AsesorRoutes exact path="/asesores/add-suggestion" component={AddSuggestion} />
         <AsesorRoutes exact path="/asesores/suggestion" component={Suggestions} />
+        <AsesorRoutes exact path="/asesores/change-password" component={ChangePassword} />
         <AsesorRoutes exact path="/" component={Home} />
       </Switch>
     </Router>

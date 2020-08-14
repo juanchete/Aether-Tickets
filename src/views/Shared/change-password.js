@@ -1,196 +1,104 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useContext } from "react";
 import styled, { keyframes } from "styled-components";
-import { useFormik, Field } from "formik";
+import { useFormik } from "formik";
 import * as Yup from "yup";
 import "firebase/auth";
-import { useFirebaseApp, useFirestore, useUser, useAuth } from "reactfire";
+import { useFirebaseApp, useAuth, FirebaseAppProvider } from "reactfire";
 import ButtonSubmit from "../../components/buttons/Button-Submit";
 import Input from "../../components/inputs/InputLogin";
 import Swal from 'sweetalert2';
-import { Link, Router, Redirect } from "react-router-dom";
-import Cookies from 'js-cookie'
 import { UserContext } from "../../CreateContext";
 import firebase from "firebase";
 
 
-export default function LoginClientes() {
 
-  const [remember, setRemember] = useState(false)
-
-  const [flag, setFlag] = useState(false)
-
-  const {setUser} = useContext(UserContext)
-
-  const usuario = useUser()
-
-  console.log(usuario);
-
-  const auth = useAuth()
-
-  
-  
-
-  const firebaseReact = useFirebaseApp();
-  const firestore = useFirestore();
+export default function ChangePassword () {
+  const auth = useAuth();
+  const {user} = useContext(UserContext)
   const formik = useFormik({
     initialValues: {
-      email: localStorage.getItem('remember-email') || "",
+      old_password: '',
       password: "",
-      remember: false
+      confirm_password:''
     },
     validationSchema: Yup.object({
-      email: Yup.string().email("Invalid Email").required("Required Field"),
+       old_password: Yup.string().required("Required Field"),
       password: Yup.string().required("Required Field"),
+      confirm_password: Yup.string().when("password", {
+        is: val => (val && val.length > 0 ? true : false),
+        then: Yup.string().oneOf(
+          [Yup.ref("password")],
+          "Both password need to be the same"
+        )
+      })
     }),
 
     onSubmit: async (valores) => {
-      let usuario = null
-      const { email, password } = valores;
+      const { old_password, password } = valores;
+
+
+      const {email} = user;
+
+      const credential = firebase.auth.EmailAuthProvider.credential(
+            email,
+            old_password
+         )
+    
+
       try {
 
-        await firestore.collection('usuarios').where('email','==',email).get().then(function(querySnapshot) {
-          querySnapshot.forEach(function(doc) {
-              // doc.data() is never undefined for query doc snapshots
-              usuario=doc.data()
-          });
-        
-          
-      })
 
-      if (usuario !== null) {
+        await auth.currentUser.reauthenticateWithCredential(credential)
 
-        const { name, email, lastName } = usuario
-
-        if (remember) {
-          await firebaseReact.auth().signInWithEmailAndPassword(email, password);
-          Cookies.set('user', {
-            name ,
-            lastName ,
-            email,
-            role:'usuario'
-  
-          });
-         }else{
-           
-          await firebaseReact.auth().setPersistence('session');
-          
-          await firebaseReact.auth().signInWithEmailAndPassword(email, password);
-
-          sessionStorage.setItem('user', JSON.stringify({
-            name ,
-            lastName ,
-            email,
-            role:'usuario'
-  
-          }))
-        
-         }
-
-        
+        await auth.currentUser.updatePassword(password)
 
 
-        setUser({
-          name ,
-          lastName ,
-          email,
-          role:'usuario'
-
-        })
-
-     
-     
-     Swal.fire(
-      'Correcto',
-      'Inicio sesion Correcctamente',
-      'success'
-  )
-
-  setFlag(true)
-   
-      }else {
         Swal.fire(
-          'Error',
-          'No se encuentra registrado como asesor',
-          'error'
-      )
-      }
-
+            'Correcto',
+            'Contraseña Cambiada Correcctamente',
+            'success'
+        )
+          
       } catch (error) {
+
         Swal.fire(
-          'Correcto',
-          error.message,
-          'error'
-      )
+            'Error',
+            error.message,
+            'error'
+        )
+          
       }
+      
+        
+      
+       
+        
+      
     },
   });
 
-  const forgotPassword = ( () =>{
-    const mail = formik.values.email
 
-    firebaseReact.auth().sendPasswordResetEmail(mail).then(() => {
-      console.log('Email Sent');
-    }).catch((error) =>{
-      console.log(error);
-    });
-  })
-
-  // const googleSignIn = () => {
-  //   var provider = firebase.auth.GoogleAuthProvider();
-
-  //   firebase.auth().signInWithPopup(provider).then(function(result) {
-  //     // This gives you a Google Access Token. You can use it to access the Google API.
-  //     var token = result.credential.accessToken;
-  //     // The signed-in user info.
-  //     var user = result.user;
-  //     // ...
-  //     await firestore.collection('usuarios').where('email','==',user.email).get().then(function(querySnapshot) {
-  //       querySnapshot.forEach(function(doc) {
-  //           // doc.data() is never undefined for query doc snapshots
-  //           usuario=doc.data()
-  //       })});
-  //   }).catch(function(error) {
-  //     // Handle Errors here.
-  //     var errorCode = error.code;
-  //     var errorMessage = error.message;
-  //     // The email of the user's account used.
-  //     var email = error.email;
-  //     // The firebase.auth.AuthCredential type that was used.
-  //     var credential = error.credential;
-  //     // ...
-  // })}
-  
-  return flag  ? <Redirect to="/faq"/> : ( 
+  return (
     <StyledLogin>
       <div className="container">
         <div className="container-login">
-          <h1>Login</h1>
-          <button className="sign-in-google"
-                  // onClick={(event) => {googleSignIn()}}
-                  >
-            <img className="google-icon" src="google.png" />
-            <h3>Sign in with google</h3>
-          </button>
-          <div className="sign-in-option">
-            <div className="line"></div>
-            <h3>or</h3>
-            <div className="line"></div>
-          </div>
+          <h1>Restore Password</h1>
+          
           <form onSubmit={formik.handleSubmit}>
             <Input
               color="#2f2519"
               color2="#ff4301"
-              label="Email"
-              id="email"
-              type="email"
-              placeholder="Email"
+              label="Current Password"
+              id="old_password"
+              type="password"
+              placeholder="Current Password"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              value={formik.values.email}
+              value={formik.values.old_password}
               marginBottom="15px"
               error={
-                formik.touched.email && formik.errors.email
-                  ? `${formik.errors.email}`
+                formik.touched.old_password && formik.errors.old_password
+                  ? `${formik.errors.old_password}`
                   : null
               }
             />
@@ -211,25 +119,32 @@ export default function LoginClientes() {
                   : null
               }
             />
-            <label className="forgot-password" onClick={forgotPassword}>
-              <Link to='/forgot-password'>Forgot Password?</Link>
-            </label>
+
+            <Input
+              color="#2f2519"
+              color2="#ff4301"
+              label="Confirm Password"
+              id="confirm_password"
+              type="Password"
+              placeholder="confirm_password"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.confirm_password}
+              error={
+                formik.touched.confirm_password && formik.errors.confirm_password
+                  ? `${formik.errors.confirm_password}`
+                  : null
+              }
+            />
 
             
-
-
-            <div className="remember-me">
-              <input type="checkbox" value={remember} onChange={evt => setRemember(!remember)}/>
-              <h4>Remember me</h4>
-            </div>
             <div className="button-error">
               <ButtonSubmit color="#ff4301" />
 
+              {/* <h4>Erroooooooooooooooor</h4> */}
             </div>
           </form>
-          <label className="sign-up-label">
-            <Link to='signup'>Do not have an account? Sign Up Now.</Link>
-          </label>
+          
         </div>
       </div>
     </StyledLogin>
@@ -239,7 +154,7 @@ const StyledLogin = styled.nav`
   background: #2f2519;
   height: 100vh;
   width: 100vw;
-  font-family: 'Raleway', sans-serif;
+  font-family: "Raleway", sans-serif;
   .container {
     width: 100%;
     margin: auto;
@@ -263,7 +178,7 @@ const StyledLogin = styled.nav`
 
     h1 {
       text-align: center;
-      font-family: 'Raleway', sans-serif;
+      font-family: "Raleway", sans-serif;
       letter-spacing: 0.3em;
       font-weight: 400;
       font-size: 48px;
@@ -343,7 +258,7 @@ const StyledLogin = styled.nav`
             height:100%;
             align-items:center;
             h4{
-              font-family: 'Raleway', sans-serif;
+              font-family: "Raleway", sans-serif;
               font-size: 12px;
               font-weight:200;
               letter-spacing: 0.1em;
@@ -365,7 +280,7 @@ const StyledLogin = styled.nav`
             margin-bottom: 5px;
 
             h4{
-                font-family: 'Raleway', sans-serif;
+                font-family: "Raleway", sans-serif;
                 font-size: 12px;
                 font-weight:200;
                 letter-spacing: 0.1em;
@@ -383,9 +298,11 @@ const StyledLogin = styled.nav`
             width:100%;
             height:100%;
             align-items:center;
+            padding-bottom: 2px;
+            padding-top: 2px;
 
             h4{
-                font-family: 'Raleway', sans-serif;
+                font-family: "Raleway", sans-serif;
                 font-size: 12px;
                 font-weight:200;
                 letter-spacing: 0.1em;
@@ -413,7 +330,7 @@ const StyledLogin = styled.nav`
       }
 
       h3 {
-        font-family: 'Raleway', sans-serif;
+        font-family: "Raleway", sans-serif;
         font-size: 20px;
         letter-spacing: 0.1em;
         color: #2f2519;
@@ -428,7 +345,7 @@ const StyledLogin = styled.nav`
     width: 100vw;
     
 
-    font-family: 'Raleway', sans-serif;
+    font-family: "Raleway", sans-serif;
     .container {
       width: 100%;
       margin: auto;

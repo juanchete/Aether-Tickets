@@ -22,6 +22,7 @@ export default function SidebarUser({ ticket }) {
   const [currentUser, setCurrentUser] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [flag, setFlag] = React.useState(false);
+  const [changePassword, setchangePassword] = React.useState(false);
   const [log, setLog] = React.useState(user);
 
   useEffect(() => {
@@ -34,6 +35,12 @@ export default function SidebarUser({ ticket }) {
   const renderRedirect = () => {
     if (flag) {
       return <Redirect to='/login' />
+    }
+  }
+
+  const renderRedirectPassword = () => {
+    if (changePassword) {
+      return <Redirect to='/user/change-password' />
     }
   }
 
@@ -57,9 +64,12 @@ export default function SidebarUser({ ticket }) {
   };
 
   return (
+
+    
     
     <Sidebar>
      {renderRedirect()} 
+     {renderRedirectPassword()}
       <div className="navbar">
         <ul className="utilities">
           <li className="utilities-item"></li>
@@ -256,6 +266,12 @@ export default function SidebarUser({ ticket }) {
             { log  ? (
 
             <ul className="nav-links2">
+              <li className="link-1"
+                 onClick={(event) => {
+                 setchangePassword(true);
+                  }}>
+                <h3>Change Passwword</h3>
+              </li>
                <li className="link-1"
                  onClick={(event) => {
                  logout();
