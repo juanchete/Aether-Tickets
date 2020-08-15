@@ -14,11 +14,16 @@ import Suggestions from "../views/Asesor/Suggestions";
 import ShowTickets from "../views/Asesor/ShowTicketsByStatus";
 import Home from "../views/clientes/Home";
 import ChangePassword from '../views/Shared/change-password'
+import AddCategory from '../views/Asesor/AddCategory'
+import AddSuggestion from '../views/Asesor/AddSuggestion'
+import AllAsesors from '../views/Asesor/AllAsesors'
+import AllClients from '../views/Asesor/AllClients'
 
 import AdminRoutes from '../routes/AdminRoutes'
 import UserRoutes from '../routes/UserRoutes'
 import AsesorRoutes from '../routes/AsesorRoutes'
 import InviteRoutes from '../routes/InviteRoutes'
+
 
 
 
@@ -37,6 +42,16 @@ function AppRouter() {
           exact
           path="/invite-register"
           component={InviteToRegister}
+        />
+        <AdminRoutes
+          exact
+          path="/asesores/all-asesors"
+          component={AllAsesors}
+        />
+        <AdminRoutes
+          exact
+          path="/asesores/all-clients"
+          component={AllClients}
         />
         <InviteRoutes exact path="/sign-up-asesores" component={SignUpAsesor} />
 

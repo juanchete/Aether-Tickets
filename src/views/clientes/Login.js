@@ -6,31 +6,37 @@ import "firebase/auth";
 import { useFirebaseApp, useFirestore, useUser, useAuth } from "reactfire";
 import ButtonSubmit from "../../components/buttons/Button-Submit";
 import Input from "../../components/inputs/InputLogin";
-import Swal from "sweetalert2";
+import Swal from 'sweetalert2';
 import { Link, Router, Redirect } from "react-router-dom";
-import Cookies from "js-cookie";
+import Cookies from 'js-cookie'
 import { UserContext } from "../../CreateContext";
 import firebase from "firebase";
 
 
 export default function LoginClientes() {
-  const [remember, setRemember] = useState(false);
 
-  const [flag, setFlag] = useState(false);
+  const [remember, setRemember] = useState(false)
 
-  const { setUser } = useContext(UserContext);
+  const [flag, setFlag] = useState(false)
 
-  useEffect(() => {
-    console.log(remember);
-  }, [remember]);
+  const {setUser} = useContext(UserContext)
+
+  const usuario = useUser()
+
+  console.log(usuario);
+
+  const auth = useAuth()
+
+  
+  
 
   const firebaseReact = useFirebaseApp();
   const firestore = useFirestore();
   const formik = useFormik({
     initialValues: {
-      email: localStorage.getItem("remember-email") || "",
+      email: localStorage.getItem('remember-email') || "",
       password: "",
-      remember: false,
+      remember: false
     },
     validationSchema: Yup.object({
       email: Yup.string().email("Invalid Email").required("Required Field"),
@@ -38,19 +44,18 @@ export default function LoginClientes() {
     }),
 
     onSubmit: async (valores) => {
-      let usuario = null;
+      let usuario = null
       const { email, password } = valores;
       try {
-        await firestore
-          .collection("usuarios")
-          .where("email", "==", email)
-          .get()
-          .then(function (querySnapshot) {
-            querySnapshot.forEach(function (doc) {
+
+        await firestore.collection('usuarios').where('email','==',email).get().then(function(querySnapshot) {
+          querySnapshot.forEach(function(doc) {
               // doc.data() is never undefined for query doc snapshots
-              usuario = doc.data();
-            });
+              usuario=doc.data()
           });
+        
+          
+      })
 
       if (usuario !== null) {
 
@@ -110,57 +115,52 @@ export default function LoginClientes() {
       )
       }
 
-          setUser({
-            name,
-            lastName,
-            email,
-            role: "usuario",
-          });
-
-          Cookies.set(
-            "user",
-            {
-              name,
-              lastName,
-              email,
-              role: "usuario",
-            },
-            { expires: 7 }
-          );
-
-          if (remember) {
-            localStorage.setItem("remember-email", email);
-          } else {
-            localStorage.removeItem("remember-email");
-          }
-          Swal.fire("Correcto", "Inicio sesion Correcctamente", "success");
-
-          setFlag(true);
-        } 
-        catch (error) {
-          Swal.fire("Correcto", error.message, "error");
-        }
-      } 
+      } catch (error) {
+        Swal.fire(
+          'Correcto',
+          error.message,
+          'error'
+      )
+      }
     },
-  );
+  });
 
-  const forgotPassword = () => {
-    const mail = formik.values.email;
+  const forgotPassword = ( () =>{
+    const mail = formik.values.email
 
-    firebase
-      .auth()
-      .sendPasswordResetEmail(mail)
-      .then(() => {
-        console.log("Email Sent");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+    firebaseReact.auth().sendPasswordResetEmail(mail).then(() => {
+      console.log('Email Sent');
+    }).catch((error) =>{
+      console.log(error);
+    });
+  })
 
-  return flag ? (
-    <Redirect to="/faq" />
-  ) : (
+  // const googleSignIn = () => {
+  //   var provider = firebase.auth.GoogleAuthProvider();
+
+  //   firebase.auth().signInWithPopup(provider).then(function(result) {
+  //     // This gives you a Google Access Token. You can use it to access the Google API.
+  //     var token = result.credential.accessToken;
+  //     // The signed-in user info.
+  //     var user = result.user;
+  //     // ...
+  //     await firestore.collection('usuarios').where('email','==',user.email).get().then(function(querySnapshot) {
+  //       querySnapshot.forEach(function(doc) {
+  //           // doc.data() is never undefined for query doc snapshots
+  //           usuario=doc.data()
+  //       })});
+  //   }).catch(function(error) {
+  //     // Handle Errors here.
+  //     var errorCode = error.code;
+  //     var errorMessage = error.message;
+  //     // The email of the user's account used.
+  //     var email = error.email;
+  //     // The firebase.auth.AuthCredential type that was used.
+  //     var credential = error.credential;
+  //     // ...
+  // })}
+  
+  return flag  ? <Redirect to="/faq"/> : ( 
     <StyledLogin>
       <div className="container">
         <div className="container-login">
@@ -212,23 +212,23 @@ export default function LoginClientes() {
               }
             />
             <label className="forgot-password" onClick={forgotPassword}>
-              <Link to="/forgot-password">Forgot Password?</Link>
+              <Link to='/forgot-password'>Forgot Password?</Link>
             </label>
 
+            
+
+
             <div className="remember-me">
-              <input
-                type="checkbox"
-                value={remember}
-                onChange={(evt) => setRemember(!remember)}
-              />
+              <input type="checkbox" value={remember} onChange={evt => setRemember(!remember)}/>
               <h4>Remember me</h4>
             </div>
             <div className="button-error">
               <ButtonSubmit color="#ff4301" />
+
             </div>
           </form>
           <label className="sign-up-label">
-            <Link to="signup">Do not have an account? Sign Up Now.</Link>
+            <Link to='signup'>Do not have an account? Sign Up Now.</Link>
           </label>
         </div>
       </div>

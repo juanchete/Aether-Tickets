@@ -24,6 +24,8 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
   const [categories, setCategories] = React.useState(category ? true : false);
   const [reports, setReports] = React.useState(report ? true : false);
   const [changePassword, setChangePassword] = React.useState(false);
+  const [allAsesors, setAllAsesors] = React.useState(false);
+  const [allClients, setAllClients] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [flag, setFlag] = React.useState(false);
   const firebase = useFirebaseApp();
@@ -39,6 +41,18 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
   const renderRedirectPassword = () => {
     if (changePassword) {
       return <Redirect to='/asesores/change-password' />
+    }
+  }
+
+  const renderRedirectAllAsessors = () => {
+    if (allAsesors) {
+      return <Redirect to='/asesores/all-asesors' />
+    }
+  }
+
+  const renderRedirectAllUsers = () => {
+    if (allClients) {
+      return <Redirect to='/asesores/all-clients' />
     }
   }
 
@@ -67,7 +81,9 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
       <AddSuggestion show={suggestionShow} showSuggestion={showSuggestion} />
       <Sidebar categories={category}>
       {renderRedirect()} 
-     {renderRedirectPassword()}
+      {renderRedirectPassword()}
+      {renderRedirectAllAsessors()}
+      {renderRedirectAllUsers()}
         <div className="navbar">
           <ul className="utilities">
             <li className="utilities-item"></li>
@@ -261,6 +277,26 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
                   </div>
                 </li>
               </ul>
+              { user.role == 'admin' ? (<ul className="nav-links">
+                <li className="link-1"
+                onClick={(event) => {
+                  setAllAsesors(true);
+                }}>
+                  <h3>All Asesors</h3>
+                  <div className="counter">
+                    <h4>4</h4>
+                  </div>
+                </li>
+                <li className="link-1"
+                 onClick={(event) => {
+                 setAllClients(true);
+                  }}>
+                <h3>All Clients</h3>
+                <div className="counter">
+                    <h4>4</h4>
+                  </div>
+              </li>
+              </ul>) : (<></>)}
             </div>
             {open ? (
               <div className="navbar-especific-phone">
