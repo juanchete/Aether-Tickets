@@ -17,12 +17,13 @@ export default function NewTicket() {
   const db = firebase.firestore();
 
   const [text, setText] = useState("");
+  const [content, setContent] = useState("");
   const [files, setFiles] = useState([]);
   const onEditorChange = (value) => {
     setText(value);
     let texto = text;
     texto = texto.replace(/(<([^>]+)>)/gi, "");
-    console.log(texto);
+    setContent(texto);
   };
   const onFilesChange = (file) => {
     setFiles([...files, file]);
@@ -52,7 +53,8 @@ export default function NewTicket() {
           .collection("messages")
           .add({
             sender: email,
-            content: text,
+            contentHtml: text,
+            content: content,
             files: files,
             date: new Date(),
           })
@@ -61,8 +63,9 @@ export default function NewTicket() {
               usuario: { email: email, name: name, lastName: lastName },
               subject: subject,
               category: category,
-              description: description.props.children,
+              description: content,
               asesors: [],
+              asesor: null,
               messages: [docRef],
               status: "Pending",
               priority: "Low",

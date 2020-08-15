@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "firebase";
 import { useUser, useFirebaseApp } from "reactfire";
-import * as admin from "firebase-admin";
 import styled from "styled-components";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -10,7 +9,7 @@ import Input from "../../components/inputs/InputLogin";
 import Select from "../../components/inputs/SelectLogin";
 import TextArea from "../../components/inputs/TextAreaInput";
 import { IoMdClose } from "react-icons/io";
-import firebase from 'firebase'
+import firebase from "firebase";
 
 export default function AddSuggestion({ color, color2, show, showSuggestion }) {
   const firebaseReact = useFirebaseApp();
@@ -50,28 +49,17 @@ export default function AddSuggestion({ color, color2, show, showSuggestion }) {
       const { name, category, suggestion } = valores;
 
       try {
-       const {id} = await db
-          .collection("suggestions")
-          .add({
-            name: name,
-            suggestion: suggestion,
-            createdAt: new Date(),
-            available: true,
-          })
-          var ref = db.collection("categories").doc(category);
-          ref.update({
-            suggestions:  firebase.firestore.FieldValue.arrayUnion(id) 
+        const { id } = await db.collection("suggestions").add({
+          name: name,
+          suggestion: suggestion,
+          category: category,
+          createdAt: new Date(),
+          available: true,
         });
-          // .then( function (docRef) {
-          //   var ref = db.collection("categories").doc(category);
-          //   ref
-          //     .update({
-          //       suggestions: admin.firestore.FieldValue.arrayUnion(docRef),
-          //     });
-
-          //   console.log('Llego');
-          // });
-
+        var ref = db.collection("categories").doc(category);
+        ref.update({
+          suggestions: firebase.firestore.FieldValue.arrayUnion(id),
+        });
       } catch (error) {}
     },
   });
