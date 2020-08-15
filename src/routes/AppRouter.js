@@ -41,9 +41,6 @@ function AppRouter() {
         <InviteRoutes exact path="/sign-up-asesores" component={SignUpAsesor} />
 
         <Route exact path="/asesores/login" component={LoginAsesores} />
-        <Route exact path="/asesores/categories" component={Categories} />
-        <Route exact path="/asesores/suggestion" component={Suggestions} />
-        <Route exact path="/" component={Home} />
         <Route
           exact
           path="/tickets/pending"
