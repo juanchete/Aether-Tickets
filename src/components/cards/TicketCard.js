@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Tags from "../Tags";
+import PopUp from "../PopUp";
+import { BsThreeDots } from "react-icons/bs";
 
 export default function TicketCard({ color, color2, tickets, filter }) {
   const [ticketsFiltered, setTickets] = useState();
@@ -15,6 +17,14 @@ export default function TicketCard({ color, color2, tickets, filter }) {
     }
     setLoading(false);
   }, [filter]);
+
+  const click = () => {
+    return (
+      <div className="option" style={{ width: "300px" }}>
+        HOLA
+      </div>
+    );
+  };
   return (
     <>
       {!loading ? (
@@ -46,6 +56,9 @@ export default function TicketCard({ color, color2, tickets, filter }) {
               <li className="data">
                 <h2>CREATED AT</h2>
               </li>
+              <li className="data-2">
+                <PopUp ticket={ticket} />
+              </li>
             </Card>
           ))}
         </>
@@ -63,9 +76,12 @@ const Card = styled.div`
   padding-left: 10px;
   padding-right: 10px;
   list-style: none;
-
+  .data-2 {
+    width: 10%;
+  }
   .data {
     width: 16.66%;
+
     h2 {
       font-size: 14px;
       font-family: "Raleway", sans-serif;

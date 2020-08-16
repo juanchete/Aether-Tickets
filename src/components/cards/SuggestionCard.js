@@ -1,17 +1,66 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import "firebase";
+import { useUser, useFirebaseApp } from "reactfire";
+import { AiFillMinusCircle } from "react-icons/ai";
+import { IoIosAddCircle } from "react-icons/io";
 
-export default function SuggestionCard({ color, color2, title }) {
+export default function SuggestionCard({ color, color2, suggestion }) {
+  const firebaseReact = useFirebaseApp();
+  const db = firebaseReact.firestore();
+  const [category, setCategory] = useState();
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    setLoading(true);
+    const db = firebaseReact.firestore();
+    return db.collection("categories").onSnapshot((snapshot) => {
+      const categoryData = [];
+      snapshot.forEach((doc) => {
+        if (doc.id === suggestion.category) {
+          categoryData.push({ ...doc.data(), id: doc.id });
+        }
+      });
+      setCategory(categoryData);
+      setLoading(false);
+    });
+  }, []);
+
+  const changeAvailable = async (value) => {
+    try {
+      await db.collection("suggestions").doc(suggestion.id).update({
+        available: value,
+      });
+    } catch (error) {}
+  };
   return (
-    <Card color={color} color2={color2}>
-      <div className="card-title">
-        <h2>Suggestion 1</h2>
-        <h3>Category 1</h3>
-      </div>
-      <div className="card-content">
-        <h2>Esta es la Suggestion numero 1 </h2>
-      </div>
-    </Card>
+    <>
+      {!loading ? (
+        <Card color={color} color2={color2}>
+          <div className="card-title">
+            <h2>{suggestion.name}</h2>
+            <h3>{category[0].name}</h3>
+            {suggestion.available ? (
+              <AiFillMinusCircle
+                onClick={() => {
+                  changeAvailable(false);
+                }}
+                className="icon"
+              />
+            ) : (
+              <IoIosAddCircle
+                onClick={() => {
+                  changeAvailable(true);
+                }}
+                className="icon"
+              />
+            )}
+          </div>
+          <div className="card-content">
+            <h2>{suggestion.suggestion} </h2>
+          </div>
+        </Card>
+      ) : null}
+    </>
   );
 }
 const Card = styled.div`
@@ -29,9 +78,14 @@ const Card = styled.div`
     display: flex;
     padding-left: 10px;
     flex-direction: column;
+    .icon {
+      width: 20px;
+      height: 20px;
+      color: #fa7d09;
+    }
 
     h2 {
-      font-size: 18px;
+      font-size: 15px;
       font-family: "Raleway", sans-serif;
       letter-spacing: 0.2em;
       font-weight: 300;
@@ -42,7 +96,7 @@ const Card = styled.div`
       margin-right: 5px;
     }
     h3 {
-      font-size: 15px;
+      font-size: 12px;
       font-family: "Raleway", sans-serif;
       letter-spacing: 0.2em;
       font-weight: 300;

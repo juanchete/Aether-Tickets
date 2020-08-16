@@ -10,6 +10,7 @@ import LoginAsesores from "../views/Asesor/Login";
 import Faq from "../views/clientes/Faq";
 import NewTicket from "../views/clientes/NewTicket";
 import Categories from "../views/Asesor/Categories";
+import Category from "../views/Asesor/Category";
 import Suggestions from "../views/Asesor/Suggestions";
 import ShowTickets from "../views/Asesor/ShowTicketsByStatus";
 import Home from "../views/clientes/Home";
@@ -32,6 +33,7 @@ function AppRouter() {
     <Router>
       <Switch>
         <Route exact path="/login" component={Login} />
+        <Route exact path="/category/:id" component={Category} />
         <Route exact path="/signup" component={RegistroClientes} />
         <Route exact path="/forgot-password" component={ForgotPassword} />
         <UserRoutes exact path="/new-ticket" component={NewTicket} />
