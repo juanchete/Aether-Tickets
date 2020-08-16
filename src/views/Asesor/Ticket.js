@@ -1,14 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import "firebase";
+import firebase from "firebase";
 import { useUser, useFirebaseApp } from "reactfire";
 import styled from "styled-components";
 import SidebarAdmin from "../../components/sidebars/SidebarAdmin";
 import TextEditor from "../../components/inputs/TextEditor";
 import { AiOutlineInfoCircle } from "react-icons/ai";
+import { useParams } from "react-router";
 
 export default function Ticket() {
+  const firebaseReact = useFirebaseApp();
+  const db = firebaseReact.firestore();
   const [text, setText] = useState("");
+  const [ticket, setTicket] = useState();
   const [toggleDet, setToggleDet] = useState(false);
   const [files, setFiles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  let { id } = useParams();
   const onEditorChange = (value) => {
     setText(value);
     console.log(text);
@@ -16,6 +24,30 @@ export default function Ticket() {
   const onFilesChange = (files) => {
     setFiles(files);
   };
+  useEffect(() => {
+    setLoading(true);
+    console.log("Entre");
+    const db = firebase.firestore();
+
+    let docRef = db.collection("tickets").doc(id);
+    docRef
+      .get()
+      .then(function (doc) {
+        if (doc.exists) {
+          console.log(doc.data());
+          setTicket(doc.data());
+          setLoading(false);
+        } else {
+          // doc.data() will be undefined in this case
+          console.log("No such document!");
+          setLoading(false);
+        }
+      })
+      .catch(function (error) {
+        console.log("Error getting document:", error);
+      });
+    setLoading(false);
+  }, []);
   return (
     <HomeStyle toggleDet={toggleDet} screenWidth={window.innerWidth}>
       <SidebarAdmin ticket={true} />
@@ -23,7 +55,7 @@ export default function Ticket() {
         <div className="home-view-title">
           <div style={{ display: "flex", flexDirection: "row" }}>
             <h2>Ticket</h2>
-            <h1>789Gji087</h1>
+            <h1>{id.substring(0, 7)}</h1>
             <AiOutlineInfoCircle
               className="icon"
               onClick={(event) => {
@@ -32,86 +64,90 @@ export default function Ticket() {
             />
           </div>
         </div>
-        <div className="container">
-          <div className="chat">
-            <div className="chat-screen">
-              <div className="chat-screen-header"></div>
+        {!loading && ticket ? (
+          <div className="container">
+            <div className="chat">
+              <div className="chat-screen">
+                <div className="chat-screen-header"></div>
+              </div>
+              <div className="chat-text-box">
+                {" "}
+                <TextEditor
+                  onEditorChange={onEditorChange}
+                  onFilesChange={onFilesChange}
+                />
+                <div className="button-container">
+                  <button className="button-submit" type="submit">
+                    <h2>Submit</h2>
+                  </button>
+                </div>
+              </div>
             </div>
-            <div className="chat-text-box">
-              {" "}
-              <TextEditor
-                onEditorChange={onEditorChange}
-                onFilesChange={onFilesChange}
-              />
+
+            <div className="ticket-detail">
+              <div className="ticket-detail-title">
+                <h2>Details</h2>
+              </div>
+              <div className="ticket-detail-info">
+                <div className="ticket-detail-info-title">
+                  <h2>Ticket Info </h2>
+                </div>
+                <div className="ticket-detail-info-item">
+                  <h2>Ticket ID: </h2>
+                  <h3>{id.substring(0, 7)}</h3>
+                </div>
+                <div className="ticket-detail-info-item">
+                  <h2>Created: </h2>
+                  <h3>7/08/2020</h3>
+                </div>
+                <div className="ticket-detail-info-item">
+                  <h2>Last Message: </h2>
+                  <h3>7/08/2020</h3>
+                </div>
+                <div className="ticket-detail-info-item">
+                  <h2>Status: </h2>
+                  <h3>{ticket.status}</h3>
+                </div>
+                <div className="ticket-detail-info-item">
+                  <h2>Category: </h2>
+                  <h3>LOGIN</h3>
+                </div>
+              </div>
+              <div className="ticket-detail-info">
+                <div className="ticket-detail-info-title">
+                  <h2>Responsability </h2>
+                </div>
+                <div className="ticket-detail-info-item">
+                  <h2>Assigned to: </h2>
+                  <h3>
+                    {ticket.usuario.name} {ticket.usuario.lastName}
+                  </h3>
+                </div>
+                <div className="ticket-detail-info-item">
+                  <h2>Rating: </h2>
+                  <h3>5</h3>
+                </div>
+              </div>
+              <div className="ticket-detail-info">
+                <div className="ticket-detail-info-title">
+                  <h2>Requester </h2>
+                </div>
+                <div className="ticket-detail-info-item">
+                  <h2>Juan Lopez</h2>
+                </div>
+                <div className="ticket-detail-info-item">
+                  <h2>Total Tickets: </h2>
+                  <h3>20</h3>
+                </div>
+              </div>
               <div className="button-container">
                 <button className="button-submit" type="submit">
-                  <h2>Submit</h2>
+                  <h2>Unsolved</h2>
                 </button>
               </div>
             </div>
           </div>
-
-          <div className="ticket-detail">
-            <div className="ticket-detail-title">
-              <h2>Details</h2>
-            </div>
-            <div className="ticket-detail-info">
-              <div className="ticket-detail-info-title">
-                <h2>Ticket Info </h2>
-              </div>
-              <div className="ticket-detail-info-item">
-                <h2>Ticket ID: </h2>
-                <h3>789Gji087</h3>
-              </div>
-              <div className="ticket-detail-info-item">
-                <h2>Created: </h2>
-                <h3>7/08/2020</h3>
-              </div>
-              <div className="ticket-detail-info-item">
-                <h2>Last Message: </h2>
-                <h3>7/08/2020</h3>
-              </div>
-              <div className="ticket-detail-info-item">
-                <h2>Status: </h2>
-                <h3>OPEN</h3>
-              </div>
-              <div className="ticket-detail-info-item">
-                <h2>Category: </h2>
-                <h3>LOGIN</h3>
-              </div>
-            </div>
-            <div className="ticket-detail-info">
-              <div className="ticket-detail-info-title">
-                <h2>Responsability </h2>
-              </div>
-              <div className="ticket-detail-info-item">
-                <h2>Assigned to: </h2>
-                <h3>Valeska Silva</h3>
-              </div>
-              <div className="ticket-detail-info-item">
-                <h2>Rating: </h2>
-                <h3>5</h3>
-              </div>
-            </div>
-            <div className="ticket-detail-info">
-              <div className="ticket-detail-info-title">
-                <h2>Requester </h2>
-              </div>
-              <div className="ticket-detail-info-item">
-                <h2>Juan Lopez</h2>
-              </div>
-              <div className="ticket-detail-info-item">
-                <h2>Total Tickets: </h2>
-                <h3>20</h3>
-              </div>
-            </div>
-            <div className="button-container">
-              <button className="button-submit" type="submit">
-                <h2>Unsolved</h2>
-              </button>
-            </div>
-          </div>
-        </div>
+        ) : null}
       </div>
     </HomeStyle>
   );
