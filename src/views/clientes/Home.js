@@ -346,6 +346,7 @@ export default function Home() {
           <li className="label">
             <h2>Created At</h2>
           </li>
+          <li className="label-2"></li>
         </ul>
         {!loading ? <TicketCard tickets={tickets} /> : null}
       </div>
@@ -592,6 +593,9 @@ const HomeStyle = styled.div`
           width: 100%;
           margin-right: 5px;
         }
+      }
+      .label-2 {
+        width: 10%;
       }
     }
   }
