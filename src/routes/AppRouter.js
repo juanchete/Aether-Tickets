@@ -19,7 +19,8 @@ import AddCategory from "../views/Asesor/AddCategory";
 import AddSuggestion from "../views/Asesor/AddSuggestion";
 import AllAsesors from "../views/Asesor/AllAsesors";
 import AllClients from "../views/Asesor/AllClients";
-import Ticket from "../views/Asesor/Ticket";
+import TicketAsesor from "../views/Asesor/Ticket";
+import Ticket from "../views/clientes/Ticket";
 import AdminRoutes from "../routes/AdminRoutes";
 import UserRoutes from "../routes/UserRoutes";
 import AsesorRoutes from "../routes/AsesorRoutes";
@@ -105,6 +106,7 @@ function AppRouter() {
           path="/asesores/change-password"
           component={ChangePassword}
         />
+        <AsesorRoutes exact path="/asesores/ticket" component={TicketAsesor} />
         <AsesorRoutes exact path="/" component={Home} />
       </Switch>
     </Router>

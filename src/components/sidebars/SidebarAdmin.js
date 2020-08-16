@@ -62,6 +62,7 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
 
       setUser({});
 
+      sessionStorage.removeItem("user");
       Cookies.remove("user");
     } catch (error) {
       console.log(error);

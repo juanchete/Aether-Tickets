@@ -8,7 +8,7 @@ import TextEditor from "../../components/inputs/TextEditor";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { useParams } from "react-router";
 
-export default function Ticket() {
+export default function TicketAsesor() {
   const firebaseReact = useFirebaseApp();
   const db = firebaseReact.firestore();
   const [text, setText] = useState("");

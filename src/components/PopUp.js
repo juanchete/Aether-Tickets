@@ -7,7 +7,7 @@ import { BsThreeDots } from "react-icons/bs";
 
 export default function TicketCard({ color, color2, ticket }) {
   const firebaseReact = useFirebaseApp();
-  const [user, setUser] = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
   const db = firebaseReact.firestore();
   const [ticketsFiltered, setTickets] = useState();
   const [loading, setLoading] = useState(true);

@@ -16,6 +16,8 @@ export default function SignUpClientes() {
 
   const db = firebase.firestore();
 
+  const usuario = useUser();
+
   const [flag, setFlag] = useState(false);
 
   const {setUser} = useContext(UserContext);
@@ -46,25 +48,27 @@ export default function SignUpClientes() {
       // console.log(valores);
       const { email, password, name, lastName, telephone } = valores;
       try {
-         await firebase
+          await firebase
           .auth()
           .createUserWithEmailAndPassword(email, password)
           
-          await  db.collection("usuarios").add({
+          await  db.collection("usuarios").doc(firebase.auth().currentUser.uid).set({
               name,
               email,
               lastName,
               telephone,
             })
 
-          await  db.collection('mail').add({
-            to: 'vekasilva99@gmail.com',
-            message: {
-              subject: 'Hello from Firebase!',
-              text: 'This is the plaintext section of the email body.',
-              html: 'This is the <code>HTML</code> section of the email body.',
-            }
-          }).then(() => console.log('Queued email for delivery!'));
+            
+
+          // await  db.collection('mail').add({
+          //   to: 'vekasilva99@gmail.com',
+          //   message: {
+          //     subject: 'Hello from Firebase!',
+          //     text: 'This is the plaintext section of the email body.',
+          //     html: 'This is the <code>HTML</code> section of the email body.',
+          //   }
+          // }).then(() => console.log('Queued email for delivery!'));
 
           console.log('hola');
 

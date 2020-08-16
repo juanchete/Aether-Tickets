@@ -15,6 +15,8 @@ import Cookies from 'js-cookie'
 export default function SignUpAsesor() {
   const firebase = useFirebaseApp();
 
+  const usuario = useUser();
+
   const db = firebase.firestore();
 
   const [flag, setFlag] = useState(false)
@@ -47,7 +49,7 @@ export default function SignUpAsesor() {
           .auth()
           .createUserWithEmailAndPassword(email, password)
           .then(
-            db.collection("asesores").add({
+            db.collection("asesores").doc(firebase.auth().currentUser.uid).set({
               name,
               email,
               lastName,

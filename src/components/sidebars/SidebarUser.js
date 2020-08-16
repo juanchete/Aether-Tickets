@@ -53,6 +53,7 @@ export default function SidebarUser({ ticket }) {
       setUser({})
 
       Cookies.remove('user')
+      sessionStorage.removeItem("user");
 
 
       setFlag(true)
