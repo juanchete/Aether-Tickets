@@ -20,6 +20,8 @@ export default function SignUpClientes() {
 
   const {setUser} = useContext(UserContext);
 
+  console.log('Aca pues');
+
   const formik = useFormik({
     initialValues: {
       email: "prueba1@email.com",
@@ -54,6 +56,17 @@ export default function SignUpClientes() {
               lastName,
               telephone,
             })
+
+          await  db.collection('mail').add({
+            to: 'vekasilva99@gmail.com',
+            message: {
+              subject: 'Hello from Firebase!',
+              text: 'This is the plaintext section of the email body.',
+              html: 'This is the <code>HTML</code> section of the email body.',
+            }
+          }).then(() => console.log('Queued email for delivery!'));
+
+          console.log('hola');
 
             setUser({
               name ,

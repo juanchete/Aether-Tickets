@@ -11,6 +11,7 @@ import { Link, Router, Redirect } from "react-router-dom";
 import Cookies from 'js-cookie'
 import { UserContext } from "../../CreateContext";
 import firebase from "firebase";
+import admin from 'firebase-admin'
 
 
 export default function LoginClientes() {
@@ -96,6 +97,7 @@ export default function LoginClientes() {
           role:'usuario'
 
         })
+
 
      
      
