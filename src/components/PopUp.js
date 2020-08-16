@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import styled from "styled-components";
 import "firebase";
 import { useUser, useFirebaseApp } from "reactfire";
+import { UserContext } from "../CreateContext";
 import { BsThreeDots } from "react-icons/bs";
 
 export default function TicketCard({ color, color2, ticket }) {
   const firebaseReact = useFirebaseApp();
+  const { user, setUser } = useContext(UserContext);
   const db = firebaseReact.firestore();
   const [ticketsFiltered, setTickets] = useState();
   const [loading, setLoading] = useState(true);
@@ -40,11 +42,13 @@ export default function TicketCard({ color, color2, ticket }) {
 }
 const PopUp = styled.div`
   width: 100%;
+
   .icon {
     width: 20px;
     height: 20px;
     color: #2f2519;
     cursor: pointer;
+    z-index: 3000;
   }
   .option {
     width: 120px;

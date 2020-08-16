@@ -32,36 +32,36 @@ export default function TicketCard({ color, color2, tickets, filter }) {
         <>
           {ticketsFiltered.map((ticket) => (
             <Card color={color} color2={color2}>
-              <NavLink className="ticket-view" to={path + ticket.id}>
-                <li className="data">
+              <ul className="ticket-view">
+                <NavLink className="data" to={path + ticket.id}>
                   <h2>
                     {ticket.usuario.name} {ticket.usuario.lastName}
                   </h2>
                   <h3>{ticket.usuario.email}</h3>
-                </li>
-                <li className="data">
+                </NavLink>
+                <NavLink className="data" to={path + ticket.id}>
                   <h2>{ticket.subject}</h2>
-                </li>
-                <li className="data">
+                </NavLink>
+                <NavLink className="data" to={path + ticket.id}>
                   {ticket.asesors.length > 0 ? (
                     <h2>{ticket.asesors[ticket.asesors.length - 1]}</h2>
                   ) : (
                     <h2>Unnasigned</h2>
                   )}
-                </li>
-                <li className="data">
+                </NavLink>
+                <NavLink className="data" to={path + ticket.id}>
                   <Tags title={ticket.priority} color="#EE220C" />
-                </li>
-                <li className="data">
+                </NavLink>
+                <NavLink className="data" to={path + ticket.id}>
                   <Tags title={ticket.status} color="#29E2F3" />
-                </li>
-                <li className="data">
+                </NavLink>
+                <NavLink className="data" to={path + ticket.id}>
                   <h2>CREATED AT</h2>
-                </li>
+                </NavLink>
                 <li className="data-2">
                   <PopUp ticket={ticket} />
                 </li>
-              </NavLink>
+              </ul>
             </Card>
           ))}
         </>

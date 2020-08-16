@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "firebase";
 import { useUser, useFirebaseApp } from "reactfire";
+import { UserContext } from "../../CreateContext";
 import styled from "styled-components";
 import SidebarAdmin from "../../components/sidebars/SidebarAdmin";
 import TicketCard from "../../components/cards/TicketCard";
