@@ -73,7 +73,8 @@ export default function LoginAsesores() {
             name ,
             lastName ,
             email,
-            role
+            role,
+            id: firebase.auth().currentUser.uid
   
           }) )
         
@@ -84,7 +85,8 @@ export default function LoginAsesores() {
           name ,
           lastName ,
           email,
-          role
+          role,
+          id: firebase.auth().currentUser.uid
 
         })
 

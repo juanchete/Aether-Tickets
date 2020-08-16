@@ -81,7 +81,8 @@ export default function LoginClientes() {
             name ,
             lastName ,
             email,
-            role:'usuario'
+            role:'usuario',
+            id: firebase.auth().currentUser.uid
   
           }))
         
@@ -94,7 +95,8 @@ export default function LoginClientes() {
           name ,
           lastName ,
           email,
-          role:'usuario'
+          role:'usuario',
+          id: firebase.auth().currentUser.uid
 
         })
 
