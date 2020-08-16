@@ -1,45 +1,35 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useUser, useFirebaseApp } from "reactfire";
 import styled from "styled-components";
 import SidebarUser from "../../components/sidebars/SidebarUser";
 import Accordion from "../../components/Accordion";
+import FaqComponent from "../../components/FaqComponent";
+import { NavLink, withRouter } from "react-router-dom";
 
 export default function Faq() {
-  const [faqs, setfaqs] = useState([
-    {
-      question: "How many programmers does it take to screw in a lightbulb?",
-      answer: "None. We don't address hardware issues.",
-      open: true,
-    },
-    {
-      question: "Who is the most awesome person?",
-      answer: "You. The Viewer.",
-      open: false,
-    },
-    {
-      question:
-        "How many questions does it take to make a successful FAQ Page?",
-      answer: "This many.",
-      open: false,
-    },
-  ]);
+  const firebaseReact = useFirebaseApp();
+  const db = firebaseReact.firestore();
+  const [categories, setCategories] = useState();
+  let [path, setPath] = React.useState("/new-ticket/");
+  const [loading, setLoading] = useState(true);
 
-  const toggleFAQ = (index) => {
-    setfaqs(
-      faqs.map((faq, i) => {
-        if (i === index) {
-          faq.open = !faq.open;
-        } else {
-          faq.open = false;
-        }
+  useEffect(() => {
+    setLoading(true);
+    return db
+      .collection("categories")
+      .orderBy("createdAt", "desc")
+      .onSnapshot((snapshot) => {
+        const categoryData = [];
+        snapshot.forEach((doc) =>
+          categoryData.push({ ...doc.data(), id: doc.id })
+        );
+        console.log(categoryData); // <------
+        setCategories(categoryData);
+        setLoading(false);
+      });
+  }, []);
 
-        return faq;
-      })
-    );
-  };
-
-  const usuario = useUser()
-
+  const usuario = useUser();
 
   return (
     <HomeStyle>
@@ -50,16 +40,27 @@ export default function Faq() {
             <h2>FAQS</h2>
           </div>
         </div>
-        <div className="container">
-          <div className="faqs">
-            <div className="faq-title">
-              <h2>Category 1</h2>
-            </div>
-            {faqs.map((faq, i) => (
-              <Accordion faq={faq} index={i} toggleFAQ={toggleFAQ} />
+        {!loading && categories ? (
+          <div className="container">
+            {categories.map((category) => (
+              <div className="faqs">
+                <div className="faq-title">
+                  <h2>{category.name}</h2>
+                  <NavLink className="new-ticket" to={path + category.id}>
+                    <h3>New {category.name} Ticket</h3>
+                  </NavLink>
+                </div>
+                {category.suggestions.length > 0 ? (
+                  <FaqComponent category={category.id} />
+                ) : (
+                  <div className="no-suggestions">
+                    <h2>There are no Suggestions Available</h2>
+                  </div>
+                )}
+              </div>
             ))}
           </div>
-        </div>
+        ) : null}
       </div>
     </HomeStyle>
   );
@@ -77,6 +78,46 @@ const HomeStyle = styled.div`
       margin: 0 auto;
       padding: 15px;
 
+      .new-ticket {
+        width: 200px;
+        height: 35px;
+        background: #ff4301;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        border: 1px solid #ff4301;
+        border-radius: 5px;
+        h3 {
+          font-size: 10px;
+          font-family: "Raleway", sans-serif;
+          letter-spacing: 0.1em;
+          font-weight: 500;
+          font-style: normal;
+          color: white;
+          text-transform: uppercase;
+          width: 100%;
+        }
+      }
+      .no-suggestions {
+        width: 100%;
+        height: 100px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+
+        h2 {
+          font-size: 15px;
+          font-family: "Raleway", sans-serif;
+          letter-spacing: 0.2em;
+          font-weight: 500;
+          font-style: normal;
+          color: #2f2519;
+          text-transform: uppercase;
+          width: 100%;
+        }
+      }
       .faq-title {
         width: 100%;
         height: 60px;

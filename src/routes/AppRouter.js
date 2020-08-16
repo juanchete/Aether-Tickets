@@ -35,6 +35,11 @@ function AppRouter() {
         <Route exact path="/signup" component={RegistroClientes} />
         <Route exact path="/forgot-password" component={ForgotPassword} />
         <UserRoutes exact path="/new-ticket" component={NewTicket} />
+        <UserRoutes
+          exact
+          path="/new-ticket/:id"
+          component={() => <NewTicket categoryTicket={true} />}
+        />
         <UserRoutes exact path="/faq" component={Faq} />
         <UserRoutes
           exact

@@ -14,6 +14,8 @@ export default function SelectTicket({
   max,
   error,
   fontSize,
+  options,
+  disable,
   marginBottom,
   marginRight,
   children,
@@ -28,10 +30,17 @@ export default function SelectTicket({
       marginRight={marginRight}
     >
       <label>{label}</label>
-      <select id={id} onChange={onChange} onBlur={onBlur} value={value}>
+      <select
+        id={id}
+        onChange={onChange}
+        onBlur={onBlur}
+        value={value}
+        disabled={disable ? true : false}
+      >
         <option value="" label="" />
-        <option value="Login" label="Login" />
-        <option value="Register" label="Register" />
+        {options.map((option) => (
+          <option value={option.id} label={option.name} />
+        ))}
       </select>
       {error ? <h4>{error}</h4> : <h4 style={{ color: "white" }}>h</h4>}
     </Select>

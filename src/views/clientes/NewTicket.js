@@ -1,6 +1,7 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import "firebase";
 import { useUser, useFirebaseApp } from "reactfire";
+import firebase from "firebase";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import styled from "styled-components";
@@ -10,15 +11,36 @@ import Select from "../../components/inputs/SelectTicket";
 import TextEditor from "../../components/inputs/TextEditor";
 import parse from "html-react-parser";
 import { UserContext } from "../../CreateContext";
+import { useParams } from "react-router";
 
-export default function NewTicket() {
+export default function NewTicket(categoryTicket) {
   const { user, setUser } = useContext(UserContext);
   const firebase = useFirebaseApp();
   const db = firebase.firestore();
-
+  let { id } = useParams();
   const [text, setText] = useState("");
   const [content, setContent] = useState("");
   const [files, setFiles] = useState([]);
+  const [categories, setCategories] = useState();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+
+    const db = firebase.firestore();
+    return db
+      .collection("categories")
+      .orderBy("createdAt", "desc")
+      .onSnapshot((snapshot) => {
+        const categoryData = [];
+        snapshot.forEach((doc) =>
+          categoryData.push({ ...doc.data(), id: doc.id })
+        );
+        console.log(categoryData); // <------
+        setCategories(categoryData);
+        setLoading(false);
+      });
+  }, []);
   const onEditorChange = (value) => {
     setText(value);
     let texto = text;
@@ -34,7 +56,7 @@ export default function NewTicket() {
       name: user ? user.name : "",
       lastName: user ? user.lastName : "",
       email: user ? user.email : "",
-      category: "",
+      category: categoryTicket ? id : "",
     },
     validationSchema: Yup.object({
       email: Yup.string().email("Invalid Email").required("Required Field"),
@@ -85,110 +107,114 @@ export default function NewTicket() {
             <h1>Ticket</h1>
           </div>
         </div>
-        <div className="container-form">
-          <form onSubmit={formik.handleSubmit}>
-            <Input
-              color="#2f2519"
-              color2="#ff4301"
-              label="Email"
-              fontSize="10px"
-              placeholder="email"
-              id="email"
-              type="email"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.email}
-              error={
-                formik.touched.email && formik.errors.email
-                  ? `${formik.errors.email}`
-                  : null
-              }
-              disable={user ? true : false}
-            />
-            <Input
-              color="#2f2519"
-              color2="#ff4301"
-              label="Subject"
-              fontSize="10px"
-              placeholder="subject"
-              id="subject"
-              type="text"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.subject}
-              error={
-                formik.touched.subject && formik.errors.subject
-                  ? `${formik.errors.subject}`
-                  : null
-              }
-            />
-            <div className="input-name">
+        {!loading ? (
+          <div className="container-form">
+            <form onSubmit={formik.handleSubmit}>
               <Input
                 color="#2f2519"
                 color2="#ff4301"
-                label="Name"
+                label="Email"
                 fontSize="10px"
-                placeholder="name"
-                marginRight="20px"
-                id="name"
-                type="text"
+                placeholder="email"
+                id="email"
+                type="email"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                value={formik.values.name}
-                disable={user ? true : false}
+                value={formik.values.email}
                 error={
-                  formik.touched.name && formik.errors.name
-                    ? `${formik.errors.name}`
+                  formik.touched.email && formik.errors.email
+                    ? `${formik.errors.email}`
                     : null
                 }
+                disable={user ? true : false}
               />
               <Input
                 color="#2f2519"
                 color2="#ff4301"
-                label="Last Name"
+                label="Subject"
                 fontSize="10px"
-                placeholder="lastName"
-                id="lastName"
+                placeholder="subject"
+                id="subject"
                 type="text"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                value={formik.values.lastName}
-                disable={user ? true : false}
+                value={formik.values.subject}
                 error={
-                  formik.touched.lastName && formik.errors.lastName
-                    ? `${formik.errors.lastName}`
+                  formik.touched.subject && formik.errors.subject
+                    ? `${formik.errors.subject}`
                     : null
                 }
               />
-            </div>
-            <Select
-              color="#2f2519"
-              color2="#ff4301"
-              label="Category"
-              id="category"
-              fontSize="10px"
-              type="select"
-              placeholder="category"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.category}
-              error={
-                formik.touched.category && formik.errors.category
-                  ? `${formik.errors.category}`
-                  : null
-              }
-            />
-            <TextEditor
-              onEditorChange={onEditorChange}
-              onFilesChange={onFilesChange}
-            />
-            <div className="button-container">
-              <button className="button-submit" type="submit">
-                <h2>Submit</h2>
-              </button>
-            </div>
-          </form>
-        </div>
+              <div className="input-name">
+                <Input
+                  color="#2f2519"
+                  color2="#ff4301"
+                  label="Name"
+                  fontSize="10px"
+                  placeholder="name"
+                  marginRight="20px"
+                  id="name"
+                  type="text"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.name}
+                  disable={user ? true : false}
+                  error={
+                    formik.touched.name && formik.errors.name
+                      ? `${formik.errors.name}`
+                      : null
+                  }
+                />
+                <Input
+                  color="#2f2519"
+                  color2="#ff4301"
+                  label="Last Name"
+                  fontSize="10px"
+                  placeholder="lastName"
+                  id="lastName"
+                  type="text"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.lastName}
+                  disable={user ? true : false}
+                  error={
+                    formik.touched.lastName && formik.errors.lastName
+                      ? `${formik.errors.lastName}`
+                      : null
+                  }
+                />
+              </div>
+              <Select
+                color="#2f2519"
+                color2="#ff4301"
+                label="Category"
+                id="category"
+                fontSize="10px"
+                type="select"
+                options={categories}
+                placeholder="category"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.category}
+                disable={categoryTicket ? true : false}
+                error={
+                  formik.touched.category && formik.errors.category
+                    ? `${formik.errors.category}`
+                    : null
+                }
+              />
+              <TextEditor
+                onEditorChange={onEditorChange}
+                onFilesChange={onFilesChange}
+              />
+              <div className="button-container">
+                <button className="button-submit" type="submit">
+                  <h2>Submit</h2>
+                </button>
+              </div>
+            </form>
+          </div>
+        ) : null}
       </div>
     </HomeStyle>
   );
