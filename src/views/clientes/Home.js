@@ -349,7 +349,13 @@ export default function Home() {
           </li>
           <li className="label-2"></li>
         </ul>
-        {!loading ? <TicketCard tickets={tickets} /> : null}
+        {!loading ? (
+          <>
+            {tickets.map((ticket) => (
+              <TicketCard ticket={ticket} />
+            ))}
+          </>
+        ) : null}
       </div>
     </HomeStyle>
   );

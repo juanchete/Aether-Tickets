@@ -1,69 +1,103 @@
 import React, { useEffect, useState } from "react";
+import "firebase";
+import firebase from "firebase";
+import { useUser, useFirebaseApp } from "reactfire";
 import styled from "styled-components";
 import Tags from "../Tags";
 import PopUp from "../PopUp";
 import { BsThreeDots } from "react-icons/bs";
 import { NavLink, withRouter } from "react-router-dom";
 
-export default function TicketCard({ color, color2, tickets, filter }) {
+export default function TicketCard({ color, color2, ticket, filter }) {
+  const firebaseReact = useFirebaseApp();
+  const db = firebaseReact.firestore();
   const [ticketsFiltered, setTickets] = useState();
   const [loading, setLoading] = useState(true);
+  const [asesor, setAsesor] = useState();
   let [path, setPath] = React.useState("/asesores/ticket/");
   useEffect(() => {
-    setLoading(true);
-    if (filter) {
-      setTickets(tickets.filter((ticket) => ticket.status === filter));
-    } else {
-      setTickets(tickets);
+    if (ticket.asesor) {
+      setLoading(true);
+      let docRef = db.collection("asesores").doc(ticket.asesor);
+      docRef
+        .get()
+        .then(function (doc) {
+          if (doc.exists) {
+            console.log("Document data:", doc.data());
+            setAsesor(doc.data());
+          } else {
+            // doc.data() will be undefined in this case
+            console.log("No such document!");
+          }
+        })
+        .catch(function (error) {
+          console.log("Error getting document:", error);
+        });
     }
     setLoading(false);
-  }, [filter]);
+  }, [ticket]);
 
-  const click = () => {
-    return (
-      <div className="option" style={{ width: "300px" }}>
-        HOLA
-      </div>
-    );
+  const prueba = () => {
+    console.log(ticketsFiltered);
   };
+
+  const getAsesor = async (ticket, id) => {
+    const db = firebaseReact.firestore();
+    let docRef = db.collection("asesores").doc(id);
+    await docRef.get().then(function (doc) {
+      if (doc.exists) {
+        console.log("Document data:", doc.data());
+        let name = {
+          name: doc.data().name,
+          lastName: doc.data().lastName,
+          id: id,
+        };
+        setAsesor(name);
+      } else {
+        // doc.data() will be undefined in this case
+        console.log("No such document!");
+      }
+    });
+  };
+
   return (
     <>
       {!loading ? (
         <>
-          {ticketsFiltered.map((ticket) => (
-            <Card color={color} color2={color2}>
-              <ul className="ticket-view">
-                <NavLink className="data" to={path + ticket.id}>
+          <Card color={color} color2={color2}>
+            <ul className="ticket-view">
+              <NavLink className="data" to={path + ticket.id}>
+                <h2>
+                  {ticket.usuario.name} {ticket.usuario.lastName}
+                </h2>
+                <h3>{ticket.usuario.email}</h3>
+              </NavLink>
+              <NavLink className="data" to={path + ticket.id}>
+                <h2>{ticket.subject}</h2>
+              </NavLink>
+              <NavLink className="data" to={path + ticket.id}>
+                {ticket.asesor && asesor ? (
                   <h2>
-                    {ticket.usuario.name} {ticket.usuario.lastName}
+                    {asesor.name} {asesor.lastName}
                   </h2>
-                  <h3>{ticket.usuario.email}</h3>
-                </NavLink>
-                <NavLink className="data" to={path + ticket.id}>
-                  <h2>{ticket.subject}</h2>
-                </NavLink>
-                <NavLink className="data" to={path + ticket.id}>
-                  {ticket.asesors.length > 0 ? (
-                    <h2>{ticket.asesors[ticket.asesors.length - 1]}</h2>
-                  ) : (
-                    <h2>Unnasigned</h2>
-                  )}
-                </NavLink>
-                <NavLink className="data" to={path + ticket.id}>
-                  <Tags title={ticket.priority} color="#EE220C" />
-                </NavLink>
-                <NavLink className="data" to={path + ticket.id}>
-                  <Tags title={ticket.status} color="#29E2F3" />
-                </NavLink>
-                <NavLink className="data" to={path + ticket.id}>
-                  <h2>CREATED AT</h2>
-                </NavLink>
-                <li className="data-2">
-                  <PopUp ticket={ticket} />
-                </li>
-              </ul>
-            </Card>
-          ))}
+                ) : (
+                  <h2>Unnasigned</h2>
+                )}
+              </NavLink>
+              <NavLink className="data" to={path + ticket.id}>
+                <Tags title={ticket.priority} color="#EE220C" />
+              </NavLink>
+              <NavLink className="data" to={path + ticket.id}>
+                <Tags title={ticket.status} color="#29E2F3" />
+              </NavLink>
+              <NavLink className="data" to={path + ticket.id}>
+                <h2>CREATED AT</h2>
+              </NavLink>
+              <li className="data-2">
+                <PopUp ticket={ticket} prueba={prueba} getAsesor={getAsesor} />
+              </li>
+            </ul>
+          </Card>
         </>
       ) : null}
     </>

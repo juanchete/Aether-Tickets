@@ -1,11 +1,18 @@
 import React, { useEffect, useState, useContext } from "react";
 import styled from "styled-components";
 import "firebase";
+import firebase from "firebase";
 import { useUser, useFirebaseApp } from "reactfire";
 import { UserContext } from "../CreateContext";
 import { BsThreeDots } from "react-icons/bs";
 
-export default function TicketCard({ color, color2, ticket }) {
+export default function TicketCard({
+  color,
+  color2,
+  ticket,
+  prueba,
+  getAsesor,
+}) {
   const firebaseReact = useFirebaseApp();
   const { user, setUser } = useContext(UserContext);
   const db = firebaseReact.firestore();
@@ -15,9 +22,21 @@ export default function TicketCard({ color, color2, ticket }) {
 
   const assumeTicket = async () => {
     try {
-      await db.collection("tickets").doc(ticket.id).update({
-        asesor: "Valeskaa",
-      });
+      await db
+        .collection("tickets")
+        .doc(ticket.id)
+        .update({
+          asesor: user.id,
+          asesores: firebase.firestore.FieldValue.arrayUnion(user.id),
+        })
+        .then(() => {
+          getAsesor(ticket, user.id);
+
+          var ref = db.collection("asesores").doc(user.id);
+          ref.update({
+            tickets: firebase.firestore.FieldValue.arrayUnion(ticket.id),
+          });
+        });
     } catch (error) {}
   };
 

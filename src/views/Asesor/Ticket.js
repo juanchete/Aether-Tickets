@@ -1,18 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "firebase";
 import firebase from "firebase";
 import { useUser, useFirebaseApp } from "reactfire";
 import styled from "styled-components";
 import SidebarAdmin from "../../components/sidebars/SidebarAdmin";
 import TextEditor from "../../components/inputs/TextEditor";
+import { UserContext } from "../../CreateContext";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { useParams } from "react-router";
 
 export default function TicketAsesor() {
+  const { user, setUser } = useContext(UserContext);
   const firebaseReact = useFirebaseApp();
   const db = firebaseReact.firestore();
   const [text, setText] = useState("");
   const [ticket, setTicket] = useState();
+  const [asesor, setAsesor] = useState();
   const [toggleDet, setToggleDet] = useState(false);
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -26,7 +29,6 @@ export default function TicketAsesor() {
   };
   useEffect(() => {
     setLoading(true);
-    console.log("Entre");
     const db = firebase.firestore();
 
     let docRef = db.collection("tickets").doc(id);
@@ -34,7 +36,22 @@ export default function TicketAsesor() {
       .get()
       .then(function (doc) {
         if (doc.exists) {
-          console.log(doc.data());
+          if (doc.data().asesor) {
+            let docRef2 = db.collection("asesores").doc(doc.data().asesor);
+            docRef2
+              .get()
+              .then(function (doc2) {
+                if (doc2.exists) {
+                  setAsesor(doc2.data());
+                } else {
+                  // doc.data() will be undefined in this case
+                  console.log("No such document!");
+                }
+              })
+              .catch(function (error) {
+                console.log("Error getting document:", error);
+              });
+          }
           setTicket(doc.data());
           setLoading(false);
         } else {
@@ -47,7 +64,50 @@ export default function TicketAsesor() {
         console.log("Error getting document:", error);
       });
     setLoading(false);
-  }, []);
+  }, [ticket]);
+
+  const assumeTicket = async () => {
+    console.log(id);
+    console.log(user.id);
+    try {
+      await db
+        .collection("tickets")
+        .doc(id)
+        .update({
+          asesor: user.id,
+          asesores: firebase.firestore.FieldValue.arrayUnion(user.id),
+        })
+        .then(() => {
+          let newTicket = ticket;
+          newTicket.asesor = user.id;
+          setTicket(newTicket);
+          getAsesor(newTicket, user.id);
+          var ref = db.collection("asesores").doc(user.id);
+          ref.update({
+            tickets: firebase.firestore.FieldValue.arrayUnion(id),
+          });
+        });
+    } catch (error) {}
+  };
+
+  const getAsesor = async (ticket, id) => {
+    const db = firebaseReact.firestore();
+    let docRef = db.collection("asesores").doc(id);
+    await docRef.get().then(function (doc) {
+      if (doc.exists) {
+        console.log("Document data:", doc.data());
+        let name = {
+          name: doc.data().name,
+          lastName: doc.data().lastName,
+          id: id,
+        };
+        setAsesor(name);
+      } else {
+        // doc.data() will be undefined in this case
+        console.log("No such document!");
+      }
+    });
+  };
   return (
     <HomeStyle toggleDet={toggleDet} screenWidth={window.innerWidth}>
       <SidebarAdmin ticket={true} />
@@ -119,9 +179,19 @@ export default function TicketAsesor() {
                 </div>
                 <div className="ticket-detail-info-item">
                   <h2>Assigned to: </h2>
-                  <h3>
-                    {ticket.usuario.name} {ticket.usuario.lastName}
-                  </h3>
+                  {ticket.asesor && asesor ? (
+                    <h3>
+                      {asesor.name} {asesor.lastName}
+                    </h3>
+                  ) : (
+                    <button
+                      type="button"
+                      className="assume-ticket"
+                      onClick={assumeTicket}
+                    >
+                      <h2>Assume</h2>
+                    </button>
+                  )}
                 </div>
                 <div className="ticket-detail-info-item">
                   <h2>Rating: </h2>
@@ -133,7 +203,9 @@ export default function TicketAsesor() {
                   <h2>Requester </h2>
                 </div>
                 <div className="ticket-detail-info-item">
-                  <h2>Juan Lopez</h2>
+                  <h2>
+                    {ticket.usuario.name} {ticket.usuario.lastName}
+                  </h2>
                 </div>
                 <div className="ticket-detail-info-item">
                   <h2>Total Tickets: </h2>
@@ -259,6 +331,33 @@ const HomeStyle = styled.div`
       .ticket-detail {
         width: 20vw;
         height: 500px;
+
+        .assume-ticket {
+          height: 30px;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: center;
+          width: fit-content;
+          margin-right: 10px !important;
+          padding-left: 10px;
+          padding-right: 10px;
+          border: 2px solid white;
+          border-radius: 20px;
+          background: white;
+
+          h2 {
+            font-size: 10px !important;
+            font-family: "Raleway", sans-serif;
+            letter-spacing: 0.2em;
+            font-weight: 500;
+            font-style: normal;
+            margin-left: 0px !important;
+            color: #fa7d09 !important;
+            text-transform: uppercase;
+            width: 100%;
+          }
+        }
         .button-container {
           width: 100%;
           height: 80px;

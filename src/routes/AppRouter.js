@@ -57,7 +57,7 @@ function AppRouter() {
           path="/asesores/all-clients"
           component={AllClients}
         />
-        <Route exact path="/asesores/ticket/:id" component={Ticket} />
+        <Route exact path="/ticket/:id" component={Ticket} />
         <InviteRoutes exact path="/sign-up-asesores" component={SignUpAsesor} />
 
         <Route exact path="/asesores/login" component={LoginAsesores} />
@@ -106,7 +106,11 @@ function AppRouter() {
           path="/asesores/change-password"
           component={ChangePassword}
         />
-        <AsesorRoutes exact path="/asesores/ticket" component={TicketAsesor} />
+        <AsesorRoutes
+          exact
+          path="/asesores/ticket/:id"
+          component={TicketAsesor}
+        />
         <AsesorRoutes exact path="/" component={Home} />
       </Switch>
     </Router>
