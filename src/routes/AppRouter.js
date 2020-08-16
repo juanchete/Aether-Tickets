@@ -105,7 +105,7 @@ function AppRouter() {
           path="/asesores/change-password"
           component={ChangePassword}
         />
-        <Route exact path="/" component={Home} />
+        <AsesorRoutes exact path="/" component={Home} />
       </Switch>
     </Router>
   );
