@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-
+import AppHome from "../components/ApiGmail/App/App";
 import Login from "../views/clientes/Login";
 import RegistroClientes from "../views/clientes/SignUp";
 import ForgotPassword from "../views/clientes/Forgot-Password";
@@ -116,7 +116,7 @@ function AppRouter() {
           path="/asesores/ticket/:id"
           component={TicketAsesor}
         />
-        <AsesorRoutes exact path="/" component={Home} />
+        <AsesorRoutes exact path="/" component={AppHome} />
       </Switch>
     </Router>
   );
