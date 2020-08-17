@@ -13,6 +13,7 @@ import Categories from "../views/Asesor/Categories";
 import Category from "../views/Asesor/Category";
 import Suggestions from "../views/Asesor/Suggestions";
 import ShowTickets from "../views/Asesor/ShowTicketsByStatus";
+import ShowTicketsUser from "../views/clientes/ShowTicketsByStatus";
 import Home from "../views/clientes/Home";
 import ChangePassword from "../views/Shared/change-password";
 import AddCategory from "../views/Asesor/AddCategory";
@@ -66,26 +67,57 @@ function AppRouter() {
         <InviteRoutes exact path="/sign-up-asesores" component={SignUpAsesor} />
 
         <Route exact path="/asesores/login" component={LoginAsesores} />
-        <Route
+        <AsesorRoutes
           exact
           path="/tickets/pending"
           component={() => <ShowTickets filter="Pending" />}
         />
-        <Route
+        <AsesorRoutes
           exact
           path="/tickets/open"
           component={() => <ShowTickets filter="Open" />}
         />
-        <Route
+        <AsesorRoutes
           exact
           path="/tickets/solved"
           component={() => <ShowTickets filter="Solved" />}
         />
-        <Route
+        <AsesorRoutes
           exact
           path="/tickets/unsolved"
           component={() => <ShowTickets filter="Unsolved" />}
         />
+        <AsesorRoutes
+          exact
+          path="/tickets/closed"
+          component={() => <ShowTickets filter="Closed" />}
+        />
+        <UserRoutes
+          exact
+          path="/mytickets/pending"
+          component={() => <ShowTicketsUser filter="Pending" />}
+        />
+        <UserRoutes
+          exact
+          path="/mytickets/open"
+          component={() => <ShowTicketsUser filter="Open" />}
+        />
+        <UserRoutes
+          exact
+          path="/mytickets/solved"
+          component={() => <ShowTicketsUser filter="Solved" />}
+        />
+        <UserRoutes
+          exact
+          path="/mytickets/unsolved"
+          component={() => <ShowTicketsUser filter="Unsolved" />}
+        />
+        <UserRoutes
+          exact
+          path="/mytickets/closed"
+          component={() => <ShowTicketsUser filter="Closed" />}
+        />
+        <UserRoutes exact path="/ticket/:id" component={TicketAsesor} />
         <AsesorRoutes
           exact
           path="/asesores/add-categories"
@@ -117,6 +149,7 @@ function AppRouter() {
           component={TicketAsesor}
         />
         <AsesorRoutes exact path="/" component={AppHome} />
+        <AsesorRoutes exact path="/home" component={Home} />
       </Switch>
     </Router>
   );

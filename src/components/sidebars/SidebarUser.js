@@ -8,14 +8,12 @@ import { FaEdit } from "react-icons/fa";
 import { FaChartBar } from "react-icons/fa";
 import { IoMdSettings } from "react-icons/io";
 import { UserContext } from "../../CreateContext";
-import Cookies from 'js-cookie'
+import { NavLink, withRouter } from "react-router-dom";
+import Cookies from "js-cookie";
 import { Redirect } from "react-router";
 
-
-
 export default function SidebarUser({ ticket }) {
-
-  const {user, setUser} = useContext(UserContext)
+  const { user, setUser } = useContext(UserContext);
 
   const [tickets, setTickets] = React.useState(ticket ? true : false);
   const [settings, setSettings] = React.useState(false);
@@ -26,51 +24,42 @@ export default function SidebarUser({ ticket }) {
   const [log, setLog] = React.useState(user);
 
   useEffect(() => {
-    setLog(user)
-  }, [user])
-
+    setLog(user);
+  }, [user]);
 
   const firebase = useFirebaseApp();
 
   const renderRedirect = () => {
     if (flag) {
-      return <Redirect to='/login' />
+      return <Redirect to="/login" />;
     }
-  }
+  };
 
   const renderRedirectPassword = () => {
     if (changePassword) {
-      return <Redirect to='/user/change-password' />
+      return <Redirect to="/user/change-password" />;
     }
-  }
-
+  };
 
   const logout = async () => {
     try {
+      await firebase.auth().signOut();
 
-      await firebase.auth().signOut()
+      setUser({});
 
-      setUser({})
-
-      Cookies.remove('user')
+      Cookies.remove("user");
       sessionStorage.removeItem("user");
 
-
-      setFlag(true)
-      
-          
-      } catch (error) {
-          console.log(error);
-      }
+      setFlag(true);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
-
-    
-    
     <Sidebar>
-     {renderRedirect()} 
-     {renderRedirectPassword()}
+      {renderRedirect()}
+      {renderRedirectPassword()}
       <div className="navbar">
         <ul className="utilities">
           <li className="utilities-item"></li>
@@ -88,13 +77,15 @@ export default function SidebarUser({ ticket }) {
           </li>
         </ul>
         <ul className="user">
-          <li className="user-item"
-              onClick={(event) => {
-                setCurrentUser(false);
-                setTickets(false);
-                setSettings(true);
-                setOpen(!open);
-              }}>
+          <li
+            className="user-item"
+            onClick={(event) => {
+              setCurrentUser(false);
+              setTickets(false);
+              setSettings(true);
+              setOpen(!open);
+            }}
+          >
             <IoMdSettings className="icon" />
             <h4>Settings</h4>
           </li>
@@ -137,18 +128,21 @@ export default function SidebarUser({ ticket }) {
             </ul>
             <ul className="nav-links3">
               <h2>Statuses</h2>
-              <li className="link-1">
+              <NavLink to="/mytickets/open" className="link-1">
                 <h3>Open</h3>
-              </li>
-              <li className="link-1">
-                <h3>Solved</h3>
-              </li>
-              <li className="link-1">
+              </NavLink>
+              <NavLink to="/mytickets/pending" className="link-1">
                 <h3>Pending</h3>
-              </li>
-              <li className="link-1">
+              </NavLink>
+              <NavLink to="/mytickets/closed" className="link-1">
+                <h3>Closed</h3>
+              </NavLink>
+              <NavLink to="/mytickets/solved" className="link-1">
+                <h3>Solved</h3>
+              </NavLink>
+              <NavLink to="/mytickets/unsolved" className="link-1">
                 <h3>Unsolved</h3>
-              </li>
+              </NavLink>
             </ul>
           </div>
           {open ? (
@@ -184,18 +178,21 @@ export default function SidebarUser({ ticket }) {
               </ul>
               <ul className="nav-links3">
                 <h2>Statuses</h2>
-                <li className="link-1">
+                <NavLink to="/mytickets/open" className="link-1">
                   <h3>Open</h3>
-                </li>
-                <li className="link-1">
-                  <h3>Solved</h3>
-                </li>
-                <li className="link-1">
+                </NavLink>
+                <NavLink to="/mytickets/pending" className="link-1">
                   <h3>Pending</h3>
-                </li>
-                <li className="link-1">
+                </NavLink>
+                <NavLink to="/mytickets/closed" className="link-1">
+                  <h3>Closed</h3>
+                </NavLink>
+                <NavLink to="/mytickets/solved" className="link-1">
+                  <h3>Solved</h3>
+                </NavLink>
+                <NavLink to="/mytickets/unsolved" className="link-1">
                   <h3>Unsolved</h3>
-                </li>
+                </NavLink>
               </ul>
             </div>
           ) : null}
@@ -264,34 +261,37 @@ export default function SidebarUser({ ticket }) {
             <div className="navbar-title">
               <h2>Usuarioss</h2>
             </div>
-            { log  ? (
-
-            <ul className="nav-links2">
-              <li className="link-1"
-                 onClick={(event) => {
-                 setchangePassword(true);
-                  }}>
-                <h3>Change Passwword</h3>
-              </li>
-               <li className="link-1"
-                 onClick={(event) => {
-                 logout();
-                  }}>
-                <h3>Log Out</h3>
-              </li>
-            </ul>
-
+            {log ? (
+              <ul className="nav-links2">
+                <li
+                  className="link-1"
+                  onClick={(event) => {
+                    setchangePassword(true);
+                  }}
+                >
+                  <h3>Change Passwword</h3>
+                </li>
+                <li
+                  className="link-1"
+                  onClick={(event) => {
+                    logout();
+                  }}
+                >
+                  <h3>Log Out</h3>
+                </li>
+              </ul>
             ) : (
               <ul className="nav-links2">
-               <li className="link-1"
-                 onClick={(event) => {
-                  setFlag(true)
-                  }}>
-                <h3>Iniciar Sesion</h3>
-              </li>
-            </ul>
-
-            ) }
+                <li
+                  className="link-1"
+                  onClick={(event) => {
+                    setFlag(true);
+                  }}
+                >
+                  <h3>Iniciar Sesion</h3>
+                </li>
+              </ul>
+            )}
           </div>
           {open ? (
             <div className="navbar-especific-phone">
@@ -343,7 +343,6 @@ export default function SidebarUser({ ticket }) {
           ) : null}
         </>
       ) : null}
-      
     </Sidebar>
   );
 }

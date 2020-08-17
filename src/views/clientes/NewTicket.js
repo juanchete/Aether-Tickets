@@ -15,8 +15,8 @@ import { useParams } from "react-router";
 
 export default function NewTicket(categoryTicket) {
   const { user, setUser } = useContext(UserContext);
-  const firebase = useFirebaseApp();
-  const db = firebase.firestore();
+  const firebaseReact = useFirebaseApp();
+  const db = firebaseReact.firestore();
   let { id } = useParams();
   const [text, setText] = useState("");
   const [content, setContent] = useState("");
@@ -27,7 +27,7 @@ export default function NewTicket(categoryTicket) {
   useEffect(() => {
     setLoading(true);
 
-    const db = firebase.firestore();
+    const db = firebaseReact.firestore();
     return db
       .collection("categories")
       .orderBy("createdAt", "desc")
@@ -81,18 +81,32 @@ export default function NewTicket(categoryTicket) {
             date: new Date(),
           })
           .then(async function (docRef) {
-            await db.collection("tickets").add({
-              usuario: { email: email, name: name, lastName: lastName },
+            const { id } = await db.collection("tickets").add({
+              usuario: {
+                id: user ? user.id : null,
+                email: email,
+                name: name,
+                lastName: lastName,
+              },
               subject: subject,
               category: category,
               description: content,
               asesors: [],
               asesor: null,
               messages: [docRef],
-              status: "Pending",
+              status: "Open",
               priority: "Low",
               createdAt: new Date(),
             });
+
+            if (user) {
+              console.log("Entre");
+              console.log(docRef);
+              var ref = db.collection("usuarios").doc(user.id);
+              ref.update({
+                tickets: firebase.firestore.FieldValue.arrayUnion(id),
+              });
+            }
           });
       } catch (error) {}
     },

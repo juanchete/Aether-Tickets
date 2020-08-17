@@ -34,27 +34,27 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
 
   const renderRedirect = () => {
     if (flag) {
-      return <Redirect to='/invite-register' />
+      return <Redirect to="/invite-register" />;
     }
-  }
+  };
 
   const renderRedirectPassword = () => {
     if (changePassword) {
-      return <Redirect to='/asesores/change-password' />
+      return <Redirect to="/asesores/change-password" />;
     }
-  }
+  };
 
   const renderRedirectAllAsessors = () => {
     if (allAsesors) {
-      return <Redirect to='/asesores/all-asesors' />
+      return <Redirect to="/asesores/all-asesors" />;
     }
-  }
+  };
 
   const renderRedirectAllUsers = () => {
     if (allClients) {
-      return <Redirect to='/asesores/all-clients' />
+      return <Redirect to="/asesores/all-clients" />;
     }
-  }
+  };
 
   const logout = async () => {
     try {
@@ -81,10 +81,10 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
       <AddCategory show={categoryShow} showCategory={showCategory} />
       <AddSuggestion show={suggestionShow} showSuggestion={showSuggestion} />
       <Sidebar categories={category}>
-      {renderRedirect()} 
-      {renderRedirectPassword()}
-      {renderRedirectAllAsessors()}
-      {renderRedirectAllUsers()}
+        {renderRedirect()}
+        {renderRedirectPassword()}
+        {renderRedirectAllAsessors()}
+        {renderRedirectAllUsers()}
         <div className="navbar">
           <ul className="utilities">
             <li className="utilities-item"></li>
@@ -203,11 +203,14 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
                 <NavLink to="/tickets/open" className="link-1">
                   <h3>Open</h3>
                 </NavLink>
-                <NavLink to="/tickets/solved" className="link-1">
-                  <h3>Solved</h3>
-                </NavLink>
                 <NavLink to="/tickets/pending" className="link-1">
                   <h3>Pending</h3>
+                </NavLink>
+                <NavLink to="/tickets/closed" className="link-1">
+                  <h3>Closed</h3>
+                </NavLink>
+                <NavLink to="/tickets/solved" className="link-1">
+                  <h3>Solved</h3>
                 </NavLink>
                 <NavLink to="/tickets/unsolved" className="link-1">
                   <h3>Unsolved</h3>
@@ -247,18 +250,21 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
                 </ul>
                 <ul className="nav-links3">
                   <h2>Statuses</h2>
-                  <li className="link-1">
+                  <NavLink to="/tickets/open" className="link-1">
                     <h3>Open</h3>
-                  </li>
-                  <li className="link-1">
-                    <h3>Solved</h3>
-                  </li>
-                  <li className="link-1">
+                  </NavLink>
+                  <NavLink to="/tickets/pending" className="link-1">
                     <h3>Pending</h3>
-                  </li>
-                  <li className="link-1">
+                  </NavLink>
+                  <NavLink to="/tickets/closed" className="link-1">
+                    <h3>Closed</h3>
+                  </NavLink>
+                  <NavLink to="/tickets/solved" className="link-1">
+                    <h3>Solved</h3>
+                  </NavLink>
+                  <NavLink to="/tickets/unsolved" className="link-1">
                     <h3>Unsolved</h3>
-                  </li>
+                  </NavLink>
                 </ul>
               </div>
             ) : null}
@@ -278,26 +284,34 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
                   </div>
                 </li>
               </ul>
-              { user.role == 'admin' ? (<ul className="nav-links">
-                <li className="link-1"
-                onClick={(event) => {
-                  setAllAsesors(true);
-                }}>
-                  <h3>All Asesors</h3>
-                  <div className="counter">
-                    <h4>4</h4>
-                  </div>
-                </li>
-                <li className="link-1"
-                 onClick={(event) => {
-                 setAllClients(true);
-                  }}>
-                <h3>All Clients</h3>
-                <div className="counter">
-                    <h4>4</h4>
-                  </div>
-              </li>
-              </ul>) : (<></>)}
+              {user.role == "admin" ? (
+                <ul className="nav-links">
+                  <li
+                    className="link-1"
+                    onClick={(event) => {
+                      setAllAsesors(true);
+                    }}
+                  >
+                    <h3>All Asesors</h3>
+                    <div className="counter">
+                      <h4>4</h4>
+                    </div>
+                  </li>
+                  <li
+                    className="link-1"
+                    onClick={(event) => {
+                      setAllClients(true);
+                    }}
+                  >
+                    <h3>All Clients</h3>
+                    <div className="counter">
+                      <h4>4</h4>
+                    </div>
+                  </li>
+                </ul>
+              ) : (
+                <></>
+              )}
             </div>
             {open ? (
               <div className="navbar-especific-phone">
@@ -405,16 +419,20 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
                 <h2>Settings</h2>
               </div>
               <ul className="nav-links">
-              <li className="link-1"
-                 onClick={(event) => {
-                 setChangePassword(true);
-                  }}>
-                <h3>Change Passwword</h3>
-              </li>
-                <li className="link-1"
-                onClick={(event) => {
-                  logout();
-                }}>
+                <li
+                  className="link-1"
+                  onClick={(event) => {
+                    setChangePassword(true);
+                  }}
+                >
+                  <h3>Change Passwword</h3>
+                </li>
+                <li
+                  className="link-1"
+                  onClick={(event) => {
+                    logout();
+                  }}
+                >
                   <h3>Log Out</h3>
                 </li>
               </ul>
@@ -442,27 +460,36 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
               <div className="navbar-title">
                 <h2>Hola {user.name}</h2>
               </div>
-              { user.role == 'admin' ? (<ul className="nav-links">
-                <li className="link-1"
-                onClick={(event) => {
-                  setFlag(true);
-                }}>
-                  <h3>Invitar a Asesor</h3>
-                </li>
-                <li className="link-1"
-                 onClick={(event) => {
-                 setChangePassword(true);
-                  }}>
-                <h3>Change Passwword</h3>
-              </li>
-                <li className="link-1"
-                onClick={(event) => {
-                  logout();
-                }}>
-                  <h3>Log Out</h3>
-                </li>
-              </ul>) : (<></>)}
-              
+              {user.role == "admin" ? (
+                <ul className="nav-links">
+                  <li
+                    className="link-1"
+                    onClick={(event) => {
+                      setFlag(true);
+                    }}
+                  >
+                    <h3>Invitar a Asesor</h3>
+                  </li>
+                  <li
+                    className="link-1"
+                    onClick={(event) => {
+                      setChangePassword(true);
+                    }}
+                  >
+                    <h3>Change Passwword</h3>
+                  </li>
+                  <li
+                    className="link-1"
+                    onClick={(event) => {
+                      logout();
+                    }}
+                  >
+                    <h3>Log Out</h3>
+                  </li>
+                </ul>
+              ) : (
+                <></>
+              )}
             </div>
             {open ? (
               <div className="navbar-especific-phone">

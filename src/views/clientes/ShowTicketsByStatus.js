@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import "firebase";
 import { useUser, useFirebaseApp } from "reactfire";
 import styled from "styled-components";
-import SidebarAdmin from "../../components/sidebars/SidebarAdmin";
-import TicketCard from "../../components/cards/TicketCard";
+import SidebarUser from "../../components/sidebars/SidebarUser";
+import TicketCard from "../../components/cards/UserCard";
+import { UserContext } from "../../CreateContext";
 
 export default function TicketsByStatus({ filter }) {
+  const { user, setUser } = useContext(UserContext);
   const firebase = useFirebaseApp();
   const [tickets, setTickets] = useState();
   const [loading, setLoading] = useState(true);
@@ -18,25 +20,44 @@ export default function TicketsByStatus({ filter }) {
     setLoading(true);
     console.log(filter);
     const db = firebase.firestore();
-    return db
-      .collection("tickets")
-      .where("status", "==", filter)
-      .orderBy("createdAt", "desc")
-      .onSnapshot((snapshot) => {
-        const ticketData = [];
-        snapshot.forEach((doc) =>
-          ticketData.push({ ...doc.data(), id: doc.id })
-        );
-        console.log(ticketData); // <------
-        setTickets(ticketData);
-        setLoading(false);
+    let docRef = db.collection("usuarios").doc(user.id);
+    docRef
+      .get()
+      .then(function (doc) {
+        if (doc.exists) {
+          let usuario = {
+            email: doc.data().email,
+            name: doc.data().name,
+            lastName: doc.data().lastName,
+            id: user.id,
+          };
+          db.collection("tickets")
+            .where("usuario", "==", usuario)
+            .where("status", "==", filter)
+            .orderBy("createdAt", "desc")
+            .onSnapshot((snapshot) => {
+              const ticketData = [];
+              snapshot.forEach((doc) =>
+                ticketData.push({ ...doc.data(), id: doc.id })
+              );
+              console.log(ticketData); // <------
+              setTickets(ticketData);
+              setLoading(false);
+            });
+        } else {
+          // doc.data() will be undefined in this case
+          console.log("No such document!");
+          setLoading(false);
+        }
+      })
+      .catch(function (error) {
+        console.log("Error getting document:", error);
       });
   }, [filter]);
 
-  const user = useUser();
   return (
     <HomeStyle>
-      <SidebarAdmin ticket={true} />
+      <SidebarUser ticket={true} />
       <div className="home-view">
         <div className="home-view-title">
           <div style={{ display: "flex", flexDirection: "row" }}>
@@ -111,7 +132,7 @@ const HomeStyle = styled.div`
         letter-spacing: 0.2em;
         font-weight: 300;
         font-style: normal;
-        color: #fa7d09;
+        color: #ff4301;
         text-transform: uppercase;
         width: 100%;
         margin-right: 5px;
