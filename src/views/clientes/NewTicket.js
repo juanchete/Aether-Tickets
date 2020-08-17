@@ -80,7 +80,7 @@ export default function NewTicket(categoryTicket) {
             files: files,
             date: new Date(),
           })
-          .then(async function (docRef) {
+          .then(async function (doc) {
             const { id } = await db.collection("tickets").add({
               usuario: {
                 id: user ? user.id : null,
@@ -93,15 +93,18 @@ export default function NewTicket(categoryTicket) {
               description: content,
               asesors: [],
               asesor: null,
-              messages: [docRef],
+              messages: [doc.id],
               status: "Open",
               priority: "Low",
               createdAt: new Date(),
             });
+            var ref = db.collection("messages").doc(doc.id);
+            ref.update({
+              ticket: id,
+            });
 
             if (user) {
               console.log("Entre");
-              console.log(docRef);
               var ref = db.collection("usuarios").doc(user.id);
               ref.update({
                 tickets: firebase.firestore.FieldValue.arrayUnion(id),

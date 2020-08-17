@@ -8,13 +8,15 @@ import TextEditor from "../../components/inputs/TextEditor";
 import { UserContext } from "../../CreateContext";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { useParams } from "react-router";
+import moment from "moment";
 
-export default function TicketAsesor() {
+export default function Ticket() {
   const { user, setUser } = useContext(UserContext);
   const firebaseReact = useFirebaseApp();
   const db = firebaseReact.firestore();
   const [text, setText] = useState("");
   const [ticket, setTicket] = useState();
+  const [messages, setMessages] = useState();
   const [asesor, setAsesor] = useState();
   const [toggleDet, setToggleDet] = useState(false);
   const [files, setFiles] = useState([]);
@@ -44,7 +46,6 @@ export default function TicketAsesor() {
                 if (doc2.exists) {
                   setAsesor(doc2.data());
                 } else {
-                  // doc.data() will be undefined in this case
                   console.log("No such document!");
                 }
               })
@@ -52,10 +53,20 @@ export default function TicketAsesor() {
                 console.log("Error getting document:", error);
               });
           }
+          db.collection("messages")
+            .where("ticket", "==", id)
+            .orderBy("date", "desc")
+            .onSnapshot((snapshot) => {
+              const messagesData = [];
+              snapshot.forEach((doc) =>
+                messagesData.push({ ...doc.data(), id: doc.id })
+              );
+              setMessages(messagesData);
+            });
+
           setTicket(doc.data());
           setLoading(false);
         } else {
-          // doc.data() will be undefined in this case
           console.log("No such document!");
           setLoading(false);
         }
@@ -65,30 +76,6 @@ export default function TicketAsesor() {
       });
     setLoading(false);
   }, [ticket]);
-
-  const assumeTicket = async () => {
-    console.log(id);
-    console.log(user.id);
-    try {
-      await db
-        .collection("tickets")
-        .doc(id)
-        .update({
-          asesor: user.id,
-          asesores: firebase.firestore.FieldValue.arrayUnion(user.id),
-        })
-        .then(() => {
-          let newTicket = ticket;
-          newTicket.asesor = user.id;
-          setTicket(newTicket);
-          getAsesor(newTicket, user.id);
-          var ref = db.collection("asesores").doc(user.id);
-          ref.update({
-            tickets: firebase.firestore.FieldValue.arrayUnion(id),
-          });
-        });
-    } catch (error) {}
-  };
 
   const getAsesor = async (ticket, id) => {
     const db = firebaseReact.firestore();
@@ -124,7 +111,7 @@ export default function TicketAsesor() {
             />
           </div>
         </div>
-        {!loading && ticket ? (
+        {!loading && ticket && messages ? (
           <div className="container">
             <div className="chat">
               <div className="chat-screen">
@@ -158,11 +145,19 @@ export default function TicketAsesor() {
                 </div>
                 <div className="ticket-detail-info-item">
                   <h2>Created: </h2>
-                  <h3>7/08/2020</h3>
+                  <h3>
+                    {moment(ticket.createdAt.toDate())
+                      .format("DD/MM/yyyy")
+                      .toString()}
+                  </h3>
                 </div>
                 <div className="ticket-detail-info-item">
                   <h2>Last Message: </h2>
-                  <h3>7/08/2020</h3>
+                  <h3>
+                    {moment(messages[messages.length - 1].date.toDate())
+                      .fromNow()
+                      .toString()}
+                  </h3>
                 </div>
                 <div className="ticket-detail-info-item">
                   <h2>Status: </h2>

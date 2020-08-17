@@ -8,6 +8,7 @@ import TextEditor from "../../components/inputs/TextEditor";
 import { UserContext } from "../../CreateContext";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { useParams } from "react-router";
+import moment from "moment";
 
 export default function TicketAsesor() {
   const { user, setUser } = useContext(UserContext);
@@ -15,10 +16,12 @@ export default function TicketAsesor() {
   const db = firebaseReact.firestore();
   const [text, setText] = useState("");
   const [ticket, setTicket] = useState();
+  const [messages, setMessages] = useState();
   const [asesor, setAsesor] = useState();
   const [toggleDet, setToggleDet] = useState(false);
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [show, setShow] = useState(false);
   let { id } = useParams();
   const onEditorChange = (value) => {
     setText(value);
@@ -52,6 +55,17 @@ export default function TicketAsesor() {
                 console.log("Error getting document:", error);
               });
           }
+          db.collection("messages")
+            .where("ticket", "==", id)
+            .orderBy("date", "desc")
+            .onSnapshot((snapshot) => {
+              const messagesData = [];
+              snapshot.forEach((doc) =>
+                messagesData.push({ ...doc.data(), id: doc.id })
+              );
+
+              setMessages(messagesData);
+            });
           setTicket(doc.data());
           setLoading(false);
         } else {
@@ -90,6 +104,25 @@ export default function TicketAsesor() {
     } catch (error) {}
   };
 
+  const changeStatus = async (status) => {
+    if (status != ticket.status) {
+      if (status == "Delegate") {
+        try {
+          await db.collection("tickets").doc(id).update({
+            asesor: null,
+          });
+        } catch (error) {}
+      } else {
+        try {
+          await db.collection("tickets").doc(id).update({
+            status: status,
+          });
+        } catch (error) {}
+      }
+    }
+    setShow(false);
+  };
+
   const getAsesor = async (ticket, id) => {
     const db = firebaseReact.firestore();
     let docRef = db.collection("asesores").doc(id);
@@ -109,7 +142,11 @@ export default function TicketAsesor() {
     });
   };
   return (
-    <HomeStyle toggleDet={toggleDet} screenWidth={window.innerWidth}>
+    <HomeStyle
+      toggleDet={toggleDet}
+      screenWidth={window.innerWidth}
+      show={show}
+    >
       <SidebarAdmin ticket={true} />
       <div className="home-view">
         <div className="home-view-title">
@@ -124,7 +161,7 @@ export default function TicketAsesor() {
             />
           </div>
         </div>
-        {!loading && ticket ? (
+        {!loading && ticket && messages ? (
           <div className="container">
             <div className="chat">
               <div className="chat-screen">
@@ -137,7 +174,15 @@ export default function TicketAsesor() {
                   onFilesChange={onFilesChange}
                 />
                 <div className="button-container">
-                  <button className="button-submit" type="submit">
+                  <button
+                    className="button-submit"
+                    type="submit"
+                    disabled={
+                      user.id === ticket.asesor && ticket.status === "Open"
+                        ? false
+                        : true
+                    }
+                  >
                     <h2>Submit</h2>
                   </button>
                 </div>
@@ -158,15 +203,60 @@ export default function TicketAsesor() {
                 </div>
                 <div className="ticket-detail-info-item">
                   <h2>Created: </h2>
-                  <h3>7/08/2020</h3>
+                  <h3>
+                    {moment(ticket.createdAt.toDate())
+                      .format("DD/MM/yyyy")
+                      .toString()}
+                  </h3>
                 </div>
                 <div className="ticket-detail-info-item">
                   <h2>Last Message: </h2>
-                  <h3>7/08/2020</h3>
+                  <h3>
+                    {moment(messages[messages.length - 1].date.toDate())
+                      .fromNow()
+                      .toString()}
+                  </h3>
                 </div>
                 <div className="ticket-detail-info-item">
                   <h2>Status: </h2>
-                  <h3>{ticket.status}</h3>
+                  <div className="button-container-status">
+                    <button
+                      type="button"
+                      className="status-button"
+                      disabled={user.id == ticket.asesor ? false : true}
+                      onClick={() => {
+                        setShow(!show);
+                      }}
+                    >
+                      <h2>{ticket.status}</h2>
+                    </button>
+                    <ul className="status-options">
+                      <li
+                        className="status-options-item"
+                        onClick={() => {
+                          changeStatus("Open");
+                        }}
+                      >
+                        <h2>Open</h2>
+                      </li>
+                      <li
+                        className="status-options-item"
+                        onClick={() => {
+                          changeStatus("Closed");
+                        }}
+                      >
+                        <h2>Closed</h2>
+                      </li>
+                      <li
+                        className="status-options-item"
+                        onClick={() => {
+                          changeStatus("Delegate");
+                        }}
+                      >
+                        <h2>Delegate</h2>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
                 <div className="ticket-detail-info-item">
                   <h2>Category: </h2>
@@ -177,26 +267,34 @@ export default function TicketAsesor() {
                 <div className="ticket-detail-info-title">
                   <h2>Responsability </h2>
                 </div>
-                <div className="ticket-detail-info-item">
-                  <h2>Assigned to: </h2>
-                  {ticket.asesor && asesor ? (
-                    <h3>
-                      {asesor.name} {asesor.lastName}
-                    </h3>
-                  ) : (
-                    <button
-                      type="button"
-                      className="assume-ticket"
-                      onClick={assumeTicket}
-                    >
-                      <h2>Assume</h2>
-                    </button>
-                  )}
-                </div>
-                <div className="ticket-detail-info-item">
-                  <h2>Rating: </h2>
-                  <h3>5</h3>
-                </div>
+
+                {ticket.asesor && asesor ? (
+                  <>
+                    <div className="ticket-detail-info-item">
+                      <h2>Assigned to: </h2>
+                      <h3>
+                        {asesor.name} {asesor.lastName}
+                      </h3>
+                    </div>
+                    <div className="ticket-detail-info-item">
+                      <h2>Rating: </h2>
+                      <h3>5</h3>
+                    </div>
+                  </>
+                ) : (
+                  <div className="ticket-detail-info-item">
+                    <h2>Assigned to: </h2>
+                    <div className="button-container-status">
+                      <button
+                        type="button"
+                        className="status-button"
+                        onClick={assumeTicket}
+                      >
+                        <h2>Assume</h2>
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
               <div className="ticket-detail-info">
                 <div className="ticket-detail-info-title">
@@ -213,7 +311,11 @@ export default function TicketAsesor() {
                 </div>
               </div>
               <div className="button-container">
-                <button className="button-submit" type="submit">
+                <button
+                  className="button-submit"
+                  type="submit"
+                  disabled={user.id === ticket.asesor ? false : true}
+                >
                   <h2>Unsolved</h2>
                 </button>
               </div>
@@ -358,6 +460,7 @@ const HomeStyle = styled.div`
             width: 100%;
           }
         }
+
         .button-container {
           width: 100%;
           height: 80px;
@@ -436,7 +539,7 @@ const HomeStyle = styled.div`
             align-items: center;
             height: auto;
             flex-direction: row;
-            margin-top: 5px;
+            margin-top: 10px;
             h2 {
               font-size: 12px;
               font-family: "Raleway", sans-serif;
@@ -446,6 +549,74 @@ const HomeStyle = styled.div`
               color: white;
               width: 100%;
               margin-left: 15px;
+            }
+            .status-options {
+              position: absolute;
+              width: 120px;
+              height: auto;
+              background: white;
+              padding-top: 5px;
+              padding-bottom: 5px;
+              border: 1px solid white;
+              border-radius: 5px;
+              margin-top: 5px;
+              box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+              ${(props) => (props.show ? "" : "display:none;")}
+              .status-options-item {
+                width: 100%;
+                height: 40px;
+                display: flex;
+                border: 1px solid white;
+                border-radius: 5px;
+                align-items: center;
+                h2 {
+                  font-size: 12px;
+                  font-family: "Raleway", sans-serif;
+                  letter-spacing: 0.2em;
+                  font-weight: 300;
+                  font-style: normal;
+                  color: #fa7d09;
+                  text-transform: uppercase;
+                  width: 100%;
+                  margin-left: 5px;
+                }
+                &:hover {
+                  background: #fafafa;
+                  outline: none;
+                }
+                &:focus {
+                  outline: none;
+                }
+              }
+            }
+            .button-container-status {
+              width: 100%;
+              height: fit-content;
+              .status-button {
+                height: 30px;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                width: fit-content;
+                padding-left: 10px;
+                padding-right: 10px;
+                border: 2px solid white;
+                border-radius: 20px;
+                background: white;
+
+                h2 {
+                  font-size: 12px !important;
+                  font-family: "Raleway", sans-serif;
+                  letter-spacing: 0.2em;
+                  font-weight: 500;
+                  font-style: normal;
+                  margin-left: 0px !important;
+                  color: #fa7d09 !important;
+                  text-transform: uppercase;
+                  width: 100%;
+                }
+              }
             }
             h3 {
               font-size: 12px;
