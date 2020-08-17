@@ -1,6 +1,7 @@
 /* global gapi */
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import Home from "../Home/Home";
+import { FaBatteryThreeQuarters } from "react-icons/fa";
 
 const config = {
   clientId:
@@ -8,59 +9,9 @@ const config = {
   scope: "https://mail.google.com/",
 };
 
-class App extends Component {
-  state = {
-    gapiLoaded: false,
-  };
-
-  listHistory(userId, gapi) {
-    var getPageOfHistory = function (request, result) {
-      request.execute(function (resp) {
-        result = result.concat(resp.history);
-        var nextPageToken = resp.nextPageToken;
-        if (nextPageToken) {
-          request = gapi.client.gmail.users.history.list({
-            userId: userId,
-            pageToken: nextPageToken,
-          });
-          getPageOfHistory(request, result);
-        } else {
-        }
-      });
-    };
-    var request = gapi.client.gmail.users.history.list({});
-    getPageOfHistory(request, []);
-  }
-  componentDidMount() {
-    const script = document.createElement("script");
-    script.src = "https://apis.google.com/js/client.js";
-
-    script.onload = () => {
-      console.log("OnLoad");
-      const initClient = () => {
-        gapi.client.init(config).then(() => {
-          const gapi = window.gapi;
-          const auth2 = gapi.auth2.getAuthInstance();
-          auth2.isSignedIn.listen(this.handleSigninStatusChange);
-
-          const currentUser = auth2.currentUser.get();
-          const authResponse = currentUser.getAuthResponse(true);
-          if (authResponse && currentUser) {
-            // save access token
-            console.log(authResponse);
-          }
-          this.setState({
-            gapiLoaded: true,
-          });
-        });
-      };
-      gapi.load("client:auth2", initClient);
-    };
-
-    document.body.appendChild(script);
-  }
-
-  handleSigninStatusChange = (isSignedIn) => {
+export default function App() {
+  const [gapiLoaded, setgapiLoaded] = useState(false);
+  const handleSigninStatusChange = (isSignedIn) => {
     const auth2 = gapi.auth2.getAuthInstance();
     if (isSignedIn) {
       const currentUser = auth2.currentUser.get();
@@ -72,18 +23,38 @@ class App extends Component {
       }
     }
   };
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://apis.google.com/js/client.js";
 
-  render() {
-    const { gapiLoaded } = this.state;
+    script.onload = () => {
+      console.log("OnLoad");
+      const initClient = () => {
+        gapi.client.init(config).then(() => {
+          const gapi = window.gapi;
+          const auth2 = gapi.auth2.getAuthInstance();
+          auth2.isSignedIn.listen(handleSigninStatusChange());
 
-    return gapiLoaded ? (
-      <div>
-        <Home />
-      </div>
-    ) : (
-      <div>Please provide clientId in the config</div>
-    );
-  }
+          const currentUser = auth2.currentUser.get();
+          const authResponse = currentUser.getAuthResponse(true);
+          if (authResponse && currentUser) {
+            // save access token
+            console.log(authResponse);
+          }
+          setgapiLoaded(true);
+        });
+      };
+      gapi.load("client:auth2", initClient);
+    };
+
+    document.body.appendChild(script);
+  }, [handleSigninStatusChange]);
+
+  return gapiLoaded ? (
+    <div>
+      <Home />
+    </div>
+  ) : (
+    <div>Please provide clientId in the config</div>
+  );
 }
-
-export default App;
