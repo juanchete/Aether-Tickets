@@ -10,6 +10,7 @@ export default function TicketsByStatus({ filter }) {
   const { user, setUser } = useContext(UserContext);
   const firebase = useFirebaseApp();
   const [tickets, setTickets] = useState();
+  const [asesor, setAsesor] = useState(null);
   const [loading, setLoading] = useState(true);
   const db = firebase.firestore();
   const logout = async () => {
@@ -56,45 +57,50 @@ export default function TicketsByStatus({ filter }) {
   }, [filter]);
 
   return (
-    <HomeStyle>
-      <SidebarUser ticket={true} />
-      <div className="home-view">
-        <div className="home-view-title">
-          <div style={{ display: "flex", flexDirection: "row" }}>
-            <h2>{filter}</h2>
-            <h1>Tickets</h1>
+    <>
+      <HomeStyle>
+        <SidebarUser ticket={true} />
+        <div className="home-view">
+          <div className="home-view-title">
+            <div style={{ display: "flex", flexDirection: "row" }}>
+              <h2>{filter}</h2>
+              <h1>Tickets</h1>
+            </div>
           </div>
-        </div>
 
-        <ul className="labels">
-          <li className="label">
-            <h2>Requester</h2>
-          </li>
-          <li className="label">
-            <h2>Subject</h2>
-          </li>
-          <li className="label">
-            <h2>Assigned To</h2>
-          </li>
-          <li className="label">
-            <h2>Priority</h2>
-          </li>
-          <li className="label">
-            <h2>Status</h2>
-          </li>
-          <li className="label">
-            <h2>Created At</h2>
-          </li>
-        </ul>
-        {!loading ? (
-          <>
-            {tickets.map((ticket) => (
-              <TicketCard ticket={ticket} />
-            ))}
-          </>
-        ) : null}
-      </div>
-    </HomeStyle>
+          <ul className="labels">
+            <li className="label">
+              <h2>Requester</h2>
+            </li>
+            <li className="label">
+              <h2>Subject</h2>
+            </li>
+            <li className="label">
+              <h2>Assigned To</h2>
+            </li>
+            <li className="label">
+              <h2>Priority</h2>
+            </li>
+            <li className="label">
+              <h2>Status</h2>
+            </li>
+            <li className="label">
+              <h2>Created At</h2>
+            </li>
+            {filter != "Solved" && filter != "Unsolved" ? (
+              <li className="label-2"></li>
+            ) : null}
+          </ul>
+          {!loading ? (
+            <>
+              {tickets.map((ticket) => (
+                <TicketCard ticket={ticket} />
+              ))}
+            </>
+          ) : null}
+        </div>
+      </HomeStyle>
+    </>
   );
 }
 const HomeStyle = styled.div`
@@ -164,15 +170,24 @@ const HomeStyle = styled.div`
           margin-right: 5px;
         }
       }
+      .label-2 {
+        width: 10%;
+      }
     }
   }
   @media only screen and (max-width: 1100px) {
     flex-direction: column;
     .home-view {
       width: 100%;
+      margin-left: 0;
 
       .home-view-title {
         height: 80px;
+        margin-top: 90px;
+        width: 100%;
+      }
+      .labels {
+        margin-top: 170px;
       }
     }
   }

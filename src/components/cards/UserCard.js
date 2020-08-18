@@ -4,11 +4,11 @@ import firebase from "firebase";
 import { useUser, useFirebaseApp } from "reactfire";
 import styled from "styled-components";
 import Tags from "../Tags";
-import PopUp from "../PopUp";
+import PopUp from "../PopUpUser";
 import { BsThreeDots } from "react-icons/bs";
 import { NavLink, withRouter } from "react-router-dom";
 
-export default function TicketCard({ color, color2, ticket, filter }) {
+export default function TicketCard({ color, color2, ticket }) {
   const firebaseReact = useFirebaseApp();
   const db = firebaseReact.firestore();
   const [ticketsFiltered, setTickets] = useState();
@@ -62,7 +62,7 @@ export default function TicketCard({ color, color2, ticket, filter }) {
 
   return (
     <>
-      {!loading ? (
+      {!loading && ticket ? (
         <>
           <Card color={color} color2={color2}>
             <ul className="ticket-view">
@@ -93,6 +93,11 @@ export default function TicketCard({ color, color2, ticket, filter }) {
               <NavLink className="data" to={path + ticket.id}>
                 <h2>CREATED AT</h2>
               </NavLink>
+              {ticket.status != "Solved" && ticket.status != "Unsolved" ? (
+                <li className="data-2">
+                  <PopUp ticket={ticket} />
+                </li>
+              ) : null}
             </ul>
           </Card>
         </>

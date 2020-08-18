@@ -16,6 +16,9 @@ export default function InputLogin({
   fontSize,
   marginBottom,
   marginRight,
+  marginTop,
+  height,
+  width,
   children,
   ...rest
 }) {
@@ -26,6 +29,9 @@ export default function InputLogin({
       color2={color2}
       fontSize={fontSize}
       marginRight={marginRight}
+      marginTop={marginTop}
+      height={height}
+      width={width}
     >
       <label>{label}</label>
       <textarea
@@ -40,7 +46,7 @@ export default function InputLogin({
   );
 }
 const TextArea = styled.div`
-  width: 100%;
+  width: ${(props) => (props.width ? props.width : "100%")};
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -49,6 +55,7 @@ const TextArea = styled.div`
   margin-bottom: ${(props) =>
     props.marginBottom ? props.marginBottom : "0px"};
   margin-right: ${(props) => (props.marginRight ? props.marginRight : "0px")};
+  margin-top: ${(props) => (props.marginTop ? props.marginTop : "0px")};
 
   label {
     font-family: "Raleway", sans-serif;
@@ -61,7 +68,7 @@ const TextArea = styled.div`
   }
   textarea {
     width: 100%;
-    height: 40px;
+    height: ${(props) => (props.height ? props.height : "40px")};
     border: 2px solid ${(props) => (props.color2 ? props.color2 : "#fa7d09")};
     background: white;
     font-family: "Raleway", sans-serif;
@@ -92,6 +99,7 @@ const TextArea = styled.div`
   }
 
   @media only screen and (max-width: 629px) {
+    width: 100%;
     margin-bottom: 0px;
     label {
       font-size: 12px;

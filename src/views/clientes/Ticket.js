@@ -7,6 +7,7 @@ import SidebarUser from "../../components/sidebars/SidebarUser";
 import TextEditor from "../../components/inputs/TextEditor";
 import { UserContext } from "../../CreateContext";
 import { AiOutlineInfoCircle } from "react-icons/ai";
+import Feedback from "../../components/Feedback";
 import { useParams } from "react-router";
 import moment from "moment";
 
@@ -19,9 +20,16 @@ export default function Ticket() {
   const [messages, setMessages] = useState();
   const [asesor, setAsesor] = useState();
   const [toggleDet, setToggleDet] = useState(false);
+  const [feedbackShow, setFeedbackShow] = useState(false);
+  const [show, setShow] = useState(false);
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
   let { id } = useParams();
+
+  const showFeedback = (e) => {
+    setFeedbackShow(!feedbackShow);
+  };
+
   const onEditorChange = (value) => {
     setText(value);
     console.log(text);
@@ -44,7 +52,12 @@ export default function Ticket() {
               .get()
               .then(function (doc2) {
                 if (doc2.exists) {
-                  setAsesor(doc2.data());
+                  const asesorLast = {
+                    id: doc2.id,
+                    name: doc2.data().name,
+                    lastName: doc2.data().lastName,
+                  };
+                  setAsesor(asesorLast);
                 } else {
                   console.log("No such document!");
                 }
@@ -77,141 +90,182 @@ export default function Ticket() {
     setLoading(false);
   }, [ticket]);
 
-  const getAsesor = async (ticket, id) => {
-    const db = firebaseReact.firestore();
-    let docRef = db.collection("asesores").doc(id);
-    await docRef.get().then(function (doc) {
-      if (doc.exists) {
-        console.log("Document data:", doc.data());
-        let name = {
-          name: doc.data().name,
-          lastName: doc.data().lastName,
-          id: id,
-        };
-        setAsesor(name);
-      } else {
-        // doc.data() will be undefined in this case
-        console.log("No such document!");
-      }
-    });
+  const closeTicket = async (e) => {
+    e.preventDefault();
+    console.log(ticket.asesores[ticket.asesores.length - 1]);
+    if (ticket.asesores.length > 0) {
+      setShow(false);
+      showFeedback(true);
+    }
+    try {
+      await db
+        .collection("tickets")
+        .doc(id)
+        .update({
+          status: "Solved",
+        })
+        .then(() => {
+          showFeedback(true);
+          setShow(false);
+        });
+    } catch (error) {}
   };
+
   return (
-    <HomeStyle toggleDet={toggleDet} screenWidth={window.innerWidth}>
-      <SidebarUser ticket={true} />
-      <div className="home-view">
-        <div className="home-view-title">
-          <div style={{ display: "flex", flexDirection: "row" }}>
-            <h2>Ticket</h2>
-            <h1>{id.substring(0, 7)}</h1>
-            <AiOutlineInfoCircle
-              className="icon"
-              onClick={(event) => {
-                setToggleDet(!toggleDet);
-              }}
-            />
-          </div>
-        </div>
-        {!loading && ticket && messages ? (
-          <div className="container">
-            <div className="chat">
-              <div className="chat-screen">
-                <div className="chat-screen-header"></div>
-              </div>
-              <div className="chat-text-box">
-                {" "}
-                <TextEditor
-                  onEditorChange={onEditorChange}
-                  onFilesChange={onFilesChange}
-                />
-                <div className="button-container">
-                  <button className="button-submit" type="submit">
-                    <h2>Submit</h2>
-                  </button>
-                </div>
-              </div>
+    <>
+      {asesor ? (
+        <Feedback
+          show={feedbackShow}
+          showFeedback={showFeedback}
+          asesor={asesor}
+          ticket={id}
+        />
+      ) : null}
+      <HomeStyle
+        toggleDet={toggleDet}
+        screenWidth={window.innerWidth}
+        show={show}
+      >
+        <SidebarUser ticket={true} />
+        <div className="home-view">
+          <div className="home-view-title">
+            <div style={{ display: "flex", flexDirection: "row" }}>
+              <h2>Ticket</h2>
+              <h1>{id.substring(0, 7)}</h1>
+              <AiOutlineInfoCircle
+                className="icon"
+                onClick={(event) => {
+                  setToggleDet(!toggleDet);
+                }}
+              />
             </div>
-
-            <div className="ticket-detail">
-              <div className="ticket-detail-title">
-                <h2>Details</h2>
-              </div>
-              <div className="ticket-detail-info">
-                <div className="ticket-detail-info-title">
-                  <h2>Ticket Info </h2>
+          </div>
+          {!loading && ticket && messages ? (
+            <div className="container">
+              <div className="chat">
+                <div className="chat-screen">
+                  <div className="chat-screen-header"></div>
                 </div>
-                <div className="ticket-detail-info-item">
-                  <h2>Ticket ID: </h2>
-                  <h3>{id.substring(0, 7)}</h3>
-                </div>
-                <div className="ticket-detail-info-item">
-                  <h2>Created: </h2>
-                  <h3>
-                    {moment(ticket.createdAt.toDate())
-                      .format("DD/MM/yyyy")
-                      .toString()}
-                  </h3>
-                </div>
-                <div className="ticket-detail-info-item">
-                  <h2>Last Message: </h2>
-                  <h3>
-                    {moment(messages[messages.length - 1].date.toDate())
-                      .fromNow()
-                      .toString()}
-                  </h3>
-                </div>
-                <div className="ticket-detail-info-item">
-                  <h2>Status: </h2>
-                  <h3>{ticket.status}</h3>
-                </div>
-                <div className="ticket-detail-info-item">
-                  <h2>Category: </h2>
-                  <h3>LOGIN</h3>
+                <div className="chat-text-box">
+                  {" "}
+                  <TextEditor
+                    onEditorChange={onEditorChange}
+                    onFilesChange={onFilesChange}
+                  />
+                  <div className="button-container">
+                    <button className="button-submit" type="submit">
+                      <h2>Submit</h2>
+                    </button>
+                  </div>
                 </div>
               </div>
-              <div className="ticket-detail-info">
-                <div className="ticket-detail-info-title">
-                  <h2>Responsability </h2>
-                </div>
 
-                {ticket.asesor && asesor ? (
-                  <>
+              <div className="ticket-detail">
+                <div className="ticket-detail-title">
+                  <h2>Details</h2>
+                </div>
+                <div className="ticket-detail-info">
+                  <div className="ticket-detail-info-title">
+                    <h2>Ticket Info </h2>
+                  </div>
+                  <div className="ticket-detail-info-item">
+                    <h2>Ticket ID: </h2>
+                    <h3>{id.substring(0, 7)}</h3>
+                  </div>
+                  <div className="ticket-detail-info-item">
+                    <h2>Created: </h2>
+                    <h3>
+                      {moment(ticket.createdAt.toDate())
+                        .format("DD/MM/yyyy")
+                        .toString()}
+                    </h3>
+                  </div>
+                  <div className="ticket-detail-info-item">
+                    <h2>Last Message: </h2>
+                    <h3>
+                      {moment(messages[messages.length - 1].date.toDate())
+                        .fromNow()
+                        .toString()}
+                    </h3>
+                  </div>
+                  <div className="ticket-detail-info-item">
+                    <h2>Status: </h2>
+                    <div className="button-container-status">
+                      <button
+                        type="button"
+                        className="status-button"
+                        onClick={() => {
+                          setShow(!show);
+                        }}
+                        disabled={
+                          ticket.status != "Solved" &&
+                          ticket.status != "Unsolved"
+                            ? false
+                            : true
+                        }
+                      >
+                        <h2>{ticket.status}</h2>
+                      </button>
+                      <ul className="status-options">
+                        <li
+                          className="status-options-item"
+                          onClick={closeTicket}
+                        >
+                          <h2>Ticket Solved</h2>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div className="ticket-detail-info-item">
+                    <h2>Category: </h2>
+                    <h3>LOGIN</h3>
+                  </div>
+                </div>
+                <div className="ticket-detail-info">
+                  <div className="ticket-detail-info-title">
+                    <h2>Responsability </h2>
+                  </div>
+
+                  {ticket.asesor && asesor ? (
+                    <>
+                      <div className="ticket-detail-info-item">
+                        <h2>Assigned to: </h2>
+                        <h3>
+                          {asesor.name} {asesor.lastName}
+                        </h3>
+                      </div>
+                      <div className="ticket-detail-info-item">
+                        <h2>Rating: </h2>
+                        <h3>5</h3>
+                      </div>
+                    </>
+                  ) : (
                     <div className="ticket-detail-info-item">
                       <h2>Assigned to: </h2>
-                      <h3>
-                        {asesor.name} {asesor.lastName}
-                      </h3>
+                      <h3>Unnasigned</h3>
                     </div>
-                    <div className="ticket-detail-info-item">
-                      <h2>Rating: </h2>
-                      <h3>5</h3>
-                    </div>
-                  </>
-                ) : (
-                  <div className="ticket-detail-info-item">
-                    <h2>Assigned to: </h2>
-                    <h3>Unnasigned</h3>
+                  )}
+                </div>
+                <div className="ticket-detail-info">
+                  <div className="ticket-detail-info-title">
+                    <h2>Requester </h2>
                   </div>
-                )}
-              </div>
-              <div className="ticket-detail-info">
-                <div className="ticket-detail-info-title">
-                  <h2>Requester </h2>
-                </div>
-                <div className="ticket-detail-info-item">
-                  <h2>
-                    {ticket.usuario.name} {ticket.usuario.lastName}
-                  </h2>
-                </div>
-                <div className="ticket-detail-info-item">
-                  <h2>Total Tickets: </h2>
-                  <h3>20</h3>
+                  <div className="ticket-detail-info-item">
+                    <h2>
+                      {ticket.usuario.name} {ticket.usuario.lastName}
+                    </h2>
+                  </div>
+                  <div className="ticket-detail-info-item">
+                    <h2>Total Tickets: </h2>
+                    <h3>20</h3>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ) : null}
-      </div>
-    </HomeStyle>
+          ) : null}
+        </div>
+      </HomeStyle>
+    </>
   );
 }
 const HomeStyle = styled.div`
@@ -426,7 +480,7 @@ const HomeStyle = styled.div`
             align-items: center;
             height: auto;
             flex-direction: row;
-            margin-top: 5px;
+            margin-top: 10px;
             h2 {
               font-size: 12px;
               font-family: "Raleway", sans-serif;
@@ -436,6 +490,74 @@ const HomeStyle = styled.div`
               color: white;
               width: 100%;
               margin-left: 15px;
+            }
+            .status-options {
+              position: absolute;
+              width: 120px;
+              height: auto;
+              background: white;
+              padding-top: 5px;
+              padding-bottom: 5px;
+              border: 1px solid white;
+              border-radius: 5px;
+              margin-top: 5px;
+              box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+              ${(props) => (props.show ? "" : "display:none;")}
+              .status-options-item {
+                width: 100%;
+                height: 40px;
+                display: flex;
+                border: 1px solid white;
+                border-radius: 5px;
+                align-items: center;
+                h2 {
+                  font-size: 12px;
+                  font-family: "Raleway", sans-serif;
+                  letter-spacing: 0.2em;
+                  font-weight: 300;
+                  font-style: normal;
+                  color: #fa7d09;
+                  text-transform: uppercase;
+                  width: 100%;
+                  margin-left: 5px;
+                }
+                &:hover {
+                  background: #fafafa;
+                  outline: none;
+                }
+                &:focus {
+                  outline: none;
+                }
+              }
+            }
+            .button-container-status {
+              width: 100%;
+              height: fit-content;
+              .status-button {
+                height: 30px;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                width: fit-content;
+                padding-left: 10px;
+                padding-right: 10px;
+                border: 2px solid white;
+                border-radius: 20px;
+                background: white;
+
+                h2 {
+                  font-size: 12px !important;
+                  font-family: "Raleway", sans-serif;
+                  letter-spacing: 0.2em;
+                  font-weight: 500;
+                  font-style: normal;
+                  margin-left: 0px !important;
+                  color: #fa7d09 !important;
+                  text-transform: uppercase;
+                  width: 100%;
+                }
+              }
             }
             h3 {
               font-size: 12px;
