@@ -316,6 +316,8 @@ export default class QuillEditor extends React.Component {
               border: "2px solid #4A3F35",
               borderRadius: "5px",
               color: "white",
+              height: "100px",
+              overflowY: "scroll",
             }}
           />
           <input

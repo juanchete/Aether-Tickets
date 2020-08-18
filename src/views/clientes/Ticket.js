@@ -16,6 +16,7 @@ export default function Ticket() {
   const firebaseReact = useFirebaseApp();
   const db = firebaseReact.firestore();
   const [text, setText] = useState("");
+  const [content, setContent] = useState("");
   const [ticket, setTicket] = useState();
   const [messages, setMessages] = useState();
   const [asesor, setAsesor] = useState();
@@ -32,10 +33,12 @@ export default function Ticket() {
 
   const onEditorChange = (value) => {
     setText(value);
-    console.log(text);
+    let texto = text;
+    texto = texto.replace(/(<([^>]+)>)/gi, "");
+    setContent(texto);
   };
-  const onFilesChange = (files) => {
-    setFiles(files);
+  const onFilesChange = (file) => {
+    setFiles([...files, file]);
   };
   useEffect(() => {
     setLoading(true);
@@ -68,7 +71,7 @@ export default function Ticket() {
           }
           db.collection("messages")
             .where("ticket", "==", id)
-            .orderBy("date", "desc")
+            .orderBy("date", "asc")
             .onSnapshot((snapshot) => {
               const messagesData = [];
               snapshot.forEach((doc) =>
@@ -89,6 +92,32 @@ export default function Ticket() {
       });
     setLoading(false);
   }, [ticket]);
+
+  const sendMessage = async (e) => {
+    try {
+      await db
+        .collection("messages")
+        .add({
+          sender: {
+            id: user ? user.id : null,
+            email: user.email,
+            name: user.name,
+            lastName: user.lastName,
+          },
+          contentHtml: text,
+          ticket: id,
+          content: content,
+          files: files,
+          date: new Date(),
+        })
+        .then(async function (doc) {
+          var ref = db.collection("tickets").doc(id);
+          ref.update({
+            messages: firebase.firestore.FieldValue.arrayUnion(id),
+          });
+        });
+    } catch (error) {}
+  };
 
   const closeTicket = async (e) => {
     e.preventDefault();
@@ -144,8 +173,31 @@ export default function Ticket() {
             <div className="container">
               <div className="chat">
                 <div className="chat-screen">
-                  <div className="chat-screen-header"></div>
+                  {messages.map((message) => (
+                    <div className="chat-message">
+                      <div className="chat-screen-header">
+                        <div className="name">
+                          <h2>Valeska Silva</h2>
+                        </div>
+                        <div className="time">
+                          <h2>
+                            {" "}
+                            {moment(message.date.toDate()).fromNow().toString()}
+                          </h2>
+                        </div>
+                      </div>
+                      <div className="chat-screen-content">
+                        <div
+                          className="content"
+                          dangerouslySetInnerHTML={{
+                            __html: message.contentHtml,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  ))}
                 </div>
+
                 <div className="chat-text-box">
                   {" "}
                   <TextEditor
@@ -153,7 +205,16 @@ export default function Ticket() {
                     onFilesChange={onFilesChange}
                   />
                   <div className="button-container">
-                    <button className="button-submit" type="submit">
+                    <button
+                      className="button-submit"
+                      type="button"
+                      onClick={sendMessage}
+                      disbled={
+                        ticket.status != "Solved" && ticket.status != "Unsolved"
+                          ? false
+                          : true
+                      }
+                    >
                       <h2>Submit</h2>
                     </button>
                   </div>
@@ -274,7 +335,11 @@ const HomeStyle = styled.div`
   flex-direction: row;
   .home-view {
     width: 70%;
+    height: 100vh;
     margin-left: 30%;
+    display: flex;
+    justify-content: center;
+
     .home-view-title {
       width: 70%;
       position: fixed;
@@ -315,36 +380,104 @@ const HomeStyle = styled.div`
         align-self: center;
       }
     }
+
     .container {
-      margin-top: 80px;
-      width: 70vw;
-      height: auto;
-      padding: 10px;
+      width: 100%;
+      height: 100%;
+      overflow-y: hidden;
       display: flex;
+      flex-direction: row;
+      padding: 10px;
+      padding-top: 90px;
 
       .chat {
-        width: 50vw;
-        height: 70vh;
-        padding: 10px;
-        padding-top: 0px;
+        width: 70%;
+        height: 100%;
+
         .chat-screen {
           width: 100%;
-          height: 75%;
+          height: 70%;
+          overflow-y: scroll;
           background: #4a3f35;
-          border: 1px solid #2f2519;
+          padding-top: 10px;
+          padding-bottom: 10px;
+          padding-right: 5px;
+          padding-left: 5px;
+          margin-bottom: 10px;
+          border: 1px solid #4a3f35;
           border-radius: 5px;
 
-          .chat-screen-header {
+          .chat-message {
+            margin-bottom: 15px;
             width: 100%;
-            height: 50px;
-            background: #2f2519;
+            height: auto;
+            background: white;
             border: 1px solid #2f2519;
             border-radius: 5px;
+
+            .chat-screen-header {
+              width: 100%;
+              background: #2f2519;
+              height: 50px;
+              border: 1px solid transparent;
+              border-radius: 5px;
+              display: flex;
+              flex-direction: row;
+
+              .name {
+                display: flex;
+                align-items: center;
+                width: 50%;
+                height: 100%;
+                padding-left: 10px;
+
+                h2 {
+                  font-size: 15px;
+                  font-family: "Raleway", sans-serif;
+                  letter-spacing: 0.2em;
+                  font-weight: 300;
+                  font-style: italics;
+                  color: #ff4301;
+                  margin-right: 5px;
+                }
+              }
+              .time {
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                text-align: flex-end;
+                width: 50%;
+                height: 100%;
+
+                h2 {
+                  font-size: 12px;
+                  font-family: "Raleway", sans-serif;
+                  letter-spacing: 0.2em;
+                  font-weight: 300;
+                  font-style: italics;
+                  color: #ff4301;
+                  margin-right: 5px;
+                }
+              }
+            }
+            .chat-screen-content {
+              width: 100%;
+              padding: 10px;
+              height: auto;
+
+              .content {
+                font-family: "Raleway", sans-serif !important;
+              }
+            }
           }
         }
+
         .chat-text-box {
+          display: flex;
+          flex-direction: column;
           width: 100%;
-          margin-top: 10px;
+          height: 30%;
+
           .button-container {
             width: 100%;
             height: 60px;
@@ -372,9 +505,12 @@ const HomeStyle = styled.div`
           }
         }
       }
+
       .ticket-detail {
-        width: 20vw;
-        height: 500px;
+        width: 30%;
+        height: 100%;
+        margin-left: 10px;
+        overflow-y: scroll;
 
         .assume-ticket {
           height: 30px;
@@ -573,27 +709,22 @@ const HomeStyle = styled.div`
       }
     }
   }
-
   @media only screen and (max-width: 1100px) and (min-width: 768px) {
     flex-direction: column;
-    width: 100vw;
 
     .home-view {
       width: 100vw;
-      margin-top: 90px;
       margin-left: 0;
       .home-view-title {
-        width: 100%;
+        margin-top: 90px;
         height: 80px;
         width: 100vw;
         align-items: center;
         justify-content: center;
       }
       .container {
-        margin-top: 80px;
         width: 100vw;
-        height: auto;
-        padding: 10px;
+        padding-top: 200px;
         margin-right: 0 !important;
 
         .chat {
@@ -610,11 +741,13 @@ const HomeStyle = styled.div`
 
     .home-view {
       width: 100vw;
-      margin-top: 90px;
       margin-left: 0;
       .home-view-title {
-        width: 100%;
+        margin-top: 90px;
         height: 80px;
+        width: 100vw;
+        align-items: center;
+        justify-content: center;
 
         .icon {
           width: 40px;
@@ -631,10 +764,8 @@ const HomeStyle = styled.div`
         }
       }
       .container {
-        margin-top: 80px;
-        width: 100%;
-        height: auto;
-        padding: 10px;
+        width: 100vw;
+        padding-top: 180px;
         margin-right: 0 !important;
 
         .chat {
@@ -645,6 +776,17 @@ const HomeStyle = styled.div`
         .ticket-detail {
           width: 100%;
           ${(props) => (props.toggleDet ? "display:none" : "")};
+        }
+      }
+    }
+  }
+  @media only screen and (max-height: 900px) {
+    .home-view {
+      .container {
+        .chat {
+          .chat-screen {
+            height: 50%;
+          }
         }
       }
     }
