@@ -50,62 +50,48 @@ export default function LoginAsesores() {
             });
           });
 
-      if (usuario !== null) {
+        if (usuario !== null) {
+          const { name, email, lastName, role } = usuario;
 
-        const { name, email, lastName,role } = usuario
+          if (remember) {
+            await firebase.auth().signInWithEmailAndPassword(email, password);
+            Cookies.set("user", {
+              name,
+              lastName,
+              email,
+              role,
+            });
+          } else {
+            await firebase.auth().setPersistence("session");
 
-        if (remember) {
-          await firebase.auth().signInWithEmailAndPassword(email, password);
-          Cookies.set('user', {
-            name ,
-            lastName ,
-            email,
-            role
-  
-          });
-         }else{
-           
-          await firebase.auth().setPersistence('session');
-          
-          await firebase.auth().signInWithEmailAndPassword(email, password);
+            await firebase.auth().signInWithEmailAndPassword(email, password);
 
-          sessionStorage.setItem('user', JSON.stringify({
-            name ,
-            lastName ,
+            sessionStorage.setItem(
+              "user",
+              JSON.stringify({
+                name,
+                lastName,
+                email,
+                role,
+                id: firebase.auth().currentUser.uid,
+              })
+            );
+          }
+
+          setUser({
+            name,
+            lastName,
             email,
             role,
-            id: firebase.auth().currentUser.uid
-  
-          }) )
-        
-         }
+            id: firebase.auth().currentUser.uid,
+          });
 
+          Swal.fire("Correcto", "Inicio sesion Correcctamente", "success");
 
-        setUser({
-          name ,
-          lastName ,
-          email,
-          role,
-          id: firebase.auth().currentUser.uid
-
-        })
-
-
-     Swal.fire(
-      'Correcto',
-      'Inicio sesion Correcctamente',
-      'success'
-  )
-
-  setFlag(true);
-        
-      }else {
-        Swal.fire(
-          'Error',
-          'No se encuentra registrado como asesor',
-          'error'
-      )
-      }
+          setFlag(true);
+        } else {
+          Swal.fire("Error", "No se encuentra registrado como asesor", "error");
+        }
       } catch (error) {
         Swal.fire("Correcto", error.message, "error");
       }
@@ -134,7 +120,7 @@ export default function LoginAsesores() {
         <div className="container-login">
           <h1>Login</h1>
           <button className="sign-in-google">
-            <img className="google-icon" src="google.png" />
+            <img className="google-icon" src="google2.png" />
             <h3>Sign in with google</h3>
           </button>
           <div className="sign-in-option">

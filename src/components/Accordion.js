@@ -38,6 +38,7 @@ const AccordionStyle = styled.div`
     padding: 15px;
     background-color: #2f2519;
     border-radius: 5px;
+    z-index: 1;
   }
 
   .faq .faq-question {
@@ -52,6 +53,7 @@ const AccordionStyle = styled.div`
     color: white;
     text-transform: uppercase;
     margin-top: 2px;
+    z-index: 1;
   }
 
   .faq .faq-question::after {

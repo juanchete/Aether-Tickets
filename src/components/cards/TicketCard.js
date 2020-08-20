@@ -118,7 +118,7 @@ const Card = styled.div`
       width: 10%;
     }
     .data {
-      width: 16.66%;
+      width: 15%;
 
       h2 {
         font-size: 14px;

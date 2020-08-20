@@ -349,13 +349,15 @@ export default function Home() {
           </li>
           <li className="label-2"></li>
         </ul>
-        {!loading ? (
-          <>
-            {tickets.map((ticket) => (
-              <TicketCard ticket={ticket} />
-            ))}
-          </>
-        ) : null}
+        <div className="content">
+          {!loading ? (
+            <>
+              {tickets.map((ticket) => (
+                <TicketCard ticket={ticket} />
+              ))}
+            </>
+          ) : null}
+        </div>
       </div>
     </HomeStyle>
   );
@@ -367,7 +369,11 @@ const HomeStyle = styled.div`
   .home-view {
     width: 70%;
     margin-left: 30%;
-
+    .content {
+      width: 100%;
+      height: auto;
+      margin-top: 170px;
+    }
     .home-view-title {
       width: 70%;
       position: fixed;
@@ -512,6 +518,8 @@ const HomeStyle = styled.div`
       flex-direction: row;
       justify-content: flex-start;
       align-items: center;
+      position: fixed;
+      background: white;
 
       .add-filter {
         border: 2px solid #fa7d09;
@@ -586,9 +594,12 @@ const HomeStyle = styled.div`
       align-items: center;
       padding-left: 10px;
       padding-right: 10px;
+      position: fixed;
+      margin-top: 130px;
+      background: white;
 
       .label {
-        width: 16.66%;
+        width: 10.5%;
         h2 {
           font-size: 12px;
           font-family: "Raleway", sans-serif;
@@ -610,9 +621,31 @@ const HomeStyle = styled.div`
     flex-direction: column;
     .home-view {
       width: 100%;
-
+      margin-left: 0;
+      .PageLoading {
+        margin-top: 250px;
+      }
+      .content {
+        width: 100%;
+        height: auto;
+        margin-top: 260px;
+      }
       .home-view-title {
         height: 80px;
+        margin-top: 90px;
+        width: 100%;
+      }
+      .filters {
+        margin-top: 170px;
+      }
+      .labels {
+        margin-top: 220px;
+        .label {
+          width: 33.333%;
+        }
+        .label-1 {
+          display: none;
+        }
       }
     }
   }

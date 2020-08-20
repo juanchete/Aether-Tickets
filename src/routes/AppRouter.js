@@ -1,29 +1,21 @@
 import React, { useContext } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import AppHome from "../components/ApiGmail/App/App";
-import Login from "../views/clientes/Login";
-import RegistroClientes from "../views/clientes/SignUp";
-import ForgotPassword from "../views/clientes/Forgot-Password";
 import InviteToRegister from "../views/Asesor/Invite-To-Register";
 import SignUpAsesor from "../views/Asesor/SignUp";
 import LoginAsesores from "../views/Asesor/Login";
-import Faq from "../views/clientes/Faq";
-import NewTicket from "../views/clientes/NewTicket";
 import Categories from "../views/Asesor/Categories";
 import Category from "../views/Asesor/Category";
 import Suggestions from "../views/Asesor/Suggestions";
 import ShowTickets from "../views/Asesor/ShowTicketsByStatus";
-import ShowTicketsUser from "../views/clientes/ShowTicketsByStatus";
-import Home from "../views/clientes/Home";
+import Home from "../views/Asesor/Home";
 import ChangePassword from "../views/Shared/change-password";
 import AddCategory from "../views/Asesor/AddCategory";
 import AddSuggestion from "../views/Asesor/AddSuggestion";
 import AllAsesors from "../views/Asesor/AllAsesors";
 import AllClients from "../views/Asesor/AllClients";
 import TicketAsesor from "../views/Asesor/Ticket";
-import Ticket from "../views/clientes/Ticket";
 import AdminRoutes from "../routes/AdminRoutes";
-import UserRoutes from "../routes/UserRoutes";
 import AsesorRoutes from "../routes/AsesorRoutes";
 import InviteRoutes from "../routes/InviteRoutes";
 
@@ -31,22 +23,7 @@ function AppRouter() {
   return (
     <Router>
       <Switch>
-        <Route exact path="/login" component={Login} />
         <Route exact path="/category/:id" component={Category} />
-        <Route exact path="/signup" component={RegistroClientes} />
-        <Route exact path="/forgot-password" component={ForgotPassword} />
-        <UserRoutes exact path="/new-ticket" component={NewTicket} />
-        <UserRoutes
-          exact
-          path="/new-ticket/:id"
-          component={() => <NewTicket categoryTicket={true} />}
-        />
-        <UserRoutes exact path="/faq" component={Faq} />
-        <UserRoutes
-          exact
-          path="/user/change-password"
-          component={ChangePassword}
-        />
 
         <AdminRoutes
           exact
@@ -63,7 +40,6 @@ function AppRouter() {
           path="/asesores/all-clients"
           component={AllClients}
         />
-        <Route exact path="/ticket/:id" component={Ticket} />
         <InviteRoutes exact path="/sign-up-asesores" component={SignUpAsesor} />
 
         <Route exact path="/asesores/login" component={LoginAsesores} />
@@ -92,32 +68,6 @@ function AppRouter() {
           path="/tickets/closed"
           component={() => <ShowTickets filter="Closed" />}
         />
-        <UserRoutes
-          exact
-          path="/mytickets/pending"
-          component={() => <ShowTicketsUser filter="Pending" />}
-        />
-        <UserRoutes
-          exact
-          path="/mytickets/open"
-          component={() => <ShowTicketsUser filter="Open" />}
-        />
-        <UserRoutes
-          exact
-          path="/mytickets/solved"
-          component={() => <ShowTicketsUser filter="Solved" />}
-        />
-        <UserRoutes
-          exact
-          path="/mytickets/unsolved"
-          component={() => <ShowTicketsUser filter="Unsolved" />}
-        />
-        <UserRoutes
-          exact
-          path="/mytickets/closed"
-          component={() => <ShowTicketsUser filter="Closed" />}
-        />
-        <UserRoutes exact path="/ticket/:id" component={TicketAsesor} />
         <AsesorRoutes
           exact
           path="/asesores/add-categories"
