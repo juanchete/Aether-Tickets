@@ -13,7 +13,7 @@ function AdminRoutes({ component: Component, ...rest }) {
         {...rest}
         render = { () => user && user.role=='admin' ? (<Component/>) 
             : (
-                <Redirect to='/faq'/>
+                <Redirect to='/login'/>
             )
         }/>
     )

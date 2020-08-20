@@ -13,7 +13,7 @@ function InviteRoutes({ component: Component, ...rest}) {
         {...rest}
         render = { () => firebase.auth().isSignInWithEmailLink(window.location.href)  ? (<Component/>) 
             : (
-                <Redirect to='/faq'/>
+                <Redirect to='/login'/>
             )
         }/>
     )

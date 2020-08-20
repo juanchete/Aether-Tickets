@@ -15,7 +15,7 @@ function AsesorRoutes({ component: Component, ...rest }) {
         {...rest}
         render = { () => user && (user.role=='asesor' || user.role=='admin')  ? (<Component/>) 
             : (
-                <Redirect to='/faq'/>
+                <Redirect to='/login'/>
             )
         }/>
     )
