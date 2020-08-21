@@ -18,7 +18,7 @@ import TicketAsesor from "../views/Asesor/Ticket";
 import AdminRoutes from "../routes/AdminRoutes";
 import AsesorRoutes from "../routes/AsesorRoutes";
 import InviteRoutes from "../routes/InviteRoutes";
-import ForgotPassword from '../views/Asesor/ForgotPassword'
+import ForgotPassword from "../views/Asesor/ForgotPassword";
 
 function AppRouter() {
   return (

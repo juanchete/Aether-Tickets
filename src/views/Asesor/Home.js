@@ -7,6 +7,7 @@ import SidebarAdmin from "../../components/sidebars/SidebarAdmin";
 import TicketCard from "../../components/cards/TicketCard";
 import { IoIosCloseCircle } from "react-icons/io";
 import { IoIosCheckmarkCircle } from "react-icons/io";
+import Spinner from "../../components/Spinner";
 
 export default function Home() {
   const firebase = useFirebaseApp();
@@ -174,6 +175,8 @@ export default function Home() {
             className="add-filter"
             onClick={() => {
               setFilterOpen(!filterOpen);
+              setSubSOpen(false);
+              setSubPOpen(false);
             }}
           >
             <h2>Add Filter</h2>
@@ -329,7 +332,7 @@ export default function Home() {
           </li>
         </ul>
         <ul className="labels">
-          <li className="label">
+          <li className="label-1">
             <h2>Requester</h2>
           </li>
           <li className="label">
@@ -341,12 +344,13 @@ export default function Home() {
           <li className="label">
             <h2>Priority</h2>
           </li>
-          <li className="label">
+          <li className="label-1">
             <h2>Status</h2>
           </li>
-          <li className="label">
+          <li className="label-1">
             <h2>Created At</h2>
           </li>
+
           <li className="label-2"></li>
         </ul>
         <div className="content">
@@ -356,7 +360,11 @@ export default function Home() {
                 <TicketCard ticket={ticket} />
               ))}
             </>
-          ) : null}
+          ) : (
+            <div className="PageLoading">
+              <Spinner color="#fa7d09" />
+            </div>
+          )}
         </div>
       </div>
     </HomeStyle>
@@ -369,6 +377,14 @@ const HomeStyle = styled.div`
   .home-view {
     width: 70%;
     margin-left: 30%;
+    .PageLoading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100%;
+      width: 100%;
+      margin-top: 200px;
+    }
     .content {
       width: 100%;
       height: auto;
@@ -416,6 +432,7 @@ const HomeStyle = styled.div`
       position: absolute;
       border: 1px solid white;
       border-radius: 5px;
+      margin-top: 130px;
       box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
       ${(props) => (props.filter ? "" : "display:none;")}
       .filter-options-item {
@@ -451,6 +468,7 @@ const HomeStyle = styled.div`
       border: 1px solid white;
       border-radius: 5px;
       box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+      margin-top: 130px;
       ${(props) => (props.sub ? "" : "display:none;")}
       .filter-sub-item {
         width: 100%;
@@ -586,7 +604,7 @@ const HomeStyle = styled.div`
       }
     }
     .labels {
-      width: 100%;
+      width: 70vw;
       height: 40px;
       border-bottom: 1px solid #2f2519;
       display: flex;
@@ -597,9 +615,21 @@ const HomeStyle = styled.div`
       position: fixed;
       margin-top: 130px;
       background: white;
-
+      .label-1 {
+        width: 15%;
+        h2 {
+          font-size: 12px;
+          font-family: "Raleway", sans-serif;
+          letter-spacing: 0.2em;
+          font-weight: 500;
+          font-style: normal;
+          color: #2f2519;
+          text-transform: uppercase;
+          margin-right: 5px;
+        }
+      }
       .label {
-        width: 10.5%;
+        width: 15%;
         h2 {
           font-size: 12px;
           font-family: "Raleway", sans-serif;
@@ -623,7 +653,7 @@ const HomeStyle = styled.div`
       width: 100%;
       margin-left: 0;
       .PageLoading {
-        margin-top: 250px;
+        margin-top: 300px;
       }
       .content {
         width: 100%;
@@ -640,6 +670,7 @@ const HomeStyle = styled.div`
       }
       .labels {
         margin-top: 220px;
+        width: 100vw;
         .label {
           width: 33.333%;
         }

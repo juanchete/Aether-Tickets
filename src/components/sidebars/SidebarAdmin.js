@@ -102,20 +102,22 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
               <FaTicketAlt className="icon" />
               <h4>Tickets</h4>
             </li>
-            <li
-              className="utilities-item"
-              onClick={(event) => {
-                setTickets(false);
-                setCategories(false);
-                setSettings(false);
-                setCurrentUser(false);
-                setAsesors(true);
-                setOpen(!open);
-              }}
-            >
-              <FaUsers className="icon" />
-              <h4>Asesors</h4>
-            </li>
+            {user.role === "admin" ? (
+              <li
+                className="utilities-item"
+                onClick={(event) => {
+                  setTickets(false);
+                  setCategories(false);
+                  setSettings(false);
+                  setCurrentUser(false);
+                  setAsesors(true);
+                  setOpen(!open);
+                }}
+              >
+                <FaUsers className="icon" />
+                <h4>Asesors</h4>
+              </li>
+            ) : null}
             <li
               className="utilities-item"
               onClick={(event) => {
@@ -130,10 +132,12 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
               <FaEdit className="icon" />
               <h4>Categories & Suggestions</h4>
             </li>
-            <li className="utilities-item">
-              <FaChartBar className="icon" />
-              <h4>Reports</h4>
-            </li>
+            {user.role === "admin" ? (
+              <li className="utilities-item">
+                <FaChartBar className="icon" />
+                <h4>Reports</h4>
+              </li>
+            ) : null}
           </ul>
           <ul className="user">
             <li
@@ -173,12 +177,12 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
                 <h2>Tickets</h2>
               </div>
               <ul className="nav-links">
-                <li className="link-1">
+                <NavLink to="/" className="link-1">
                   <h3>All Tickets</h3>
                   <div className="counter">
                     <h4>4</h4>
                   </div>
-                </li>
+                </NavLink>
                 <li className="link-1">
                   <h3>Tickets to Handle</h3>
                   <div className="counter">
@@ -219,7 +223,13 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
             </div>
             {open ? (
               <div className="navbar-especific-phone">
-                <div className="navbar-title">
+                <div
+                  className="navbar-title"
+                  style={{
+                    paddingTop: "30px",
+                    paddingBottom: "30px",
+                  }}
+                >
                   <h2>Tickets</h2>
                 </div>
                 <ul className="nav-links">
@@ -270,21 +280,42 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
             ) : null}
           </>
         ) : null}
-        {asesors ? (
+        {asesors && user.role === "admin" ? (
           <>
             <div className="navbar-especific">
               <div className="navbar-title">
-                <h2>Asesors</h2>
+                <h2>Users</h2>
               </div>
               <ul className="nav-links">
-                <li className="link-1">
+                <li
+                  className="link-1"
+                  onClick={(event) => {
+                    setAllAsesors(true);
+                  }}
+                >
                   <h3>All Asesors</h3>
                   <div className="counter">
                     <h4>4</h4>
                   </div>
                 </li>
+                <li
+                  className="link-1"
+                  onClick={(event) => {
+                    setAllClients(true);
+                  }}
+                >
+                  <h3>All Clients</h3>
+                  <div className="counter">
+                    <h4>4</h4>
+                  </div>
+                </li>
               </ul>
-              {user.role == "admin" ? (
+            </div>
+            {open ? (
+              <div className="navbar-especific-phone">
+                <div className="navbar-title">
+                  <h2>Users</h2>
+                </div>
                 <ul className="nav-links">
                   <li
                     className="link-1"
@@ -309,23 +340,6 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
                     </div>
                   </li>
                 </ul>
-              ) : (
-                <></>
-              )}
-            </div>
-            {open ? (
-              <div className="navbar-especific-phone">
-                <div className="navbar-title">
-                  <h2>Asesors</h2>
-                </div>
-                <ul className="nav-links">
-                  <li className="link-1">
-                    <h3>All Asesors</h3>
-                    <div className="counter">
-                      <h4>4</h4>
-                    </div>
-                  </li>
-                </ul>
               </div>
             ) : null}
           </>
@@ -337,18 +351,18 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
                 <h2>Categories & Suggestions</h2>
               </div>
               <ul className="nav-links">
-                <li className="link-1">
+                <NavLink to="/asesores/categories" className="link-1">
                   <h3>All Categories</h3>
                   <div className="counter">
                     <h4>4</h4>
                   </div>
-                </li>
-                <li className="link-1">
+                </NavLink>
+                <NavLink to="/asesores/suggestion" className="link-1">
                   <h3>All Suggestions</h3>
                   <div className="counter">
                     <h4>4</h4>
                   </div>
-                </li>
+                </NavLink>
               </ul>
               <ul className="nav-links2">
                 <h2>Create</h2>
@@ -458,7 +472,7 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
           <>
             <div className="navbar-especific">
               <div className="navbar-title">
-                <h2>Hola {user.name}</h2>
+                <h2>Hello {user.name}</h2>
               </div>
               {user.role == "admin" ? (
                 <ul className="nav-links">
@@ -468,7 +482,7 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
                       setFlag(true);
                     }}
                   >
-                    <h3>Invitar a Asesor</h3>
+                    <h3>Invite an Asesor</h3>
                   </li>
                   <li
                     className="link-1"
@@ -494,16 +508,38 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
             {open ? (
               <div className="navbar-especific-phone">
                 <div className="navbar-title">
-                  <h2>Asesors</h2>
+                  <h2>Hello {user.name}</h2>
                 </div>
-                <ul className="nav-links">
-                  <li className="link-1">
-                    <h3>All Asesors</h3>
-                    <div className="counter">
-                      <h4>4</h4>
-                    </div>
-                  </li>
-                </ul>
+                {user.role == "admin" ? (
+                  <ul className="nav-links">
+                    <li
+                      className="link-1"
+                      onClick={(event) => {
+                        setFlag(true);
+                      }}
+                    >
+                      <h3>Invite an Asesor</h3>
+                    </li>
+                    <li
+                      className="link-1"
+                      onClick={(event) => {
+                        setChangePassword(true);
+                      }}
+                    >
+                      <h3>Change Passwword</h3>
+                    </li>
+                    <li
+                      className="link-1"
+                      onClick={(event) => {
+                        logout();
+                      }}
+                    >
+                      <h3>Log Out</h3>
+                    </li>
+                  </ul>
+                ) : (
+                  <></>
+                )}
               </div>
             ) : null}
           </>
@@ -629,7 +665,11 @@ const Sidebar = styled.div`
     }
     .nav-links {
       width: 100%;
-      margin-top: 30px;
+      height: 100px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      flex-direction: column;
       .link-1 {
         margin-bottom: 20px;
         display: flex;
@@ -750,6 +790,8 @@ const Sidebar = styled.div`
     width: 100vw;
     display: flex;
     z-index: 50;
+    overflow-y: scroll;
+    overflow-x: hidden;
     flex-direction: column;
     .navbar {
       height: 90px;
@@ -798,8 +840,10 @@ const Sidebar = styled.div`
       display: none;
     }
     .navbar-especific-phone {
-      width: 100%;
-      height: 100%;
+      width: 100vw;
+      height: 100vh;
+      padding-bottom: 100px !important;
+      overflow: scroll;
       background: #4a3f35;
       display: flex;
       flex-direction: column;
@@ -990,8 +1034,10 @@ const Sidebar = styled.div`
       display: none;
     }
     .navbar-especific-phone {
+      padding-bottom: 100px !important;
+      overflow: scroll;
       width: 100%;
-      height: 100%;
+      height: 100vh;
       background: #4a3f35;
       display: flex;
       flex-direction: column;

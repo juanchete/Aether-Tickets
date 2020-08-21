@@ -9,7 +9,7 @@ import { UserContext } from "../../CreateContext";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { useParams } from "react-router";
 import moment from "moment";
-import Swal from 'sweetalert2'
+import Swal from "sweetalert2";
 
 export default function TicketAsesor() {
   const { user, setUser } = useContext(UserContext);
@@ -18,6 +18,7 @@ export default function TicketAsesor() {
   const [text, setText] = useState("");
   const [content, setContent] = useState("");
   const [ticket, setTicket] = useState();
+  const [category, setCategory] = useState();
   const [messages, setMessages] = useState();
   const [asesor, setAsesor] = useState();
   const [toggleDet, setToggleDet] = useState(false);
@@ -35,6 +36,8 @@ export default function TicketAsesor() {
   const onFilesChange = (file) => {
     setFiles([...files, file]);
   };
+  const fieldRef = React.useRef(null);
+
   useEffect(() => {
     setLoading(true);
     const db = firebase.firestore();
@@ -60,6 +63,24 @@ export default function TicketAsesor() {
                 console.log("Error getting document:", error);
               });
           }
+          let docRef3 = db.collection("categories").doc(doc.data().category);
+          docRef3
+            .get()
+            .then(function (doc3) {
+              if (doc3.exists) {
+                const categor = {
+                  id: doc3.id,
+                  name: doc3.data().name,
+                };
+
+                setCategory(categor);
+              } else {
+                console.log("No such document!");
+              }
+            })
+            .catch(function (error) {
+              console.log("Error getting document:", error);
+            });
           db.collection("messages")
             .where("ticket", "==", id)
             .orderBy("date", "asc")
@@ -82,6 +103,9 @@ export default function TicketAsesor() {
       .catch(function (error) {
         console.log("Error getting document:", error);
       });
+    if (fieldRef.current) {
+      fieldRef.current.scrollIntoView({ behavior: "smooth" });
+    }
     setLoading(false);
   }, [ticket]);
 
@@ -107,22 +131,18 @@ export default function TicketAsesor() {
           ref.update({
             messages: firebase.firestore.FieldValue.arrayUnion(id),
           });
-          console.log('asas');
+          console.log("asas");
         });
-        const check = await  db.collection('mail').add({
-          to: `juanlopezlmg@gmail.com`, //ticket.usuario.email
-          message: {
-            subject: `Response of your ticket wit id: ${id}`,
-            text: text,
-            html: text,
-          }
-        })
-        console.log(check);
-        Swal.fire(
-          'Correcto',
-          'Inicio sesion Correcctamente',
-          'success'
-      )
+      const check = await db.collection("mail").add({
+        to: `juanlopezlmg@gmail.com`, //ticket.usuario.email
+        message: {
+          subject: `Response of your ticket wit id: ${id}`,
+          text: text,
+          html: text,
+        },
+      });
+      console.log(check);
+      // Swal.fire("Correcto", "Inicio sesion Correcctamente", "success");
     } catch (error) {
       console.log(error);
     }
@@ -209,15 +229,29 @@ export default function TicketAsesor() {
             />
           </div>
         </div>
-        {!loading && ticket && messages ? (
+        {!loading && ticket && messages && category ? (
           <div className="container">
             <div className="chat">
-              <div className="chat-screen">
+              <div className="chat-screen" id="chat-screen-1">
                 {messages.map((message) => (
                   <div className="chat-message">
-                    <div className="chat-screen-header">
+                    <div
+                      className={
+                        message.sender.id === user.id
+                          ? "chat-screen-header"
+                          : "chat-screen-header-2"
+                      }
+                    >
                       <div className="name">
-                        <h2>Valeska Silva</h2>
+                        {message.sender.id === user.id ? (
+                          <h2>
+                            {user.name} {user.lastName}
+                          </h2>
+                        ) : (
+                          <h2>
+                            {message.sender.name} {message.sender.lastName}
+                          </h2>
+                        )}
                       </div>
                       <div className="time">
                         <h2>
@@ -236,6 +270,7 @@ export default function TicketAsesor() {
                     </div>
                   </div>
                 ))}
+                <div ref={fieldRef} />
               </div>
 
               <div className="chat-text-box">
@@ -249,10 +284,12 @@ export default function TicketAsesor() {
                     className="button-submit"
                     type="button"
                     onClick={sendMessage}
-                    disbled={
-                      ticket.status != "Solved" && ticket.status != "Unsolved"
-                        ? false
-                        : true
+                    disabled={
+                      ticket.status === "Solved" ||
+                      ticket.status === "Unsolved" ||
+                      ticket.asesor != user.id
+                        ? true
+                        : false
                     }
                   >
                     <h2>Submit</h2>
@@ -332,7 +369,7 @@ export default function TicketAsesor() {
                 </div>
                 <div className="ticket-detail-info-item">
                   <h2>Category: </h2>
-                  <h3>LOGIN</h3>
+                  <h3>{category.name}</h3>
                 </div>
               </div>
               <div className="ticket-detail-info">
@@ -457,7 +494,6 @@ const HomeStyle = styled.div`
       flex-direction: row;
       padding: 10px;
       padding-top: 90px;
-
       .chat {
         width: 70%;
         height: 100%;
@@ -483,14 +519,61 @@ const HomeStyle = styled.div`
             border: 1px solid #2f2519;
             border-radius: 5px;
 
+            .chat-screen-header-2 {
+              width: 100%;
+              background: #fa7d09;
+              height: 50px;
+              border: 1px solid transparent;
+              border-radius: 3px;
+              display: flex;
+              flex-direction: row;
+
+              .name {
+                display: flex;
+                align-items: center;
+                width: 50%;
+                height: 100%;
+                padding-left: 10px;
+
+                h2 {
+                  font-size: 15px;
+                  font-family: "Raleway", sans-serif;
+                  letter-spacing: 0.2em;
+                  font-weight: 300;
+                  font-style: italics;
+                  color: #2f2519;
+                  margin-right: 5px;
+                }
+              }
+              .time {
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                text-align: flex-end;
+                width: 50%;
+                height: 100%;
+
+                h2 {
+                  font-size: 12px;
+                  font-family: "Raleway", sans-serif;
+                  letter-spacing: 0.2em;
+                  font-weight: 300;
+                  font-style: italics;
+                  color: #2f2519;
+                  margin-right: 5px;
+                }
+              }
+            }
+
             .chat-screen-header {
               width: 100%;
               background: #2f2519;
               height: 50px;
               border: 1px solid transparent;
-              border-radius: 5px;
+              border-radius: 3px;
               display: flex;
               flex-direction: row;
+
               .name {
                 display: flex;
                 align-items: center;
@@ -538,11 +621,13 @@ const HomeStyle = styled.div`
             }
           }
         }
+
         .chat-text-box {
           display: flex;
           flex-direction: column;
           width: 100%;
           height: 30%;
+
           .button-container {
             width: 100%;
             height: 60px;
@@ -846,7 +931,7 @@ const HomeStyle = styled.div`
       }
     }
   }
-  @media only screen and (max-height: 900px) {
+  @media only screen and (max-height: 800px) {
     .home-view {
       .container {
         .chat {

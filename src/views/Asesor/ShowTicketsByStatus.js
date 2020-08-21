@@ -46,7 +46,7 @@ export default function TicketsByStatus({ filter }) {
         </div>
 
         <ul className="labels">
-          <li className="label">
+          <li className="label-1">
             <h2>Requester</h2>
           </li>
           <li className="label">
@@ -58,10 +58,10 @@ export default function TicketsByStatus({ filter }) {
           <li className="label">
             <h2>Priority</h2>
           </li>
-          <li className="label">
+          <li className="label-1">
             <h2>Status</h2>
           </li>
-          <li className="label">
+          <li className="label-1">
             <h2>Created At</h2>
           </li>
         </ul>
@@ -119,7 +119,7 @@ const HomeStyle = styled.div`
     }
 
     .labels {
-      width: 100%;
+      width: 70vw;
       height: 40px;
       border-bottom: 1px solid #2f2519;
       display: flex;
@@ -128,9 +128,25 @@ const HomeStyle = styled.div`
       padding-left: 10px;
       padding-right: 10px;
       margin-top: 80px;
+      .label-2 {
+        width: 10%;
+      }
 
+      .label-1 {
+        width: 15%;
+        h2 {
+          font-size: 12px;
+          font-family: "Raleway", sans-serif;
+          letter-spacing: 0.2em;
+          font-weight: 500;
+          font-style: normal;
+          color: #2f2519;
+          text-transform: uppercase;
+          margin-right: 5px;
+        }
+      }
       .label {
-        width: 16.66%;
+        width: 15%;
         h2 {
           font-size: 12px;
           font-family: "Raleway", sans-serif;
@@ -149,9 +165,30 @@ const HomeStyle = styled.div`
     flex-direction: column;
     .home-view {
       width: 100%;
-
+      margin-left: 0;
+      .PageLoading {
+        margin-top: 300px;
+      }
+      .content {
+        width: 100%;
+        height: auto;
+        margin-top: 100px;
+      }
       .home-view-title {
         height: 80px;
+        margin-top: 90px;
+        width: 100%;
+      }
+
+      .labels {
+        margin-top: 175px;
+        width: 100vw;
+        .label {
+          width: 33.333%;
+        }
+        .label-1 {
+          display: none;
+        }
       }
     }
   }

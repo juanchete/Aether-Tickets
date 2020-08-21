@@ -168,8 +168,8 @@ const Category = styled.div`
     }
     .container-add {
       padding: 2rem;
-      width: 40%;
-      height: 80%;
+      width: 500px;
+      height: 600px;
       background: white;
       border: 3px solid white;
       border-radius: 20px;
@@ -251,52 +251,14 @@ const Category = styled.div`
       .container {
         width: 100%;
         margin: auto;
-        height: 100%;
+        height: 100vh;
         display: flex;
         justify-content: center;
         align-items: center;
       }
       .container-add {
-        height: auto;
-        width: 50%;
+        height: 600px;
       }
-    }
-  }
-
-  @media only screen and (max-height: 900px) and (min-height: 800px) {
-    .container-add {
-      height: 75%;
-      overflow-y: scroll;
-    }
-  }
-  @media only screen and (max-height: 1000px) and (min-height: 901px) {
-    .container-add {
-      height: 65%;
-      overflow-y: scroll;
-    }
-  }
-  @media only screen and (max-height: 1500px) and (min-height: 1001px) {
-    .container-add {
-      height: 600px;
-      overflow-y: scroll;
-    }
-  }
-  @media only screen and (max-width: 1290px) and (min-width: 1024px) {
-    .container-add {
-      width: 50% !important;
-      overflow-y: scroll;
-    }
-  }
-
-  @media only screen and (max-width: 1023px) and (min-width: 768px) {
-    .container-add {
-      width: 65% !important;
-    }
-  }
-
-  @media only screen and (max-width: 767px) and (min-width: 630px) {
-    .container-add {
-      width: 75% !important;
     }
   }
 
