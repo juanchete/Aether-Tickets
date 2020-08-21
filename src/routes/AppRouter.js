@@ -18,6 +18,7 @@ import TicketAsesor from "../views/Asesor/Ticket";
 import AdminRoutes from "../routes/AdminRoutes";
 import AsesorRoutes from "../routes/AsesorRoutes";
 import InviteRoutes from "../routes/InviteRoutes";
+import ForgotPassword from '../views/Asesor/ForgotPassword'
 
 function AppRouter() {
   return (
@@ -43,6 +44,8 @@ function AppRouter() {
         <InviteRoutes exact path="/sign-up-asesores" component={SignUpAsesor} />
 
         <Route exact path="/login" component={LoginAsesores} />
+        <Route exact path="/forgot-password" component={ForgotPassword} />
+
         <AsesorRoutes
           exact
           path="/tickets/pending"

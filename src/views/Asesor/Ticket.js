@@ -9,6 +9,7 @@ import { UserContext } from "../../CreateContext";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { useParams } from "react-router";
 import moment from "moment";
+import Swal from 'sweetalert2'
 
 export default function TicketAsesor() {
   const { user, setUser } = useContext(UserContext);
@@ -90,7 +91,7 @@ export default function TicketAsesor() {
         .collection("messages")
         .add({
           sender: {
-            id: user ? user.id : null,
+            id: user.id ? user.id : null,
             email: user.email,
             name: user.name,
             lastName: user.lastName,
@@ -106,8 +107,25 @@ export default function TicketAsesor() {
           ref.update({
             messages: firebase.firestore.FieldValue.arrayUnion(id),
           });
+          console.log('asas');
         });
-    } catch (error) {}
+        const check = await  db.collection('mail').add({
+          to: `juanlopezlmg@gmail.com`, //ticket.usuario.email
+          message: {
+            subject: `Response of your ticket wit id: ${id}`,
+            text: text,
+            html: text,
+          }
+        })
+        console.log(check);
+        Swal.fire(
+          'Correcto',
+          'Inicio sesion Correcctamente',
+          'success'
+      )
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const assumeTicket = async () => {
