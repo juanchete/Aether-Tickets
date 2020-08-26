@@ -1,35 +1,80 @@
 // The Cloud Functions for Firebase SDK to create Cloud Functions and setup triggers.
 const functions = require('firebase-functions');
-
+const _ = require('lodash');
+const simpleParser = require('mailparser').simpleParser;
 // The Firebase Admin SDK to access Cloud Firestore.
 const admin = require('firebase-admin');
 admin.initializeApp();
 
+var imaps = require('imap-simple');
+
+var config = {
+  imap: {
+    user: 'ticket@aethersol.com',
+    password: 'aether2020!',
+    host: 'aethersol.com',
+    port: 993,
+    tls: true,
+    tlsOptions: { rejectUnauthorized: false },
+      authTimeout: 3000
+  }
+};
+
 // Take the text parameter passed to this HTTP endpoint and insert it into
 // Cloud Firestore under the path /messages/:documentId/original
 exports.addMessage = functions.https.onRequest(async (req, res) => {
-    // Grab the text parameter.
-    const original = req.query.text;
-    // Push the new message into Cloud Firestore using the Firebase Admin SDK.
-    const writeResult = await admin.firestore().collection('messages').add({original: original});
-    // Send back a message that we've succesfully written the message
-    res.json({result: `Message with ID: ${writeResult.id} added.`});
+
+  try {
+    imaps.connect(config).then(function (connection) {
+      return connection.openBox('INBOX').then(function () {
+          var searchCriteria = ['UNSEEN'];
+          var fetchOptions = {
+              bodies: ['HEADER', 'TEXT', ''],
+          };
+          return connection.search(searchCriteria, fetchOptions).then(function (messages) {
+              messages.forEach(function (item) {
+                  var all = _.find(item.parts, { "which": "" })
+                  var id = item.attributes.uid;
+                  var idHeader = "Imap-Id: "+id+"\r\n";
+                  simpleParser(idHeader+all.body, async (err, mail) => {
+                      // access to the whole mail object
+                      const prueba = mail.subject.split(": ");
+                      console.log(prueba[2])
+                      const mensajePrueba = mail.text.split("On ");
+                      console.log(mensajePrueba[0]) 
+                      const {value} = mail.from
+                      const senderEmail= value[0].address 
+      
+                      const {usuario} = nameUser[0]
+
+                      await admin.firestore().collection('messages').add({
+                        content: mensajePrueba[0],
+                        contentHtml: `<p>${mensajePrueba[0]}</p>`,
+                        date: new Date(),
+                        files:{},
+                        sender: usuario,
+                        ticket: prueba[2]
+                      }).then(async (docRef) => {
+                            await admin.firestore().collection("tickets").doc(prueba[2]).update({
+                               messages: admin.firestore.FieldValue.arrayUnion(docRef.id),
+                            });
+                    })
+             
+                  });
+                  connection.addFlags(id, "\Seen", (err) => {
+                    if (err){
+                        console.log('Problem marking message for deletion');
+                        rej(err);
+                    }
+                })
+            });
+          });
+      });
   });
-
-  // Listens for new messages added to /messages/:documentId/original and creates an
-// uppercase version of the message to /messages/:documentId/uppercase
-exports.makeUppercase = functions.firestore.document('/messages/{documentId}')
-.onCreate((snap, context) => {
-  // Grab the current value of what was written to Cloud Firestore.
-  const original = snap.data().original;
-
-  // Access the parameter `{documentId}` with `context.params`
-  functions.logger.log('Uppercasing', context.params.documentId, original);
-
-  const uppercase = original.toUpperCase();
-
-  // You must return a Promise when performing asynchronous tasks inside a Functions such as
-  // writing to Cloud Firestore.
-  // Setting an 'uppercase' field in Cloud Firestore document returns a Promise.
-  return snap.ref.set({uppercase}, {merge: true});
-});
+  } catch (error) {
+    console.log(error);
+  }
+  
+  
+  
+  });
