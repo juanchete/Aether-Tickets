@@ -44,8 +44,16 @@ exports.addMessage = functions.https.onRequest(async (req, res) => {
                       console.log(mensajePrueba[0]) 
                       const {value} = mail.from
                       const senderEmail= value[0].address 
+
+                      console.log(senderEmail.trim());
+
+                      const usuarioData = await admin.firestore().collection('tickets').where('usuario.email','==',senderEmail.trim()).limit(1).get()
+
+                      const usuario = usuarioData.docs[0].data().usuario
+
+                      console.log(usuario);
       
-                      const {usuario} = nameUser[0]
+                      
 
                       await admin.firestore().collection('messages').add({
                         content: mensajePrueba[0],
@@ -61,12 +69,7 @@ exports.addMessage = functions.https.onRequest(async (req, res) => {
                     })
              
                   });
-                  connection.addFlags(id, "\Seen", (err) => {
-                    if (err){
-                        console.log('Problem marking message for deletion');
-                        rej(err);
-                    }
-                })
+              
             });
           });
       });
