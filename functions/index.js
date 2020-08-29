@@ -39,6 +39,8 @@ exports.addMessage = functions.https.onRequest(async (req, res) => {
                   simpleParser(idHeader+all.body, async (err, mail) => {
                       // access to the whole mail object
                       const prueba = mail.subject.split(": ");
+                      const flag = prueba.includes("Response of your ticket wit id")
+                      console.log(flag);
                       console.log(prueba[2])
                       const mensajePrueba = mail.text.split("On ");
                       console.log(mensajePrueba[0]) 
@@ -47,7 +49,8 @@ exports.addMessage = functions.https.onRequest(async (req, res) => {
 
                       console.log(senderEmail.trim());
 
-                      const usuarioData = await admin.firestore().collection('tickets').where('usuario.email','==',senderEmail.trim()).limit(1).get()
+                      if (flag == true) {
+                        const usuarioData = await admin.firestore().collection('tickets').where('usuario.email','==',senderEmail.trim()).limit(1).get()
 
                       const usuario = usuarioData.docs[0].data().usuario
 
@@ -67,10 +70,24 @@ exports.addMessage = functions.https.onRequest(async (req, res) => {
                                messages: admin.firestore.FieldValue.arrayUnion(docRef.id),
                             });
                     })
+
+                    connection.addFlags(item.attributes.uid, "\Seen", (err) => {
+                      if (err){
+                          console.log('Problem marking message for deletion');
+                          rej(err);
+                      }
+        
+                  })
+                      }else{
+                        console.log('rebotado');
+                      }
+
+                      
              
                   });
               
             });
+            
           });
       });
   });
@@ -81,3 +98,29 @@ exports.addMessage = functions.https.onRequest(async (req, res) => {
   
   
   });
+
+  exports.emailGoodBye = functions.firestore
+    .document('tickets/{userId}')
+    .onUpdate((change, context) => {
+      // Get an object representing the document
+      // e.g. {'name': 'Marie', 'age': 66}
+      const newValue = change.after.data();
+
+     
+
+      // access a particular field as you would any JS property
+      const status = newValue.status;
+
+      if (status == 'Closed') {
+        firebase.firestore().collection("mail").add({
+          to: `juanlopezlmg@gmail.com`, //ticket.usuario.email
+          message: {
+            subject: `Your ticket with id: ${id} is closed`,
+            text:  `We hope that your ticket was solved and the solution that we give you acomplish all your expectations. If you have any other doubt please see our FAQ or create another ticket, see you soon.`,
+            html: text,
+          },
+        });
+      }
+
+      // perform desired operations ...
+    });

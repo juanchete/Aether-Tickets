@@ -134,7 +134,7 @@ export default function TicketAsesor() {
           console.log("asas");
         });
       const check = await db.collection("mail").add({
-        to: `juanlopezlmg@gmail.com`, //ticket.usuario.email
+        to: user.email, //ticket.usuario.email
         message: {
           subject: `Response of your ticket wit id: ${id}`,
           text: text,
@@ -209,6 +209,17 @@ export default function TicketAsesor() {
       }
     });
   };
+
+  const callFirebaseFunction = event => {
+    const callableReturnMessage = firebase.functions().httpsCallable('addMessage');
+
+    callableReturnMessage().then((result) => {
+      console.log('Revisa si funciona');
+    }).catch((error) => {
+      console.log(`error: ${JSON.stringify(error)}`);
+    });
+}
+
   return (
     <HomeStyle
       toggleDet={toggleDet}
@@ -426,6 +437,16 @@ export default function TicketAsesor() {
                   disabled={user.id === ticket.asesor ? false : true}
                 >
                   <h2>Unsolved</h2>
+                </button>
+              </div>
+              <div className="button-container">
+                <button
+                  className="button-submit"
+                  type="submit"
+                  disabled={user.id === ticket.asesor ? false : true}
+                  onClick={ a => {callFirebaseFunction()}}
+                >
+                  <h2>Refresh Email</h2>
                 </button>
               </div>
             </div>
