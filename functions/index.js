@@ -1,29 +1,28 @@
 // The Cloud Functions for Firebase SDK to create Cloud Functions and setup triggers.
-const functions = require('firebase-functions');
-const _ = require('lodash');
-const simpleParser = require('mailparser').simpleParser;
+const functions = require("firebase-functions");
+const _ = require("lodash");
+const simpleParser = require("mailparser").simpleParser;
 // The Firebase Admin SDK to access Cloud Firestore.
-const admin = require('firebase-admin');
+const admin = require("firebase-admin");
 admin.initializeApp();
 
-var imaps = require('imap-simple');
+var imaps = require("imap-simple");
 
 var config = {
   imap: {
-    user: 'ticket@aethersol.com',
-    password: 'aether2020!',
-    host: 'aethersol.com',
+    user: "ticket@aethersol.com",
+    password: "aether2020!",
+    host: "aethersol.com",
     port: 993,
     tls: true,
     tlsOptions: { rejectUnauthorized: false },
-      authTimeout: 3000
-  }
+    authTimeout: 3000,
+  },
 };
 
 // Take the text parameter passed to this HTTP endpoint and insert it into
 // Cloud Firestore under the path /messages/:documentId/original
 exports.addMessage = functions.https.onRequest(async (req, res) => {
-
   try {
     imaps.connect(config).then(function (connection) {
       return connection.openBox('INBOX').then(function () {
@@ -47,16 +46,14 @@ exports.addMessage = functions.https.onRequest(async (req, res) => {
                       const {value} = mail.from
                       const senderEmail= value[0].address 
 
-                      console.log(senderEmail.trim());
+                console.log(senderEmail.trim());
 
                       if (flag == true) {
                         const usuarioData = await admin.firestore().collection('tickets').where('usuario.email','==',senderEmail.trim()).limit(1).get()
 
-                      const usuario = usuarioData.docs[0].data().usuario
+                const usuario = usuarioData.docs[0].data().usuario;
 
-                      console.log(usuario);
-      
-                      
+                console.log(usuario);
 
                       await admin.firestore().collection('messages').add({
                         content: mensajePrueba[0],
@@ -85,12 +82,11 @@ exports.addMessage = functions.https.onRequest(async (req, res) => {
                       
              
                   });
-              
+              });
             });
             
           });
       });
-  });
   } catch (error) {
     console.log(error);
   }
