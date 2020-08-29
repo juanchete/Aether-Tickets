@@ -5,6 +5,7 @@ import { useUser, useFirebaseApp } from "reactfire";
 import styled from "styled-components";
 import SidebarAdmin from "../../components/sidebars/SidebarAdmin";
 import TextEditor from "../../components/inputs/TextEditor";
+import Feedback from "../../components/Feedback";
 import { UserContext } from "../../CreateContext";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { useParams } from "react-router";
@@ -25,6 +26,7 @@ export default function TicketAsesor() {
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [show, setShow] = useState(false);
+  const [feedbackShow, setFeedbackShow] = useState(false);
   let { id } = useParams();
 
   const onEditorChange = (value) => {
@@ -128,15 +130,37 @@ export default function TicketAsesor() {
         })
         .then(async function (doc) {
           var ref = db.collection("tickets").doc(id);
+
+          let lifespan = ticket.lifespan;
+          console.log(lifespan);
+          if ((ticket.status = "Open")) {
+            lifespan =
+              lifespan +
+              Math.round(
+                ((Math.abs(
+                  firebase.firestore.Timestamp.now().toDate() -
+                    ticket.statusUpdatedAt.toDate()
+                ) %
+                  86400000) %
+                  3600000) /
+                  60000
+              );
+          }
+
+          console.log(lifespan);
           ref.update({
             messages: firebase.firestore.FieldValue.arrayUnion(id),
+            status: "Pending",
+            statusUpdatedAt: firebase.firestore.Timestamp.now(),
+            lastMessage: firebase.firestore.Timestamp.now(),
+            lifespan: lifespan,
           });
           console.log("asas");
         });
       const check = await db.collection("mail").add({
-        to: user.email, //ticket.usuario.email
+        to: ticket.usuario.email,
         message: {
-          subject: `Response of your ticket wit id: ${id}`,
+          subject: `Response of your ticket with id: ${id}`,
           text: text,
           html: text,
         },
@@ -158,6 +182,7 @@ export default function TicketAsesor() {
         .update({
           asesor: user.id,
           asesores: firebase.firestore.FieldValue.arrayUnion(user.id),
+          asesorUpdate: firebase.firestore.Timestamp.now(),
         })
         .then(() => {
           let newTicket = ticket;
@@ -165,9 +190,6 @@ export default function TicketAsesor() {
           setTicket(newTicket);
           getAsesor(newTicket, user.id);
           var ref = db.collection("asesores").doc(user.id);
-          ref.update({
-            tickets: firebase.firestore.FieldValue.arrayUnion(id),
-          });
         });
     } catch (error) {}
   };
@@ -176,21 +198,35 @@ export default function TicketAsesor() {
     if (status != ticket.status) {
       if (status == "Delegate") {
         try {
-          await db.collection("tickets").doc(id).update({
-            asesor: null,
-          });
+          await db
+            .collection("tickets")
+            .doc(id)
+            .update({
+              asesor: null,
+              asesorUpdate: firebase.firestore.Timestamp.now(),
+            })
+            .then(async function (doc) {
+              var ref = db.collection("asesores").doc(user.id);
+              ref.update({
+                tickets: firebase.firestore.FieldValue.arrayUnion({
+                  ticket: id,
+                  status: "Delegated",
+                  updatedAt: firebase.firestore.Timestamp.now(),
+                }),
+              });
+            });
         } catch (error) {}
       } else {
         try {
           await db.collection("tickets").doc(id).update({
             status: status,
+            statusUpdatedAt: firebase.firestore.Timestamp.now(),
           });
         } catch (error) {}
       }
     }
     setShow(false);
   };
-
   const getAsesor = async (ticket, id) => {
     const db = firebaseReact.firestore();
     let docRef = db.collection("asesores").doc(id);
@@ -210,250 +246,297 @@ export default function TicketAsesor() {
     });
   };
 
-  const callFirebaseFunction = event => {
-    const callableReturnMessage = firebase.functions().httpsCallable('addMessage');
+  const callFirebaseFunction = (event) => {
+    const callableReturnMessage = firebase
+      .functions()
+      .httpsCallable("addMessage");
 
-    callableReturnMessage().then((result) => {
-      console.log('Revisa si funciona');
-    }).catch((error) => {
-      console.log(`error: ${JSON.stringify(error)}`);
-    });
-}
+    callableReturnMessage()
+      .then((result) => {
+        console.log("Revisa si funciona");
+      })
+      .catch((error) => {
+        console.log(`error: ${JSON.stringify(error)}`);
+      });
+  };
 
+  const showFeedback = (e) => {
+    setFeedbackShow(!feedbackShow);
+  };
   return (
-    <HomeStyle
-      toggleDet={toggleDet}
-      screenWidth={window.innerWidth}
-      show={show}
-    >
-      <SidebarAdmin ticket={true} />
-      <div className="home-view">
-        <div className="home-view-title">
-          <div style={{ display: "flex", flexDirection: "row" }}>
-            <h2>Ticket</h2>
-            <h1>{id.substring(0, 7)}</h1>
-            <AiOutlineInfoCircle
-              className="icon"
-              onClick={(event) => {
-                setToggleDet(!toggleDet);
-              }}
-            />
+    <>
+      <Feedback show={feedbackShow} showFeedback={showFeedback} />
+
+      <HomeStyle
+        toggleDet={toggleDet}
+        screenWidth={window.innerWidth}
+        show={show}
+      >
+        <SidebarAdmin ticket={true} />
+        <div className="home-view">
+          <div className="home-view-title">
+            <div style={{ display: "flex", flexDirection: "row" }}>
+              <h2>Ticket</h2>
+              <h1>{id.substring(0, 7)}</h1>
+              <AiOutlineInfoCircle
+                className="icon"
+                onClick={(event) => {
+                  setToggleDet(!toggleDet);
+                }}
+              />
+            </div>
           </div>
-        </div>
-        {!loading && ticket && messages && category ? (
-          <div className="container">
-            <div className="chat">
-              <div className="chat-screen" id="chat-screen-1">
-                {messages.map((message) => (
-                  <div className="chat-message">
-                    <div
-                      className={
-                        message.sender.id === user.id
-                          ? "chat-screen-header"
-                          : "chat-screen-header-2"
+          {!loading && ticket && messages && category ? (
+            <div className="container">
+              <div className="chat">
+                <div className="chat-screen" id="chat-screen-1">
+                  {messages.map((message) => (
+                    <div className="chat-message">
+                      <div
+                        className={
+                          message.sender
+                            ? message.sender.id === user.id
+                              ? "chat-screen-header"
+                              : "chat-screen-header-2"
+                            : "chat-screen-header"
+                        }
+                      >
+                        <div className="name">
+                          {message.sender.id === user.id ? (
+                            <h2>
+                              {user.name} {user.lastName}
+                            </h2>
+                          ) : (
+                            <h2>
+                              {message.sender.name} {message.sender.lastName}
+                            </h2>
+                          )}
+                          {message.sender ? (
+                            <>
+                              {message.sender.id === user.id ? (
+                                <h2>
+                                  {user.name} {user.lastName}
+                                </h2>
+                              ) : (
+                                <h2>
+                                  {" "}
+                                  {message.sender.name}{" "}
+                                  {message.sender.lastName}{" "}
+                                </h2>
+                              )}
+                            </>
+                          ) : (
+                            <h2>
+                              {" "}
+                              {user.name} {user.lastName}
+                            </h2>
+                          )}
+                        </div>
+                        <div className="time">
+                          <h2>
+                            {" "}
+                            {moment(message.date.toDate()).fromNow().toString()}
+                          </h2>
+                        </div>
+                      </div>
+                      <div className="chat-screen-content">
+                        <div
+                          className="content"
+                          dangerouslySetInnerHTML={{
+                            __html: message.contentHtml,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                  <div ref={fieldRef} />
+                </div>
+
+                <div className="chat-text-box">
+                  {" "}
+                  <TextEditor
+                    onEditorChange={onEditorChange}
+                    onFilesChange={onFilesChange}
+                  />
+                  <div className="button-container">
+                    <button
+                      className="button-submit"
+                      type="button"
+                      onClick={sendMessage}
+                      disabled={
+                        ticket.status === "Solved" ||
+                        ticket.status === "Unsolved" ||
+                        ticket.asesor != user.id
+                          ? true
+                          : false
                       }
                     >
-                      <div className="name">
-                        {message.sender.id === user.id ? (
-                          <h2>
-                            {user.name} {user.lastName}
-                          </h2>
-                        ) : (
-                          <h2>
-                            {message.sender.name} {message.sender.lastName}
-                          </h2>
-                        )}
-                      </div>
-                      <div className="time">
-                        <h2>
-                          {" "}
-                          {moment(message.date.toDate()).fromNow().toString()}
-                        </h2>
-                      </div>
-                    </div>
-                    <div className="chat-screen-content">
-                      <div
-                        className="content"
-                        dangerouslySetInnerHTML={{
-                          __html: message.contentHtml,
-                        }}
-                      />
-                    </div>
-                  </div>
-                ))}
-                <div ref={fieldRef} />
-              </div>
-
-              <div className="chat-text-box">
-                {" "}
-                <TextEditor
-                  onEditorChange={onEditorChange}
-                  onFilesChange={onFilesChange}
-                />
-                <div className="button-container">
-                  <button
-                    className="button-submit"
-                    type="button"
-                    onClick={sendMessage}
-                    disabled={
-                      ticket.status === "Solved" ||
-                      ticket.status === "Unsolved" ||
-                      ticket.asesor != user.id
-                        ? true
-                        : false
-                    }
-                  >
-                    <h2>Submit</h2>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="ticket-detail">
-              <div className="ticket-detail-title">
-                <h2>Details</h2>
-              </div>
-              <div className="ticket-detail-info">
-                <div className="ticket-detail-info-title">
-                  <h2>Ticket Info </h2>
-                </div>
-                <div className="ticket-detail-info-item">
-                  <h2>Ticket ID: </h2>
-                  <h3>{id.substring(0, 7)}</h3>
-                </div>
-                <div className="ticket-detail-info-item">
-                  <h2>Created: </h2>
-                  <h3>
-                    {moment(ticket.createdAt.toDate())
-                      .format("DD/MM/yyyy")
-                      .toString()}
-                  </h3>
-                </div>
-                <div className="ticket-detail-info-item">
-                  <h2>Last Message: </h2>
-                  <h3>
-                    {moment(messages[messages.length - 1].date.toDate())
-                      .fromNow()
-                      .toString()}
-                  </h3>
-                </div>
-                <div className="ticket-detail-info-item">
-                  <h2>Status: </h2>
-                  <div className="button-container-status">
-                    <button
-                      type="button"
-                      className="status-button"
-                      disabled={user.id == ticket.asesor ? false : true}
-                      onClick={() => {
-                        setShow(!show);
-                      }}
-                    >
-                      <h2>{ticket.status}</h2>
+                      <h2>Submit</h2>
                     </button>
-                    <ul className="status-options">
-                      <li
-                        className="status-options-item"
-                        onClick={() => {
-                          changeStatus("Open");
-                        }}
-                      >
-                        <h2>Open</h2>
-                      </li>
-                      <li
-                        className="status-options-item"
-                        onClick={() => {
-                          changeStatus("Closed");
-                        }}
-                      >
-                        <h2>Closed</h2>
-                      </li>
-                      <li
-                        className="status-options-item"
-                        onClick={() => {
-                          changeStatus("Delegate");
-                        }}
-                      >
-                        <h2>Delegate</h2>
-                      </li>
-                    </ul>
                   </div>
                 </div>
-                <div className="ticket-detail-info-item">
-                  <h2>Category: </h2>
-                  <h3>{category.name}</h3>
-                </div>
               </div>
-              <div className="ticket-detail-info">
-                <div className="ticket-detail-info-title">
-                  <h2>Responsability </h2>
-                </div>
 
-                {ticket.asesor && asesor ? (
-                  <>
-                    <div className="ticket-detail-info-item">
-                      <h2>Assigned to: </h2>
-                      <h3>
-                        {asesor.name} {asesor.lastName}
-                      </h3>
-                    </div>
-                    <div className="ticket-detail-info-item">
-                      <h2>Rating: </h2>
-                      <h3>5</h3>
-                    </div>
-                  </>
-                ) : (
+              <div className="ticket-detail">
+                <div className="ticket-detail-title">
+                  <h2>Details</h2>
+                </div>
+                <div className="ticket-detail-info">
+                  <div className="ticket-detail-info-title">
+                    <h2>Ticket Info </h2>
+                  </div>
                   <div className="ticket-detail-info-item">
-                    <h2>Assigned to: </h2>
+                    <h2>Ticket ID: </h2>
+                    <h3>{id.substring(0, 7)}</h3>
+                  </div>
+                  <div className="ticket-detail-info-item">
+                    <h2>Created: </h2>
+                    <h3>
+                      {moment(ticket.createdAt.toDate())
+                        .format("DD/MM/yyyy")
+                        .toString()}
+                    </h3>
+                  </div>
+                  <div className="ticket-detail-info-item">
+                    <h2>Last Message: </h2>
+                    <h3>
+                      {moment(messages[messages.length - 1].date.toDate())
+                        .fromNow()
+                        .toString()}
+                    </h3>
+                  </div>
+                  <div className="ticket-detail-info-item">
+                    <h2>Status: </h2>
                     <div className="button-container-status">
                       <button
                         type="button"
                         className="status-button"
-                        onClick={assumeTicket}
+                        disabled={user.id == ticket.asesor ? false : true}
+                        onClick={() => {
+                          setShow(!show);
+                        }}
                       >
-                        <h2>Assume</h2>
+                        <h2>{ticket.status}</h2>
                       </button>
+                      <ul className="status-options">
+                        <li
+                          className="status-options-item"
+                          onClick={() => {
+                            changeStatus("Open");
+                          }}
+                        >
+                          <h2>Open</h2>
+                        </li>
+                        <li
+                          className="status-options-item"
+                          onClick={() => {
+                            changeStatus("Delegate");
+                          }}
+                        >
+                          <h2>Delegate</h2>
+                        </li>
+                      </ul>
                     </div>
                   </div>
-                )}
-              </div>
-              <div className="ticket-detail-info">
-                <div className="ticket-detail-info-title">
-                  <h2>Requester </h2>
+                  <div className="ticket-detail-info-item">
+                    <h2>Category: </h2>
+                    <h3>{category.name}</h3>
+                  </div>
                 </div>
-                <div className="ticket-detail-info-item">
-                  <h2>
-                    {ticket.usuario.name} {ticket.usuario.lastName}
-                  </h2>
+                <div className="ticket-detail-info">
+                  <div className="ticket-detail-info-title">
+                    <h2>Responsability </h2>
+                  </div>
+
+                  {ticket.asesor && asesor ? (
+                    <>
+                      <div className="ticket-detail-info-item">
+                        <h2>Assigned to: </h2>
+                        <h3>
+                          {asesor.name} {asesor.lastName}
+                        </h3>
+                      </div>
+                      <div className="ticket-detail-info-item">
+                        <h2>Rating: </h2>
+                        <h3>5</h3>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {user.role == "admin" ? (
+                        <>
+                          <div className="ticket-detail-info-item">
+                            <h2>Assigned to: </h2>
+                            <div className="button-container-status">
+                              <button
+                                type="button"
+                                className="status-button"
+                                onClick={assumeTicket}
+                              >
+                                <h2>Assume</h2>
+                              </button>
+                            </div>
+                          </div>
+                          <div className="ticket-detail-info-item">
+                            <h2> </h2>
+                            <div className="button-container-status">
+                              <button
+                                type="button"
+                                className="status-button"
+                                onClick={() => {
+                                  showFeedback(true);
+                                }}
+                              >
+                                <h2>Asign</h2>
+                              </button>
+                            </div>
+                          </div>
+                        </>
+                      ) : null}
+                    </>
+                  )}
                 </div>
-                <div className="ticket-detail-info-item">
-                  <h2>Total Tickets: </h2>
-                  <h3>20</h3>
+                <div className="ticket-detail-info">
+                  <div className="ticket-detail-info-title">
+                    <h2>Requester </h2>
+                  </div>
+                  <div className="ticket-detail-info-item">
+                    <h2>
+                      {ticket.usuario.name} {ticket.usuario.lastName}
+                    </h2>
+                  </div>
+                  <div className="ticket-detail-info-item">
+                    <h2>Total Tickets: </h2>
+                    <h3>20</h3>
+                  </div>
                 </div>
-              </div>
-              <div className="button-container">
-                <button
-                  className="button-submit"
-                  type="submit"
-                  disabled={user.id === ticket.asesor ? false : true}
-                >
-                  <h2>Unsolved</h2>
-                </button>
-              </div>
-              <div className="button-container">
-                <button
-                  className="button-submit"
-                  type="submit"
-                  disabled={user.id === ticket.asesor ? false : true}
-                  onClick={ a => {callFirebaseFunction()}}
-                >
-                  <h2>Refresh Email</h2>
-                </button>
+                <div className="button-container">
+                  <button
+                    className="button-submit"
+                    type="submit"
+                    disabled={user.id === ticket.asesor ? false : true}
+                  >
+                    <h2>Unsolved</h2>
+                  </button>
+                </div>
+                <div className="button-container">
+                  <button
+                    className="button-submit"
+                    type="submit"
+                    disabled={user.id === ticket.asesor ? false : true}
+                    onClick={(a) => {
+                      callFirebaseFunction();
+                    }}
+                  >
+                    <h2>Refresh Email</h2>
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        ) : null}
-      </div>
-    </HomeStyle>
+          ) : null}
+        </div>
+      </HomeStyle>
+    </>
   );
 }
 const HomeStyle = styled.div`

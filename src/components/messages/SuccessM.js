@@ -46,7 +46,7 @@ const Success = styled.div`
     position: absolute;
     height: 100vh;
     width: 100vw;
-    z-index: 100;
+    z-index: 400;
     position: fixed;
     font-family: "Raleway", sans-serif;
     .container {

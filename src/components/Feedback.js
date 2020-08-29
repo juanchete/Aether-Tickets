@@ -1,16 +1,12 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { UserContext } from "../CreateContext";
 import "firebase";
 import firebase from "firebase";
 import { useUser, useFirebaseApp } from "reactfire";
 import styled from "styled-components";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import ButtonSubmit from "../components/buttons/Button-Submit";
-import Input from "../components/inputs/InputLogin";
+import UserCard from "../components/cards/AsignTo";
+import Spinner from "../components/Spinner";
 import { IoMdClose } from "react-icons/io";
-import StarRating from "../components/StarRating";
-import TextArea from "../components/inputs/TextAreaInput";
 
 export default function Feedback({
   color,
@@ -23,36 +19,25 @@ export default function Feedback({
   const { user, setUser } = useContext(UserContext);
   const firebaseReact = useFirebaseApp();
   const db = firebaseReact.firestore();
-  const [ratingStars, setRatingStars] = useState(null);
-
-  const rateStars = (stars) => {
-    setRatingStars(stars);
-  };
-  const formik = useFormik({
-    initialValues: {
-      comment: "",
-    },
-    validationSchema: Yup.object({
-      comment: Yup.string().required("Required Field"),
-    }),
-
-    onSubmit: async (valores) => {
-      const { comment } = valores;
-      console.log(ratingStars);
-      const feedback = {
-        rating: ratingStars,
-        comment: comment,
-        usuario: user.id,
-        ticket: ticket,
-      };
-
-      var ref = db.collection("asesores").doc(asesor.id);
-      ref.update({
-        feedback: firebase.firestore.FieldValue.arrayUnion(feedback),
+  const [asesores, setAsesores] = useState();
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    setLoading(true);
+    const db = firebase.firestore();
+    return db
+      .collection("asesores")
+      .where("available", "==", true)
+      .orderBy("name", "desc")
+      .onSnapshot((snapshot) => {
+        const asesoresData = [];
+        snapshot.forEach((doc) =>
+          asesoresData.push({ ...doc.data(), id: doc.id })
+        );
+        console.log(asesoresData); // <------
+        setAsesores(asesoresData);
+        setLoading(false);
       });
-      showFeedback();
-    },
-  });
+  }, []);
 
   let style;
   if (show) {
@@ -64,49 +49,46 @@ export default function Feedback({
     <FeedbackStyle color={color} color2={color2}>
       <div className={style}>
         <div className="container">
-          <div className="container-add">
-            <div className="close">
-              <IoMdClose
-                className="icon"
-                onClick={(event) => {
-                  showFeedback();
-                }}
-              />
+          {!loading ? (
+            <div className="container-add">
+              <div className="close">
+                <IoMdClose
+                  className="icon"
+                  onClick={(event) => {
+                    showFeedback();
+                  }}
+                />
+              </div>
+              <h1>Asign Ticket</h1>
+              <h2>To:</h2>
+              <ul className="labels">
+                <li className="label-1">
+                  <h2>Name</h2>
+                </li>
+                <li className="label-1">
+                  <h2>Last Name</h2>
+                </li>
+                <li className="label">
+                  <h2>Email</h2>
+                </li>
+              </ul>
+              <div className="content">
+                <>
+                  {asesores.map((usuario) => (
+                    <UserCard
+                      showFeedback={showFeedback}
+                      usuario={usuario}
+                      ticket={ticket}
+                    />
+                  ))}
+                </>
+              </div>
             </div>
-            <h1>Feedback</h1>
-            <h2>
-              To: {asesor.name} {asesor.lastName}
-            </h2>
-            <form onSubmit={formik.handleSubmit}>
-              <div className="rating-star">
-                <h2>Rate the service given</h2>
-                <StarRating rating={ratingStars} rateStars={rateStars} />
-              </div>
-              <TextArea
-                color="#2f2519"
-                color2="#ff4301"
-                label="Add a Comment"
-                id="comment"
-                marginTop="10px"
-                width="60%"
-                height="80px"
-                placeholder="comment"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.comment}
-                error={
-                  formik.touched.comment && formik.errors.comment
-                    ? `${formik.errors.comment}`
-                    : null
-                }
-              />
-              <div className="button-error">
-                <ButtonSubmit color="#ff4301" />
-
-                {/* <h4>Erroooooooooooooooor</h4> */}
-              </div>
-            </form>
-          </div>
+          ) : (
+            <div className="PageLoading">
+              <Spinner color="#fa7d09" />
+            </div>
+          )}
         </div>
       </div>
     </FeedbackStyle>
@@ -142,6 +124,55 @@ const FeedbackStyle = styled.div`
       align-items: center;
       flex-direction: column;
       text-align: center;
+      overflow:hidden;
+
+      .content {
+        width: 100%;
+        height: auto;
+        margin-top: 0px;
+        overflow:auto;
+      }
+      .labels {
+        width: 100%;
+        height: 40px;
+        border-bottom: 1px solid #2f2519;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding-left: 10px;
+        padding-right: 10px;
+        margin-top: 20px;
+        background: white;
+        .label-1 {
+          width: 33.33%;
+          h2 {
+            font-size: 12px;
+            font-family: "Raleway", sans-serif;
+            letter-spacing: 0.2em;
+            font-weight: 500;
+            font-style: normal;
+            color: #2f2519;
+            text-transform: uppercase;
+            margin-right: 5px;
+          }
+        }
+        .label {
+          width: 33.33%;
+          h2 {
+            font-size: 12px;
+            font-family: "Raleway", sans-serif;
+            letter-spacing: 0.2em;
+            font-weight: 500;
+            font-style: normal;
+            color: #2f2519;
+            text-transform: uppercase;
+            width: 100%;
+            margin-right: 5px;
+          }
+        }
+      
+      }
+    }
 
       .close {
         width: 100%;

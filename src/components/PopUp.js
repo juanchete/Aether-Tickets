@@ -28,15 +28,9 @@ export default function TicketCard({
         .update({
           asesor: user.id,
           asesores: firebase.firestore.FieldValue.arrayUnion(user.id),
+          asesorUpdate: firebase.firestore.Timestamp.now(),
         })
-        .then(() => {
-          getAsesor(ticket, user.id);
-
-          var ref = db.collection("asesores").doc(user.id);
-          ref.update({
-            tickets: firebase.firestore.FieldValue.arrayUnion(ticket.id),
-          });
-        });
+        .then(() => {});
     } catch (error) {}
   };
 

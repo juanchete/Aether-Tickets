@@ -310,6 +310,11 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
                   </div>
                 </li>
               </ul>
+              <ul className="nav-links2">
+                <li className="link-1">
+                  <h3>Admonished Asesors</h3>
+                </li>
+              </ul>
             </div>
             {open ? (
               <div className="navbar-especific-phone">

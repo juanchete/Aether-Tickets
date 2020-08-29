@@ -1,16 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import "firebase";
 import { useUser, useFirebaseApp } from "reactfire";
 import styled from "styled-components";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import Message from "../../components/messages/SuccessM";
 import ButtonSubmit from "../../components/buttons/Button-Submit";
 import Input from "../../components/inputs/InputLogin";
 import { IoMdClose } from "react-icons/io";
+import Spinner from "../../components/Spinner";
 
 export default function AddCategory({ color, color2, show, showCategory }) {
   const firebase = useFirebaseApp();
   const db = firebase.firestore();
+  const [type, setType] = useState();
+  const [message, setMessage] = useState();
+  const [messageShow, setMessageShow] = React.useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const showMessage = (e) => {
+    setMessageShow(!messageShow);
+  };
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -20,6 +29,7 @@ export default function AddCategory({ color, color2, show, showCategory }) {
     }),
 
     onSubmit: async (valores) => {
+      setSubmitted(true);
       const { name } = valores;
 
       try {
@@ -29,7 +39,19 @@ export default function AddCategory({ color, color2, show, showCategory }) {
           createdAt: new Date(),
           available: true,
         });
-      } catch (error) {}
+        setSubmitted(false);
+        setType("Success");
+        setMessage(`The Category ${name} has been created!`);
+        showMessage();
+
+        formik.values.name = "";
+      } catch (error) {
+        setSubmitted(false);
+        showMessage();
+        setType("Error");
+        setMessage("There has been an error!");
+        console.log(error);
+      }
     },
   });
 
@@ -40,46 +62,54 @@ export default function AddCategory({ color, color2, show, showCategory }) {
     style = "close";
   }
   return (
-    <Category color={color} color2={color2}>
-      <div className={style}>
-        <div className="container">
-          <div className="container-add">
-            <div className="close">
-              <IoMdClose
-                className="icon"
-                onClick={(event) => {
-                  showCategory();
-                }}
-              />
-            </div>
-            <h1>Create Category</h1>
-            <form onSubmit={formik.handleSubmit}>
-              <Input
-                color="#2f2519"
-                color2="#fa7d09"
-                label="Name"
-                id="name"
-                type="text"
-                placeholder="name"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.name}
-                error={
-                  formik.touched.name && formik.errors.name
-                    ? `${formik.errors.name}`
-                    : null
-                }
-              />
-              <div className="button-error">
-                <ButtonSubmit color="#fa7d09" />
-
-                {/* <h4>Erroooooooooooooooor</h4> */}
+    <>
+      {type && message ? (
+        <Message
+          show={messageShow}
+          type={type}
+          message={message}
+          showMessage={showMessage}
+        />
+      ) : null}
+      <Category color={color} color2={color2}>
+        <div className={style}>
+          <div className="container">
+            <div className="container-add">
+              <div className="close">
+                <IoMdClose
+                  className="icon"
+                  onClick={(event) => {
+                    showCategory();
+                  }}
+                />
               </div>
-            </form>
+              <h1>Create Category</h1>
+              <form onSubmit={formik.handleSubmit}>
+                <Input
+                  color="#2f2519"
+                  color2="#fa7d09"
+                  label="Name"
+                  id="name"
+                  type="text"
+                  placeholder="name"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.name}
+                  error={
+                    formik.touched.name && formik.errors.name
+                      ? `${formik.errors.name}`
+                      : null
+                  }
+                />
+                <div className="button-error">
+                  {submitted ? <Spinner color="#fa7d09" /> : <ButtonSubmit />}
+                </div>
+              </form>
+            </div>
           </div>
         </div>
-      </div>
-    </Category>
+      </Category>
+    </>
   );
 }
 const Category = styled.div`

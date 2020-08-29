@@ -4,18 +4,27 @@ import { useUser, useFirebaseApp } from "reactfire";
 import styled from "styled-components";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import Message from "../../components/messages/SuccessM";
 import ButtonSubmit from "../../components/buttons/Button-Submit";
 import Input from "../../components/inputs/InputLogin";
 import Select from "../../components/inputs/SelectLogin";
 import TextArea from "../../components/inputs/TextAreaInput";
 import { IoMdClose } from "react-icons/io";
 import firebase from "firebase";
+import Spinner from "../../components/Spinner";
 
 export default function AddSuggestion({ color, color2, show, showSuggestion }) {
   const firebaseReact = useFirebaseApp();
   const db = firebaseReact.firestore();
   const [categories, setCategories] = useState();
   const [loading, setLoading] = useState(true);
+  const [type, setType] = useState();
+  const [message, setMessage] = useState();
+  const [messageShow, setMessageShow] = React.useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const showMessage = (e) => {
+    setMessageShow(!messageShow);
+  };
   useEffect(() => {
     setLoading(true);
 
@@ -34,6 +43,7 @@ export default function AddSuggestion({ color, color2, show, showSuggestion }) {
       });
   }, []);
   const formik = useFormik({
+    enableReinitialize: true,
     initialValues: {
       name: "",
       category: "",
@@ -46,6 +56,7 @@ export default function AddSuggestion({ color, color2, show, showSuggestion }) {
     }),
 
     onSubmit: async (valores) => {
+      setSubmitted(true);
       const { name, category, suggestion } = valores;
 
       try {
@@ -60,7 +71,20 @@ export default function AddSuggestion({ color, color2, show, showSuggestion }) {
         ref.update({
           suggestions: firebase.firestore.FieldValue.arrayUnion(id),
         });
-      } catch (error) {}
+        setSubmitted(false);
+        setType("Success");
+        setMessage(`The Suggestion ${name} has been created!`);
+        showMessage();
+        formik.values.name = "";
+        formik.values.category = "";
+        formik.values.suggestion = "";
+      } catch (error) {
+        setSubmitted(false);
+        setType("Error");
+        setMessage("There has been an error!");
+        console.log(error);
+        showMessage();
+      }
     },
   });
 
@@ -71,82 +95,90 @@ export default function AddSuggestion({ color, color2, show, showSuggestion }) {
     style = "close";
   }
   return (
-    <Category color={color} color2={color2}>
-      <div className={style}>
-        <div className="container">
-          <div className="container-add">
-            <div className="close">
-              <IoMdClose
-                className="icon"
-                onClick={(event) => {
-                  showSuggestion();
-                }}
-              />
+    <>
+      {type && message ? (
+        <Message
+          show={messageShow}
+          type={type}
+          message={message}
+          showMessage={showMessage}
+        />
+      ) : null}
+      <Category color={color} color2={color2}>
+        <div className={style}>
+          <div className="container">
+            <div className="container-add">
+              <div className="close">
+                <IoMdClose
+                  className="icon"
+                  onClick={(event) => {
+                    showSuggestion();
+                  }}
+                />
+              </div>
+              <h1>Create Suggestion</h1>
+              {!loading ? (
+                <form onSubmit={formik.handleSubmit}>
+                  <Input
+                    color="#2f2519"
+                    color2="#fa7d09"
+                    label="Name"
+                    id="name"
+                    type="text"
+                    placeholder="name"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.name}
+                    error={
+                      formik.touched.name && formik.errors.name
+                        ? `${formik.errors.name}`
+                        : null
+                    }
+                  />
+                  <Select
+                    color="#2f2519"
+                    color2="#fa7d09"
+                    label="Category"
+                    id="category"
+                    fontSize="10px"
+                    type="select"
+                    placeholder="category"
+                    options={categories}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.category}
+                    error={
+                      formik.touched.category && formik.errors.category
+                        ? `${formik.errors.category}`
+                        : null
+                    }
+                  />
+                  <TextArea
+                    color="#2f2519"
+                    color2="#fa7d09"
+                    label="Suggestion"
+                    id="suggestion"
+                    placeholder="suggestion"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.suggestion}
+                    error={
+                      formik.touched.suggestion && formik.errors.suggestion
+                        ? `${formik.errors.suggestion}`
+                        : null
+                    }
+                  />
+
+                  <div className="button-error">
+                    {submitted ? <Spinner color="#fa7d09" /> : <ButtonSubmit />}
+                  </div>
+                </form>
+              ) : null}
             </div>
-            <h1>Create Suggestion</h1>
-            {!loading ? (
-              <form onSubmit={formik.handleSubmit}>
-                <Input
-                  color="#2f2519"
-                  color2="#fa7d09"
-                  label="Name"
-                  id="name"
-                  type="text"
-                  placeholder="name"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.name}
-                  error={
-                    formik.touched.name && formik.errors.name
-                      ? `${formik.errors.name}`
-                      : null
-                  }
-                />
-                <Select
-                  color="#2f2519"
-                  color2="#fa7d09"
-                  label="Category"
-                  id="category"
-                  fontSize="10px"
-                  type="select"
-                  placeholder="category"
-                  options={categories}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.category}
-                  error={
-                    formik.touched.category && formik.errors.category
-                      ? `${formik.errors.category}`
-                      : null
-                  }
-                />
-                <TextArea
-                  color="#2f2519"
-                  color2="#fa7d09"
-                  label="Suggestion"
-                  id="suggestion"
-                  placeholder="suggestion"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.suggestion}
-                  error={
-                    formik.touched.suggestion && formik.errors.suggestion
-                      ? `${formik.errors.suggestion}`
-                      : null
-                  }
-                />
-
-                <div className="button-error">
-                  <ButtonSubmit color="#fa7d09" />
-
-                  {/* <h4>Erroooooooooooooooor</h4> */}
-                </div>
-              </form>
-            ) : null}
           </div>
         </div>
-      </div>
-    </Category>
+      </Category>
+    </>
   );
 }
 const Category = styled.div`
