@@ -62,6 +62,6 @@ const Tag = styled.div`
     color: ${(props) => (props.color ? props.color : "#fa7d09")} !important;
     text-transform: uppercase;
     margin: 0;
-    margin-right: 0;
+    margin-right: 0 !important;
   }
 `;

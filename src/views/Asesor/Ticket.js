@@ -580,16 +580,20 @@ export default function TicketAsesor() {
                         </button>
                       </div>
                     ) : (
-                      <div className="button-container">
-                        <button
-                          className="button-submit"
-                          onClick={() => {
-                            setShowSolution(!showSolution);
-                          }}
-                        >
-                          <h2>Solution</h2>
-                        </button>
-                      </div>
+                      <>
+                        {ticket.solvedModal ? (
+                          <div className="button-container">
+                            <button
+                              className="button-submit"
+                              onClick={() => {
+                                setShowSolution(!showSolution);
+                              }}
+                            >
+                              <h2>Solution</h2>
+                            </button>
+                          </div>
+                        ) : null}
+                      </>
                     )}
                   </>
                 )}
