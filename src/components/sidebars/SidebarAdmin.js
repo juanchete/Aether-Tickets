@@ -310,10 +310,11 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
                   </div>
                 </li>
               </ul>
+
               <ul className="nav-links2">
-                <li className="link-1">
+                <NavLink to="/asesores/admonished-asesors" className="link-1">
                   <h3>Admonished Asesors</h3>
-                </li>
+                </NavLink>
               </ul>
             </div>
             {open ? (
@@ -344,6 +345,11 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
                       <h4>4</h4>
                     </div>
                   </li>
+                </ul>
+                <ul className="nav-links2">
+                  <NavLink to="/asesores/admonished-asesors" className="link-1">
+                    <h3>Admonished Asesors</h3>
+                  </NavLink>
                 </ul>
               </div>
             ) : null}

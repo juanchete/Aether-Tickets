@@ -3,14 +3,14 @@ import "firebase";
 import { useUser, useFirebaseApp } from "reactfire";
 import styled from "styled-components";
 import SidebarAdmin from "../../components/sidebars/SidebarAdmin";
-import UserCard from "../../components/cards/ClientsCard";
+import AdmonishedCard from "../../components/cards/Admonished";
 import { IoIosCloseCircle } from "react-icons/io";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import Spinner from "../../components/Spinner";
 
 export default function Amonestados() {
   const firebase = useFirebaseApp();
-  const [filterAvailable, setFilterAvailable] = useState(null);
+  const [filterAmonestado, setFilterAmonestado] = useState(null);
   const [filterOpen, setFilterOpen] = useState(false);
   const [subSOpen, setSubSOpen] = useState(false);
   const [subPOpen, setSubPOpen] = useState(false);
@@ -25,8 +25,8 @@ export default function Amonestados() {
     setLoading(true);
     const db = firebase.firestore();
     return db
-      .collection("usuarios")
-      .orderBy("name", "desc")
+      .collection("tickets-not-answered")
+      .orderBy("date", "desc")
       .onSnapshot((snapshot) => {
         const usuariosData = [];
         snapshot.forEach((doc) =>
@@ -43,8 +43,8 @@ export default function Amonestados() {
       setLoading(true);
       const db = firebase.firestore();
       return db
-        .collection("usuarios")
-        .where("available", "==", filter)
+        .collection("tickets-not-answered")
+        .where("amonestado", "==", filter)
         .onSnapshot((snapshot) => {
           const usuariosData = [];
           snapshot.forEach((doc) =>
@@ -57,7 +57,7 @@ export default function Amonestados() {
     } else {
       setLoading(true);
       const db = firebase.firestore();
-      return db.collection("usuarios").onSnapshot((snapshot) => {
+      return db.collection("tickets-not-answered").onSnapshot((snapshot) => {
         const usuariosData = [];
         snapshot.forEach((doc) =>
           usuariosData.push({ ...doc.data(), id: doc.id })
@@ -76,8 +76,8 @@ export default function Amonestados() {
       <div className="home-view">
         <div className="home-view-title">
           <div style={{ display: "flex", flexDirection: "row" }}>
-            <h2>All</h2>
-            <h1>Clients</h1>
+            <h2>Admonished</h2>
+            <h1>Asesors</h1>
           </div>
         </div>
         <div className="filters">
@@ -89,18 +89,18 @@ export default function Amonestados() {
           >
             <h2>Add Filter</h2>
           </button>
-          {filterAvailable ? (
+          {filterAmonestado ? (
             <div
               className="filter-applied"
               onClick={() => {
-                setFilterAvailable(null);
+                setFilterAmonestado(null);
                 setFilter(null);
                 setFilterOpen(false);
               }}
             >
               <IoIosCheckmarkCircle className="icon-check" />
               <IoIosCloseCircle className="icon" />
-              <h2>{filterAvailable}</h2>
+              <h2>{filterAmonestado}</h2>
             </div>
           ) : null}
         </div>
@@ -108,22 +108,22 @@ export default function Amonestados() {
           <li
             className="filter-options-item"
             onClick={() => {
-              setFilterAvailable("Available");
+              setFilterAmonestado("Admonished");
               setFilter(true);
               setFilterOpen(false);
             }}
           >
-            <h2>Available</h2>
+            <h2>Admonished</h2>
           </li>
           <li
             className="filter-options-item"
             onClick={() => {
-              setFilterAvailable("Not Available");
+              setFilterAmonestado("Not Admonished");
               setFilter(false);
               setFilterOpen(false);
             }}
           >
-            <h2>Not Available</h2>
+            <h2>Not Admonished</h2>
           </li>
         </ul>
         <ul className="labels">
@@ -151,7 +151,7 @@ export default function Amonestados() {
           {!loading ? (
             <>
               {usuarios.map((usuario) => (
-                <UserCard usuario={usuario} />
+                <AdmonishedCard usuario={usuario} />
               ))}
             </>
           ) : (
@@ -411,7 +411,7 @@ const HomeStyle = styled.div`
       margin-top: 130px;
       background: white;
       .label-1 {
-        width: 25%;
+        width: 16.66%;
         h2 {
           font-size: 12px;
           font-family: "Raleway", sans-serif;
@@ -424,7 +424,7 @@ const HomeStyle = styled.div`
         }
       }
       .label {
-        width: 25%;
+        width: 16.66%;
         h2 {
           font-size: 12px;
           font-family: "Raleway", sans-serif;
@@ -438,7 +438,7 @@ const HomeStyle = styled.div`
         }
       }
       .label-2 {
-        width: 10%;
+        width: 16.66%;
       }
     }
   }

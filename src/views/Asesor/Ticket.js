@@ -6,8 +6,10 @@ import styled from "styled-components";
 import SidebarAdmin from "../../components/sidebars/SidebarAdmin";
 import TextEditor from "../../components/inputs/TextEditor";
 import Feedback from "../../components/Feedback";
+import SolvedModal from "../../components/SolvedModal";
 import { UserContext } from "../../CreateContext";
 import { AiOutlineInfoCircle } from "react-icons/ai";
+import { IoMdRefresh } from "react-icons/io";
 import { useParams } from "react-router";
 import moment from "moment";
 import Swal from "sweetalert2";
@@ -26,7 +28,9 @@ export default function TicketAsesor() {
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [show, setShow] = useState(false);
+  const [showSolution, setShowSolution] = useState(false);
   const [feedbackShow, setFeedbackShow] = useState(false);
+  const [solvedShow, setSolvedShow] = useState(false);
   let { id } = useParams();
 
   const onEditorChange = (value) => {
@@ -42,6 +46,7 @@ export default function TicketAsesor() {
 
   useEffect(() => {
     setLoading(true);
+
     const db = firebase.firestore();
 
     let docRef = db.collection("tickets").doc(id);
@@ -94,7 +99,12 @@ export default function TicketAsesor() {
 
               setMessages(messagesData);
             });
+
           setTicket(doc.data());
+
+          if (doc.data().status === "Solved" && !doc.data().solvedModal) {
+            setSolvedShow(true);
+          }
           setLoading(false);
         } else {
           // doc.data() will be undefined in this case
@@ -263,9 +273,21 @@ export default function TicketAsesor() {
   const showFeedback = (e) => {
     setFeedbackShow(!feedbackShow);
   };
+  const showSolved = (e) => {
+    setSolvedShow(!feedbackShow);
+  };
   return (
     <>
       <Feedback show={feedbackShow} showFeedback={showFeedback} />
+      {!loading && ticket && user && asesor ? (
+        <>
+          {asesor.email == user.email ? (
+            <>
+              <SolvedModal show={solvedShow} showFeedback={showSolved} />
+            </>
+          ) : null}
+        </>
+      ) : null}
 
       <HomeStyle
         toggleDet={toggleDet}
@@ -288,94 +310,118 @@ export default function TicketAsesor() {
           </div>
           {!loading && ticket && messages && category ? (
             <div className="container">
-              <div className="chat">
-                <div className="chat-screen" id="chat-screen-1">
-                  {messages.map((message) => (
-                    <div className="chat-message">
-                      <div
-                        className={
-                          message.sender
-                            ? message.sender.id === user.id
-                              ? "chat-screen-header"
-                              : "chat-screen-header-2"
-                            : "chat-screen-header"
-                        }
-                      >
-                        <div className="name">
-                          {message.sender.id === user.id ? (
-                            <h2>
-                              {user.name} {user.lastName}
-                            </h2>
-                          ) : (
-                            <h2>
-                              {message.sender.name} {message.sender.lastName}
-                            </h2>
-                          )}
-                          {message.sender ? (
-                            <>
-                              {message.sender.id === user.id ? (
-                                <h2>
-                                  {user.name} {user.lastName}
-                                </h2>
-                              ) : (
-                                <h2>
-                                  {" "}
-                                  {message.sender.name}{" "}
-                                  {message.sender.lastName}{" "}
-                                </h2>
-                              )}
-                            </>
-                          ) : (
+              {showSolution && ticket.solvedModal ? (
+                <div className="solution">
+                  <h1>Problem</h1>
+                  <h2>{ticket.solvedModal.problem}</h2>
+                  <h1>Estimated Time to Resolve</h1>
+                  <h2>{ticket.solvedModal.lifespan} minutes</h2>
+                  <h1>Steps</h1>
+                  {[...Array(ticket.solvedModal.steps.length)].map(
+                    (star, i) => {
+                      const stepValue = i + 1;
+                      return (
+                        <>
+                          <h2>
+                            {i + 1}. {ticket.solvedModal.steps[i]}
+                          </h2>
+                        </>
+                      );
+                    }
+                  )}
+                  <h1>Result</h1>
+                  <h2>{ticket.solvedModal.result}</h2>
+                </div>
+              ) : (
+                <div className="chat">
+                  <div className="chat-screen" id="chat-screen-1">
+                    {messages.map((message) => (
+                      <div className="chat-message">
+                        <div
+                          className={
+                            message.sender
+                              ? message.sender.id === user.id
+                                ? "chat-screen-header"
+                                : "chat-screen-header-2"
+                              : "chat-screen-header"
+                          }
+                        >
+                          <div className="name">
+                            {message.sender ? (
+                              <>
+                                {message.sender.id === user.id ? (
+                                  <h2>
+                                    {user.name} {user.lastName}
+                                  </h2>
+                                ) : (
+                                  <h2>
+                                    {" "}
+                                    {message.sender.name}{" "}
+                                    {message.sender.lastName}{" "}
+                                  </h2>
+                                )}
+                              </>
+                            ) : (
+                              <h2>
+                                {" "}
+                                {user.name} {user.lastName}
+                              </h2>
+                            )}
+                          </div>
+                          <div className="time">
                             <h2>
                               {" "}
-                              {user.name} {user.lastName}
+                              {moment(message.date.toDate())
+                                .fromNow()
+                                .toString()}
                             </h2>
-                          )}
+                          </div>
                         </div>
-                        <div className="time">
-                          <h2>
-                            {" "}
-                            {moment(message.date.toDate()).fromNow().toString()}
-                          </h2>
+                        <div className="chat-screen-content">
+                          <div
+                            className="content"
+                            dangerouslySetInnerHTML={{
+                              __html: message.contentHtml,
+                            }}
+                          />
                         </div>
                       </div>
-                      <div className="chat-screen-content">
-                        <div
-                          className="content"
-                          dangerouslySetInnerHTML={{
-                            __html: message.contentHtml,
-                          }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                  <div ref={fieldRef} />
-                </div>
+                    ))}
+                    <div ref={fieldRef} />
+                  </div>
 
-                <div className="chat-text-box">
-                  {" "}
-                  <TextEditor
-                    onEditorChange={onEditorChange}
-                    onFilesChange={onFilesChange}
-                  />
-                  <div className="button-container">
-                    <button
-                      className="button-submit"
-                      type="button"
-                      onClick={sendMessage}
-                      disabled={
-                        ticket.status === "Solved" ||
-                        ticket.status === "Unsolved" ||
-                        ticket.asesor != user.id
-                          ? true
-                          : false
-                      }
-                    >
-                      <h2>Submit</h2>
-                    </button>
+                  <div className="chat-text-box">
+                    {" "}
+                    <TextEditor
+                      onEditorChange={onEditorChange}
+                      onFilesChange={onFilesChange}
+                    />
+                    <div className="button-container">
+                      <IoMdRefresh
+                        class="icon-refresh"
+                        disabled={user.id === ticket.asesor ? false : true}
+                        onClick={(a) => {
+                          callFirebaseFunction();
+                        }}
+                      />
+                      <button
+                        className="button-submit"
+                        type="button"
+                        onClick={sendMessage}
+                        disabled={
+                          ticket.status === "Solved" ||
+                          ticket.status === "Unsolved" ||
+                          ticket.asesor != user.id
+                            ? true
+                            : false
+                        }
+                      >
+                        <h2>Submit</h2>
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
 
               <div className="ticket-detail">
                 <div className="ticket-detail-title">
@@ -510,27 +556,47 @@ export default function TicketAsesor() {
                     <h3>20</h3>
                   </div>
                 </div>
-                <div className="button-container">
-                  <button
-                    className="button-submit"
-                    type="submit"
-                    disabled={user.id === ticket.asesor ? false : true}
-                  >
-                    <h2>Unsolved</h2>
-                  </button>
-                </div>
-                <div className="button-container">
-                  <button
-                    className="button-submit"
-                    type="submit"
-                    disabled={user.id === ticket.asesor ? false : true}
-                    onClick={(a) => {
-                      callFirebaseFunction();
-                    }}
-                  >
-                    <h2>Refresh Email</h2>
-                  </button>
-                </div>
+                {ticket.status != "Solved" && ticket.status != "Unsolved" ? (
+                  <div className="button-container">
+                    <button
+                      className="button-submit"
+                      type="submit"
+                      disabled={user.id === ticket.asesor ? false : true}
+                    >
+                      <h2>Unsolved</h2>
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    {showSolution ? (
+                      <div className="button-container">
+                        <button
+                          className="button-submit"
+                          onClick={() => {
+                            setShowSolution(!showSolution);
+                          }}
+                        >
+                          <h2>Chat</h2>
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        {ticket.solvedModal ? (
+                          <div className="button-container">
+                            <button
+                              className="button-submit"
+                              onClick={() => {
+                                setShowSolution(!showSolution);
+                              }}
+                            >
+                              <h2>Solution</h2>
+                            </button>
+                          </div>
+                        ) : null}
+                      </>
+                    )}
+                  </>
+                )}
               </div>
             </div>
           ) : null}
@@ -598,6 +664,39 @@ const HomeStyle = styled.div`
       flex-direction: row;
       padding: 10px;
       padding-top: 90px;
+      .solution {
+        width: 70%;
+        height: 100%;
+        overflow-y:auto;
+
+        h1 {
+          font-size: 22px;
+          font-family: "Raleway", sans-serif;
+          letter-spacing: 0.2em;
+          font-weight: 300;
+          font-style: normal;
+          color: #fa7d09;
+          text-transform: uppercase;
+          width: 100%;
+          margin-right: 5px;
+          display: flex;
+          align-self: center;
+          margin-bottom: 10px;
+          margin-top: 20px;
+        }
+        h2 {
+          font-size: 18px;
+          font-family: "Raleway", sans-serif;
+          letter-spacing: 0.2em;
+          font-weight: 400;
+          font-style: normal;
+          color: #2f2519;
+          width: 100%;
+          display: flex;
+          align-self: center;
+          margin-left: 10px;
+        }
+      }
       .chat {
         width: 70%;
         height: 100%;
@@ -738,6 +837,16 @@ const HomeStyle = styled.div`
             display: flex;
             align-items: center;
             justify-content: flex-end;
+            .icon-refresh {
+              height: 30px;
+              width: 30px;
+              margin-right: 10px;
+              color: #fa7d09;
+              cursor: pointer;
+              &:hover {
+                color: #2f2519;
+              }
+            }
             .button-submit {
               padding-left: 50px;
               padding-right: 50px;
@@ -803,6 +912,10 @@ const HomeStyle = styled.div`
             border: 1px solid #fa7d09;
             border-radius: 5px;
             width: 70%;
+            outline: none;
+            &:focus {
+              outline: none;
+            }
 
             h2 {
               font-size: 18px;
@@ -981,7 +1094,9 @@ const HomeStyle = styled.div`
         width: 100vw;
         padding-top: 200px;
         margin-right: 0 !important;
-
+        .solution{
+          70%;
+        }
         .chat {
           width: 70%;
         }
@@ -1024,6 +1139,11 @@ const HomeStyle = styled.div`
         margin-right: 0 !important;
 
         .chat {
+          width: 100%;
+          ${(props) => (props.toggleDet ? "" : "display:none")};
+        }
+
+        .solution {
           width: 100%;
           ${(props) => (props.toggleDet ? "" : "display:none")};
         }

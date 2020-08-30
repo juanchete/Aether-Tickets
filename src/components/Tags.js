@@ -46,9 +46,9 @@ const Tag = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  width: fit-content;
-  padding-left: 15px;
-  padding-right: 10px;
+  width: 90px;
+  padding: 0;
+  text-align: center;
   border: 2px solid ${(props) => (props.color ? props.color : "#fa7d09")};
   border-radius: 20px;
   background: ${(props) => (props.color2 ? props.color2 : "transparent")};
@@ -61,6 +61,7 @@ const Tag = styled.div`
     font-style: normal;
     color: ${(props) => (props.color ? props.color : "#fa7d09")} !important;
     text-transform: uppercase;
-    width: 100%;
+    margin: 0;
+    margin-right: 0 !important;
   }
 `;
