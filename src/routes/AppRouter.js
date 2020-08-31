@@ -13,6 +13,7 @@ import ChangePassword from "../views/Shared/change-password";
 import AddCategory from "../views/Asesor/AddCategory";
 import AddSuggestion from "../views/Asesor/AddSuggestion";
 import AllAsesors from "../views/Asesor/AllAsesors";
+import AsesorDetail from "../views/Asesor/AsesorDetail";
 import AllClients from "../views/Asesor/AllClients";
 import TicketAsesor from "../views/Asesor/Ticket";
 import Amonestados from "../views/Asesor/Amonestados";
@@ -42,6 +43,7 @@ function AppRouter() {
           path="/asesores/admonished-asesors"
           component={Amonestados}
         />
+        <AdminRoutes exact path="/asesor/:id" component={AsesorDetail} />
         <AdminRoutes
           exact
           path="/asesores/all-clients"

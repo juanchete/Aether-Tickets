@@ -3,12 +3,20 @@ import styled from "styled-components";
 import { useUser, useFirebaseApp } from "reactfire";
 import { AiFillMinusCircle } from "react-icons/ai";
 import { IoIosAddCircle } from "react-icons/io";
+import { NavLink, withRouter } from "react-router-dom";
 
-export default function ClientsCard({ color, color2, usuario, filter }) {
+export default function ClientsCard({
+  color,
+  color2,
+  usuario,
+  filter,
+  isAsesor,
+}) {
   const firebaseReact = useFirebaseApp();
   const db = firebaseReact.firestore();
   const [ticketsFiltered, setTickets] = useState();
   const [loading, setLoading] = useState(true);
+  let [path, setPath] = React.useState("/asesor/");
 
   useEffect(() => {}, []);
   const changeAvailable = async (value) => {
@@ -21,16 +29,33 @@ export default function ClientsCard({ color, color2, usuario, filter }) {
   return (
     <Card color={color} color2={color2}>
       <ul className="ticket-view">
-        <li className="data">
-          <h2>{usuario.name}</h2>
-        </li>
-        <li className="data">
-          <h2>{usuario.lastName}</h2>
-        </li>
-        <li className="data-1">
-          <h2 style={{ color: "#fa7d09" }}>{usuario.email}</h2>
-        </li>
-
+        <>
+          {isAsesor ? (
+            <>
+              <NavLink to={path + usuario.id} className="data">
+                <h2>{usuario.name}</h2>
+              </NavLink>
+              <NavLink to={path + usuario.id} className="data">
+                <h2>{usuario.lastName}</h2>
+              </NavLink>
+              <NavLink to={path + usuario.id} className="data-1">
+                <h2 style={{ color: "#fa7d09" }}>{usuario.email}</h2>
+              </NavLink>
+            </>
+          ) : (
+            <>
+              <li className="data">
+                <h2>{usuario.name}</h2>
+              </li>
+              <li className="data">
+                <h2>{usuario.lastName}</h2>
+              </li>
+              <li className="data-1">
+                <h2 style={{ color: "#fa7d09" }}>{usuario.email}</h2>
+              </li>
+            </>
+          )}
+        </>
         <li className="data-2">
           {usuario.available ? (
             <AiFillMinusCircle

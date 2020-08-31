@@ -24,53 +24,59 @@ export default function AllAsesors() {
   useEffect(() => {
     setLoading(true);
     const db = firebase.firestore();
-    return db
-      .collection("asesores")
-      .where("role", "==", "asesor")
-      .orderBy("name", "desc")
-      .onSnapshot((snapshot) => {
-        const asesoresData = [];
-        snapshot.forEach((doc) =>
-          asesoresData.push({ ...doc.data(), id: doc.id })
-        );
-        console.log(asesoresData); // <------
-        setAsesores(asesoresData);
-        setLoading(false);
-      });
+    return (
+      db
+        .collection("asesores")
+        // .where("role", "==", "asesor")
+        .orderBy("name", "desc")
+        .onSnapshot((snapshot) => {
+          const asesoresData = [];
+          snapshot.forEach((doc) =>
+            asesoresData.push({ ...doc.data(), id: doc.id })
+          );
+          console.log(asesoresData); // <------
+          setAsesores(asesoresData);
+          setLoading(false);
+        })
+    );
   }, []);
 
   const setFilter = (filter) => {
     if (filter != null) {
       setLoading(true);
       const db = firebase.firestore();
-      return db
-        .collection("asesores")
-        .where("available", "==", filter)
-        .where("role", "==", "asesor")
-        .onSnapshot((snapshot) => {
-          const asesoresData = [];
-          snapshot.forEach((doc) =>
-            asesoresData.push({ ...doc.data(), id: doc.id })
-          );
-          console.log(asesoresData); // <------
-          setAsesores(asesoresData);
-          setLoading(false);
-        });
+      return (
+        db
+          .collection("asesores")
+          .where("available", "==", filter)
+          // .where("role", "==", "asesor")
+          .onSnapshot((snapshot) => {
+            const asesoresData = [];
+            snapshot.forEach((doc) =>
+              asesoresData.push({ ...doc.data(), id: doc.id })
+            );
+            console.log(asesoresData); // <------
+            setAsesores(asesoresData);
+            setLoading(false);
+          })
+      );
     } else {
       setLoading(true);
       const db = firebase.firestore();
-      return db
-        .collection("asesores")
-        .where("role", "==", "asesor")
-        .onSnapshot((snapshot) => {
-          const asesoresData = [];
-          snapshot.forEach((doc) =>
-            asesoresData.push({ ...doc.data(), id: doc.id })
-          );
-          console.log(asesoresData); // <------
-          setAsesores(asesoresData);
-          setLoading(false);
-        });
+      return (
+        db
+          .collection("asesores")
+          // .where("role", "==", "asesor")
+          .onSnapshot((snapshot) => {
+            const asesoresData = [];
+            snapshot.forEach((doc) =>
+              asesoresData.push({ ...doc.data(), id: doc.id })
+            );
+            console.log(asesoresData); // <------
+            setAsesores(asesoresData);
+            setLoading(false);
+          })
+      );
     }
   };
 
@@ -147,7 +153,7 @@ export default function AllAsesors() {
           {!loading ? (
             <>
               {asesores.map((asesor) => (
-                <UserCard usuario={asesor} />
+                <UserCard usuario={asesor} isAsesor={true} />
               ))}
             </>
           ) : (
