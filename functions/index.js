@@ -71,11 +71,11 @@ exports.addMessage = functions.https.onRequest(async (req, res) => {
                 //             });
                 //     })
 
-                //     connection.addFlags(item.attributes.uid, "\Seen", (err) => {
-                //       if (err){
-                //           console.log('Problem marking message for deletion');
-                //           rej(err);
-                //       }
+                    // connection.addFlags(item.attributes.uid, "\Seen", (err) => {
+                    //   if (err){
+                    //       console.log('Problem marking message for deletion');
+                    //       rej(err);
+                    //   }
         
                 //   })
                 //       }else{

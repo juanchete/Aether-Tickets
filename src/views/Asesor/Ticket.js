@@ -102,6 +102,7 @@ export default function TicketAsesor() {
 
           setTicket(doc.data());
 
+
           if (doc.data().status === "Solved" && !doc.data().solvedModal) {
             setSolvedShow(true);
           }
@@ -119,7 +120,10 @@ export default function TicketAsesor() {
       fieldRef.current.scrollIntoView({ behavior: "smooth" });
     }
     setLoading(false);
-  }, [ticket]);
+    
+  }, []);
+
+  
 
   const sendMessage = async (e) => {
     try {
@@ -276,6 +280,65 @@ export default function TicketAsesor() {
   const showSolved = (e) => {
     setSolvedShow(!feedbackShow);
   };
+
+  const delegateTicket = async (e) => {
+
+    const ticket = await db.collection("tickets").doc(id).get();
+
+    const ticketData = ticket.data();
+
+    Promise.all([
+      db
+        .collection("messages")
+        .add({
+          sender: {
+            id: user.id ? user.id : null,
+            email: user.email,
+            name: user.name,
+            lastName: user.lastName,
+          },
+          contentHtml: 'Your ticket had been delegated to the Administrator, He will be contacting you in a few moments.',
+          ticket: id,
+          content: content,
+          files: files,
+          date: new Date(),
+        }),
+
+        db.collection("mail").add({
+          to: 'ticket@aethersol.com',
+          template: {
+            name: 'delegate-ticket',
+            data: {
+             id: id,
+             category: category.name,
+             title: ticketData.subject,
+             description: ticketData.description,
+             email: ticketData.usuario.email
+            }
+           },
+        }),
+        db
+    .collection("tickets")
+    .doc(id)
+    .update({
+      asesor: null,
+      asesorUpdate: firebase.firestore.Timestamp.now(),
+      status: 'Delegated'
+    })
+    .then(async function (doc) {
+      var ref = db.collection("asesores").doc(user.id);
+      ref.update({
+        tickets: firebase.firestore.FieldValue.arrayUnion({
+          ticket: id,
+          status: "Delegated",
+          updatedAt: firebase.firestore.Timestamp.now(),
+        }),
+      });
+    })
+  ])
+
+  };
+
   return (
     <>
       <Feedback show={feedbackShow} showFeedback={showFeedback} />
@@ -561,9 +624,10 @@ export default function TicketAsesor() {
                     <button
                       className="button-submit"
                       type="submit"
-                      disabled={user.id === ticket.asesor ? false : true}
+                      // disabled={user.id === ticket.asesor ? false : true}
+                      onClick={e => delegateTicket()}
                     >
-                      <h2>Unsolved</h2>
+                      <h2>Delegate to Aether</h2>
                     </button>
                   </div>
                 ) : (
