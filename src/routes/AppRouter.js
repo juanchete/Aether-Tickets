@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import AppHome from "../components/ApiGmail/App/App";
 import { ThemeContext } from "../CreateContext";
+import { LogoContext } from "../CreateContext";
 import InviteToRegister from "../views/Asesor/Invite-To-Register";
 import SignUpAsesor from "../views/Asesor/SignUp";
 import LoginAsesores from "../views/Asesor/Login";
@@ -28,9 +29,10 @@ import ForgotPassword from "../views/Asesor/ForgotPassword";
 
 function AppRouter() {
   const { themes, setTheme } = useContext(ThemeContext);
+  const { logos, setLogos } = useContext(LogoContext);
   return (
     <>
-      {themes ? (
+      {themes && logos ? (
         <Router>
           <Switch>
             <Route
@@ -47,7 +49,7 @@ function AppRouter() {
             <AdminRoutes
               exact
               path="/settings"
-              component={() => <Settings theme={themes} />}
+              component={() => <Settings theme={themes} logo={logos} />}
             />
             <AdminRoutes
               exact

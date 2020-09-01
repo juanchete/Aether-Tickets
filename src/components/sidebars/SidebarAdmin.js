@@ -21,6 +21,7 @@ export default function SidebarAdmin({
   report,
   theme,
   setting,
+  logo,
 }) {
   const [categoryShow, setCategoryShow] = React.useState(false);
   const [suggestionShow, setSuggestionShow] = React.useState(false);
@@ -102,7 +103,9 @@ export default function SidebarAdmin({
         {renderRedirectAllUsers()}
         <div className="navbar">
           <ul className="utilities">
-            <li className="utilities-item"></li>
+            <li className="utilities-item">
+              {logo ? <img className="photo" src={logo.logoImage} /> : null}
+            </li>
             <li
               className="utilities-item"
               onClick={(event) => {
@@ -515,28 +518,28 @@ export default function SidebarAdmin({
                 >
                   <h3>Change Passwword</h3>
                 </li>
-                <li
-                  className="link-1"
-                  onClick={(event) => {
-                    logout();
-                  }}
-                >
-                  <h3>Log Out</h3>
-                </li>
+                <NavLink to="/settings" className="link-1">
+                  <h3>Settings</h3>
+                </NavLink>
               </ul>
             </div>
             {open ? (
               <div className="navbar-especific-phone">
                 <div className="navbar-title">
-                  <h2>Asesors</h2>
+                  <h2>Settings</h2>
                 </div>
                 <ul className="nav-links">
-                  <li className="link-1">
-                    <h3>All Asesors</h3>
-                    <div className="counter">
-                      <h4>4</h4>
-                    </div>
+                  <li
+                    className="link-1"
+                    onClick={(event) => {
+                      setChangePassword(true);
+                    }}
+                  >
+                    <h3>Change Passwword</h3>
                   </li>
+                  <NavLink to="/settings" className="link-1">
+                    <h3>Settings</h3>
+                  </NavLink>
                 </ul>
               </div>
             ) : null}
@@ -558,14 +561,7 @@ export default function SidebarAdmin({
                   >
                     <h3>Invite an Asesor</h3>
                   </li>
-                  <li
-                    className="link-1"
-                    onClick={(event) => {
-                      setChangePassword(true);
-                    }}
-                  >
-                    <h3>Change Passwword</h3>
-                  </li>
+
                   <li
                     className="link-1"
                     onClick={(event) => {
@@ -594,14 +590,7 @@ export default function SidebarAdmin({
                     >
                       <h3>Invite an Asesor</h3>
                     </li>
-                    <li
-                      className="link-1"
-                      onClick={(event) => {
-                        setChangePassword(true);
-                      }}
-                    >
-                      <h3>Change Passwword</h3>
-                    </li>
+
                     <li
                       className="link-1"
                       onClick={(event) => {
@@ -659,6 +648,10 @@ const Sidebar = styled.div`
           height: 30px;
           color: ${(props) =>
             props.theme ? props.theme.primaryColor : "#fa7d09"};
+        }
+        .photo {
+          width: 40px;
+          height: 40px;
         }
         h4 {
           font-family: "Raleway", sans-serif;

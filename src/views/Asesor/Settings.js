@@ -1,27 +1,96 @@
 import React, { useState, useEffect, useContext } from "react";
 import "firebase";
 import { useUser, useFirebaseApp } from "reactfire";
+import { storage } from "../../components/firebaseConfig";
+import { useFormik } from "formik";
 import { ThemeContext } from "../../CreateContext";
+import { LogoContext } from "../../CreateContext";
 import styled from "styled-components";
 import SidebarAdmin from "../../components/sidebars/SidebarAdmin";
 import UserCard from "../../components/cards/ClientReportCard";
 import { IoIosCloseCircle } from "react-icons/io";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import Spinner from "../../components/Spinner";
+import { MdSave } from "react-icons/md";
+import { MdModeEdit } from "react-icons/md";
+import { MdKeyboardArrowRight } from "react-icons/md";
 
-export default function Settings({ theme }) {
+export default function Settings({ theme, logo }) {
   const { themes, setTheme } = useContext(ThemeContext);
+  const { logos, setLogos } = useContext(LogoContext);
   const firebase = useFirebaseApp();
   const [asesores, setAsesores] = useState();
   const [loading, setLoading] = useState(true);
+  const [submitted, setSubmitting] = useState(true);
+  const [photo1, setPhoto] = React.useState(null);
+  const [url, setUrl] = React.useState(null);
+  const [progress, setProgress] = React.useState(0);
+  const [photo1E, setPhotoE] = React.useState(null);
   const db = firebase.firestore();
   const logout = async () => {
     await firebase.auth().signOut();
   };
 
+  const formik = useFormik({
+    initialValues: {
+      photo: null,
+    },
+
+    onSubmit: async (valores) => {
+      setSubmitting(true);
+      console.log(photo1);
+      let image = new FormData();
+      let file = document.querySelector("#photoId");
+      image.append("image", file.files[0]);
+      console.log(image);
+      if (photo1) {
+        const uploadTask = storage.ref(`images/${photo1.name}`).put(photo1);
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const progress = Math.round(
+              (snapshot.bytesTransfered / snapshot.totalBytes) * 100
+            );
+            setProgress(progress);
+          },
+          (error) => {
+            setPhotoE(error);
+            console.log(error);
+          },
+          () => {
+            storage
+              .ref("images")
+              .child(photo1.name)
+              .getDownloadURL()
+              .then(async (url) => {
+                try {
+                  await db
+                    .collection("company")
+                    .doc("logo")
+                    .update({
+                      logoImage: url,
+                    })
+                    .then(() => {
+                      setLogos({ logoImage: url });
+                    });
+                } catch (error) {}
+                setProgress(0);
+                setPhoto(null);
+              });
+          }
+        );
+      } else {
+        setPhotoE("Please Select An Image to Upload");
+      }
+
+      setSubmitting(false);
+    },
+  });
+
   useEffect(() => {
     setLoading(true);
     const db = firebase.firestore();
+
     return (
       db
         .collection("asesores")
@@ -70,7 +139,7 @@ export default function Settings({ theme }) {
   const user = useUser();
   return (
     <HomeStyle theme={theme}>
-      <SidebarAdmin setting={true} theme={theme} />
+      <SidebarAdmin setting={true} theme={theme} logo={logo} />
       <div className="home-view">
         <div className="home-view-title">
           <div style={{ display: "flex", flexDirection: "row" }}>
@@ -154,6 +223,51 @@ export default function Settings({ theme }) {
               }}
             ></div>
           </div>
+          <div className="logo-container">
+            <h2>Logo</h2>
+            <form onSubmit={formik.handleSubmit} encType="multipart/form-data">
+              <div className="edit">
+                <input
+                  className="inputPhoto"
+                  type="file"
+                  name="image"
+                  id="photoId"
+                  style={{ display: "none" }}
+                  onChange={(event) => {
+                    const file = event.currentTarget.files[0];
+
+                    if (file) {
+                      const fileType = file["type"];
+                      const validImageTypes = [
+                        "image/gif",
+                        "image/jpeg",
+                        "image/png",
+                      ];
+                      if (validImageTypes.includes(fileType)) {
+                        setPhotoE(null);
+                        setPhoto(event.currentTarget.files[0]);
+                      } else {
+                        setPhotoE("Please Select An Image to Upload");
+                        console.log("Please Select An Image to Upload");
+                      }
+                    } else {
+                    }
+                  }}
+                />
+
+                <label htmlFor="photoId" className="settings" type="button">
+                  <MdModeEdit className="icon" />
+                </label>
+
+                {photo1 ? (
+                  <button type="submit" className="saveP">
+                    <MdSave className="icon" />
+                  </button>
+                ) : null}
+              </div>
+            </form>
+          </div>
+          {logos ? <img className="photo" src={logos.logoImage} /> : null}
         </div>
       </div>
     </HomeStyle>
@@ -218,6 +332,35 @@ const HomeStyle = styled.div`
       margin-top: 80px;
       padding: 20px;
 
+      .photo {
+        margin-top: 20px;
+        width: 200px;
+        height: 200px;
+        margin-left: 20px;
+        border: 2px solid transparent;
+        border-radius: 5px;
+      }
+
+      .logo-container {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        margin-top: 20px;
+
+        .icon {
+          margin-left: 10px;
+          width: 30px;
+          height: 30px;
+          color: ${(props) =>
+            props.theme ? props.theme.secondaryColor : "#4a3f35"};
+          ourline: none;
+          &:focus {
+            outline: none;
+          }
+        }
+      }
+
       h2 {
         font-size: 22px;
         font-family: "Raleway", sans-serif;
@@ -227,7 +370,6 @@ const HomeStyle = styled.div`
         color: ${(props) =>
           props.theme ? props.theme.primaryColor : "#fa7d09"};
         text-transform: uppercase;
-        width: 100%;
       }
 
       .content-color {

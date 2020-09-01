@@ -3,6 +3,7 @@ import { useFirebaseApp } from "reactfire";
 import AppRouter from "./routes/AppRouter";
 import { UserContext } from "./CreateContext";
 import { ThemeContext } from "./CreateContext";
+import { LogoContext } from "./CreateContext";
 import firebase from "firebase";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -16,6 +17,7 @@ function App() {
 
   const [user, setUser] = useState(usuario == undefined ? session : usuario);
   const [themes, setTheme] = useState();
+  const [logos, setLogos] = useState();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -27,7 +29,6 @@ function App() {
     docRef.get().then(function (doc) {
       if (doc.exists) {
         setTheme(doc.data());
-        setLoading(false);
       } else {
         setTheme({
           primaryColor: "#fa7d09",
@@ -35,6 +36,15 @@ function App() {
           thirdColor: "#2f2519",
           secondaryColor: "#4a3f35",
         });
+      }
+    });
+    let docRef2 = db.collection("company").doc("logo");
+    docRef2.get().then(function (doc) {
+      if (doc.exists) {
+        setLogos(doc.data());
+        setLoading(false);
+      } else {
+        setLogos(null);
         setLoading(false);
       }
     });
@@ -47,14 +57,21 @@ function App() {
         setTheme,
       }}
     >
-      <UserContext.Provider
+      <LogoContext.Provider
         value={{
-          user,
-          setUser,
+          logos,
+          setLogos,
         }}
       >
-        <AppRouter />
-      </UserContext.Provider>
+        <UserContext.Provider
+          value={{
+            user,
+            setUser,
+          }}
+        >
+          <AppRouter />
+        </UserContext.Provider>
+      </LogoContext.Provider>
     </ThemeContext.Provider>
   );
 }
