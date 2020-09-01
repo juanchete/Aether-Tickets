@@ -15,7 +15,7 @@ function App() {
   const session = JSON.parse(sessionStorage.getItem("user"));
 
   const [user, setUser] = useState(usuario == undefined ? session : usuario);
-  const [theme, setTheme] = useState();
+  const [themes, setTheme] = useState();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -43,7 +43,7 @@ function App() {
   return (
     <ThemeContext.Provider
       value={{
-        theme,
+        themes,
         setTheme,
       }}
     >

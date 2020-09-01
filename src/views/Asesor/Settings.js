@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "firebase";
 import { useUser, useFirebaseApp } from "reactfire";
+import { ThemeContext } from "../../CreateContext";
 import styled from "styled-components";
 import SidebarAdmin from "../../components/sidebars/SidebarAdmin";
 import UserCard from "../../components/cards/ClientReportCard";
@@ -9,6 +10,7 @@ import { IoIosCheckmarkCircle } from "react-icons/io";
 import Spinner from "../../components/Spinner";
 
 export default function Settings({ theme }) {
+  const { themes, setTheme } = useContext(ThemeContext);
   const firebase = useFirebaseApp();
   const [asesores, setAsesores] = useState();
   const [loading, setLoading] = useState(true);
@@ -37,6 +39,34 @@ export default function Settings({ theme }) {
     );
   }, []);
 
+  const changeTheme = async (
+    event,
+    primaryColor,
+    primaryCColor,
+    secondaryColor,
+    thirdColor
+  ) => {
+    try {
+      await db
+        .collection("company")
+        .doc("color")
+        .update({
+          primaryColor: primaryColor,
+          primaryCColor: primaryCColor,
+          secondaryColor: secondaryColor,
+          thirdColor: thirdColor,
+        })
+        .then(() => {
+          setTheme({
+            primaryColor: primaryColor,
+            primaryCColor: primaryCColor,
+            secondaryColor: secondaryColor,
+            thirdColor: thirdColor,
+          });
+        });
+    } catch (error) {}
+  };
+
   const user = useUser();
   return (
     <HomeStyle theme={theme}>
@@ -51,18 +81,78 @@ export default function Settings({ theme }) {
         <div className="content">
           <h2>Color Scheme</h2>
           <div className="content-color">
-            <div className="content-color-item-grey"></div>
-            <div className="content-color-item-orange"></div>
-            <div className="content-color-item-brown"></div>
-            <div className="content-color-item-yellow"></div>
-            <div className="content-color-item-blue"></div>
-            <div className="content-color-item-blue-1"></div>
-            <div className="content-color-item-purple"></div>
-            <div className="content-color-item-purple-1"></div>
-            <div className="content-color-item-pink"></div>
-            <div className="content-color-item-pink-1"></div>
-            <div className="content-color-item-green"></div>
-            <div className="content-color-item-green-1"></div>
+            <div
+              className="content-color-item-grey"
+              onClick={(event) => {
+                changeTheme(event, "#d6e0f0", "#f1f3f8", "#8d93ab", "#393b44");
+              }}
+            ></div>
+            <div
+              className="content-color-item-orange"
+              onClick={(event) => {
+                changeTheme(event, "#fa7d09", "#ff4301", "#4a3f35", "#2f2519");
+              }}
+            ></div>
+            <div
+              className="content-color-item-brown"
+              onClick={(event) => {
+                changeTheme(event, "#f6b61e", "#ffebaf", "#df760b", "#743c08");
+              }}
+            ></div>
+            <div
+              className="content-color-item-yellow"
+              onClick={(event) => {
+                changeTheme(event, "#f6c90e", "#eeeeee", "#3a4750", "#303841");
+              }}
+            ></div>
+            <div
+              className="content-color-item-blue"
+              onClick={(event) => {
+                changeTheme(event, "#3282b8", "#bbe1fa", "#0f4c75", "#1b262c");
+              }}
+            ></div>
+            <div
+              className="content-color-item-blue-1"
+              onClick={(event) => {
+                changeTheme(event, "#5f85db", "#90b8f8", "#353941", "#26282b");
+              }}
+            ></div>
+            <div
+              className="content-color-item-purple"
+              onClick={(event) => {
+                changeTheme(event, "#5c5470", "#dbd8e3", "#352f44", "#2a2438");
+              }}
+            ></div>
+            <div
+              className="content-color-item-purple-1"
+              onClick={(event) => {
+                changeTheme(event, "#827397", "#d8b9c3", "#4d4c7d", "#363062");
+              }}
+            ></div>
+            <div
+              className="content-color-item-pink"
+              onClick={(event) => {
+                changeTheme(event, "#8d6262", "#ed8d8d", "#4d4545", "#393232");
+              }}
+            ></div>
+            <div
+              className="content-color-item-pink-1"
+              onClick={(event) => {
+                changeTheme(event, "#d9adad", "#fccbcb", "#ad9d9d", "#838383");
+              }}
+            ></div>
+            <div
+              className="content-color-item-green"
+              onClick={(event) => {
+                changeTheme(event, "#a7d129", "#f8eeb4", "#616f39", "#1b1919");
+              }}
+            ></div>
+            <div
+              className="content-color-item-green-1"
+              onClick={(event) => {
+                changeTheme(event, "#bac7a7", "#e5e4cc", "#889e81", "#698474");
+              }}
+            ></div>
           </div>
         </div>
       </div>
