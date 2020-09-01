@@ -39,48 +39,57 @@ exports.addMessage = functions.https.onRequest(async (req, res) => {
                       // access to the whole mail object
                       const prueba = mail.subject.split(": ");
                       const flag = prueba.includes("Response of your ticket with id")
-                      console.log(flag);
-                      console.log(prueba[2])
-                      console.log(prueba);
+                    
                       const mensajePrueba = mail.text.split("On ");
-                      console.log(mail.text);
-                      console.log(mensajePrueba[0]) 
-                      console.log(mensajePrueba);
                       const {value} = mail.from
                       const senderEmail= value[0].address 
 
-                console.log(senderEmail.trim());
+               
 
-                //       if (flag == true) {
-                //         const usuarioData = await admin.firestore().collection('tickets').where('usuario.email','==',senderEmail.trim()).limit(1).get()
+                      if (flag == true) {
 
-                // const usuario = usuarioData.docs[0].data().usuario;
+                        console.log(mail.text);
+                      console.log(mensajePrueba[0]) 
+                      console.log(mensajePrueba);
 
-                // console.log(usuario);
+                      console.log(flag);
+                      console.log(prueba[2])
+                      console.log(prueba);
 
-                //       await admin.firestore().collection('messages').add({
-                //         content: mensajePrueba[0],
-                //         contentHtml: `<p>${mensajePrueba[0]}</p>`,
-                //         date: new Date(),
-                //         files:{},
-                //         sender: usuario,
-                //         ticket: prueba[2]
-                //       }).then(async (docRef) => {
-                //             await admin.firestore().collection("tickets").doc(prueba[2]).update({
-                //                messages: admin.firestore.FieldValue.arrayUnion(docRef.id),
-                //             });
-                //     })
+                        const usuarioData = await admin.firestore().collection('tickets').where('usuario.email','==',senderEmail.trim()).limit(1).get()
 
-                    // connection.addFlags(item.attributes.uid, "\Seen", (err) => {
-                    //   if (err){
-                    //       console.log('Problem marking message for deletion');
-                    //       rej(err);
-                    //   }
+
+                const usuario = usuarioData.docs[0].data().usuario;
+
+                console.log(usuario);
+
+                      await admin.firestore().collection('messages').add({
+                        content: mensajePrueba[0],
+                        contentHtml: `<p>${mensajePrueba[0]}</p>`,
+                        date: new Date(),
+                        files:{},
+                        sender: usuario,
+                        ticket: prueba[2]
+                      }).then(async (docRef) => {
+                            await admin.firestore().collection("tickets").doc(prueba[2]).update({
+                               messages: admin.firestore.FieldValue.arrayUnion(docRef.id),
+                               lastMessage: new Date (),
+                               status: 'Open',
+                               statusUpdatedAt: new Date()
+                            });
+                            console.log('ready');
+                    })
+
+                    connection.addFlags(item.attributes.uid, "\Seen", (err) => {
+                      if (err){
+                          console.log('Problem marking message for deletion');
+                          rej(err);
+                      }
         
-                //   })
-                //       }else{
-                //         console.log('rebotado');
-                //       }
+                  })
+                      }else{
+                        console.log('rebotado');
+                      }
 
                       
              
