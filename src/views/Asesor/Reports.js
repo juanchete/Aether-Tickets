@@ -13,7 +13,7 @@ import { AiFillClockCircle } from "react-icons/ai";
 import { FaTicketAlt } from "react-icons/fa";
 import { IoIosWarning } from "react-icons/io";
 
-export default function AllAsesors() {
+export default function AllAsesors({ theme }) {
   const firebase = useFirebaseApp();
   const [filterAvailable, setFilterAvailable] = useState(null);
   const [filterOpen, setFilterOpen] = useState(false);
@@ -34,18 +34,18 @@ export default function AllAsesors() {
         label: "Tickets",
         fill: "start",
         lineTension: 0.1,
-        backgroundColor: "#fa7d09",
-        borderColor: "#fa7d09",
+        backgroundColor: theme ? theme.primaryColor : "#fa7d09",
+        borderColor: theme ? theme.primaryColor : "#fa7d09",
         borderCapStyle: "butt",
         borderDash: [],
         borderDashOffset: 0.0,
         borderJoinStyle: "miter",
-        pointBorderColor: "#fa7d09",
-        pointBackgroundColor: "#fa7d09",
+        pointBorderColor: theme ? theme.primaryColor : "#fa7d09",
+        pointBackgroundColor: theme ? theme.primaryColor : "#fa7d09",
         pointBorderWidth: 1,
         pointHoverRadius: 5,
-        pointHoverBackgroundColor: "#fa7d09",
-        pointHoverBorderColor: "#fa7d09",
+        pointHoverBackgroundColor: theme ? theme.primaryColor : "#fa7d09",
+        pointHoverBorderColor: theme ? theme.primaryColor : "#fa7d09",
         pointHoverBorderWidth: 2,
         pointRadius: 1,
         pointHitRadius: 10,
@@ -234,8 +234,8 @@ export default function AllAsesors() {
 
   const user = useUser();
   return (
-    <HomeStyle filter={filterOpen} sub={subSOpen} subP={subPOpen}>
-      <SidebarAdmin report={true} />
+    <HomeStyle filter={filterOpen} sub={subSOpen} subP={subPOpen} theme={theme}>
+      <SidebarAdmin report={true} theme={theme} />
       <div className="home-view">
         <div className="home-view-title">
           <div style={{ display: "flex", flexDirection: "row" }}>
@@ -249,6 +249,7 @@ export default function AllAsesors() {
             <>
               <div className="line-graph">
                 <LineGraph
+                  theme={theme}
                   years={years}
                   getMonths={getMonths}
                   year={year}
@@ -284,6 +285,7 @@ export default function AllAsesors() {
                 </div>
                 <div className="statistics-graph">
                   <DoughnutGraph
+                    theme={theme}
                     answered={getSolved(tickets)}
                     notAnswered={getUnsolved(tickets)}
                   />
@@ -315,15 +317,17 @@ flex-direction: row;
       justify-content: center;
       text-align: center;
       height: 80px;
-      background: #4a3f35;
-      border-bottom: 1px solid #2f2519;
+      background: ${(props) =>
+        props.theme ? props.theme.secondaryColor : "#4a3f35"};
+      border-bottom: 1px solid ${(props) =>
+        props.theme ? props.theme.thirdColor : "#2f2519"};
     h1 {
       font-size: 22px;
       font-family: "Raleway", sans-serif;
       letter-spacing: 0.2em;
       font-weight: 500;
       font-style: normal;
-      color: #2f2519;
+      color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
       text-transform: uppercase;
       width: 100%;
     }
@@ -333,7 +337,7 @@ flex-direction: row;
       letter-spacing: 0.2em;
       font-weight: 300;
       font-style: normal;
-      color: #fa7d09;
+      color: ${(props) => (props.theme ? props.theme.primaryColor : "#fa7d09")};
       text-transform: uppercase;
       width: 100%;
       margin-right: 5px;
@@ -357,7 +361,8 @@ flex-direction: row;
 
         .slick-prev:before,
         .slick-next:before {
-          color: #fa7d09 !important;
+          color: ${(props) =>
+            props.theme ? props.theme.primaryColor : "#fa7d09"} !important;
         }
 
         .slick-slide {
@@ -374,7 +379,8 @@ flex-direction: row;
         letter-spacing: 0.2em;
         font-weight: 500;
         font-style: normal;
-        color: #fa7d09;
+        color: ${(props) =>
+          props.theme ? props.theme.primaryColor : "#fa7d09"};
         text-transform: uppercase;
         margin-left: 20px;
       }
@@ -399,11 +405,13 @@ flex-direction: row;
         flex-direction: row;
 
         .statistics-avarage-item {
-          background: #2f2519;
+          background: ${(props) =>
+            props.theme ? props.theme.thirdColor : "#2f2519"};
           width: 200px;
           height: 100%;
           margin-right: 10px;
-          border: 2px solid #2f2519;
+          border: 2px solid ${(props) =>
+            props.theme ? props.theme.thirdColor : "#2f2519"};
           border-radius: 5px;
 
           .icon-container {
@@ -415,7 +423,8 @@ flex-direction: row;
             .icon {
               width: 60px;
               height: 60px;
-              color: #4a3f35;
+              color: ${(props) =>
+                props.theme ? props.theme.secondaryColor : "#4a3f35"};
             }
           }
 
@@ -425,7 +434,8 @@ flex-direction: row;
             letter-spacing: 0.2em;
             font-weight: 500;
             font-style: normal;
-            color: #4a3f35;
+            color: ${(props) =>
+              props.theme ? props.theme.secondaryColor : "#4a3f35"};
             text-transform: uppercase;
             width: 100%;
             margin-top: 20px;
@@ -437,7 +447,8 @@ flex-direction: row;
             letter-spacing: 0.2em;
             font-weight: 200;
             font-style: normal;
-            color: #fa7d09;
+            color: ${(props) =>
+              props.theme ? props.theme.primaryColor : "#fa7d09"};
             text-transform: uppercase;
             margin-left: 10px;
           }
@@ -512,11 +523,13 @@ flex-direction: row;
               align-items:center;
     
               .statistics-avarage-item {
-                background: #2f2519;
+                background: ${(props) =>
+                  props.theme ? props.theme.thirdColor : "#2f2519"};
                 width: 200px;
                 height: 100%;
                 margin-right: 10px;
-                border: 2px solid #2f2519;
+                border: 2px solid ${(props) =>
+                  props.theme ? props.theme.thirdColor : "#2f2519"};
                 border-radius: 5px;
               }
           }      
@@ -568,11 +581,13 @@ flex-direction: row;
               align-items:center;
     
               .statistics-avarage-item {
-                background: #2f2519;
+                background: ${(props) =>
+                  props.theme ? props.theme.thirdColor : "#2f2519"};
                 width: 200px;
                 height: 300px;
                 margin-right: 10px;
-                border: 2px solid #2f2519;
+                border: 2px solid ${(props) =>
+                  props.theme ? props.theme.thirdColor : "#2f2519"};
                 border-radius: 5px;
                 margin-bottom:15px;
               }

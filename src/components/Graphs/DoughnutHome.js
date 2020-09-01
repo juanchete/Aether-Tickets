@@ -1,14 +1,20 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Doughnut } from "react-chartjs-2";
 
-export default function DoughnutGraph({ answered, notAnswered }) {
+export default function DoughnutGraph({ answered, notAnswered, theme }) {
   const data = {
     labels: ["Solved", "Delegated to Aether Solutions"],
     datasets: [
       {
         data: [answered, notAnswered],
-        backgroundColor: ["#fa7d09", "#4a3f35"],
-        hoverBackgroundColor: ["#fa7d09", "#4a3f35"],
+        backgroundColor: [
+          theme ? theme.primaryColor : "#fa7d09",
+          theme ? theme.secondaryColor : "#4a3f35",
+        ],
+        hoverBackgroundColor: [
+          theme ? theme.primaryColor : "#fa7d09",
+          theme ? theme.secondaryColor : "#4a3f35",
+        ],
       },
     ],
   };
@@ -17,7 +23,7 @@ export default function DoughnutGraph({ answered, notAnswered }) {
       labels: {
         // This more specific font property overrides the global property
         fontFamily: `"Raleway", sans-serif`,
-        fontColor: "#2f2519",
+        fontColor: theme ? theme.thirdColor : "#2f2519",
       },
     },
     maintainAspectRatio: false,

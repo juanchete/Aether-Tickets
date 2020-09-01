@@ -5,7 +5,7 @@ import firebase from "firebase";
 import styled from "styled-components";
 import Accordion from "../components/Accordion";
 
-export default function FaqComponent(category) {
+export default function FaqComponent({ category, theme }) {
   const firebaseReact = useFirebaseApp();
   const db = firebaseReact.firestore();
   const [edit, setEdit] = useState(false);
@@ -57,11 +57,16 @@ export default function FaqComponent(category) {
   const usuario = useUser();
 
   return (
-    <HomeStyle>
+    <HomeStyle theme={theme}>
       {!loading && faqs.length > 0 ? (
         <>
           {faqs.map((faq, i) => (
-            <Accordion faq={faq} index={i} toggleFAQ={toggleFAQ} />
+            <Accordion
+              faq={faq}
+              index={i}
+              theme={theme}
+              toggleFAQ={toggleFAQ}
+            />
           ))}
         </>
       ) : (
@@ -88,7 +93,7 @@ const HomeStyle = styled.div`
       letter-spacing: 0.2em;
       font-weight: 500;
       font-style: normal;
-      color: #2f2519;
+      color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
       text-transform: uppercase;
       width: 100%;
       margin-right: 5px;

@@ -17,6 +17,7 @@ export default function SelectTicket({
   fontSize,
   marginBottom,
   marginRight,
+  theme,
   children,
   ...rest
 }) {
@@ -27,6 +28,7 @@ export default function SelectTicket({
       color2={color2}
       fontSize={fontSize}
       marginRight={marginRight}
+      theme={theme}
     >
       <label>{label}</label>
       <select id={id} onChange={onChange} onBlur={onBlur} value={value}>

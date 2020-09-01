@@ -9,7 +9,7 @@ import { BsThreeDots } from "react-icons/bs";
 import { NavLink, withRouter } from "react-router-dom";
 import moment from "moment";
 
-export default function TicketCard({ color, color2, ticket, filter }) {
+export default function TicketCard({ color, color2, ticket, filter, theme }) {
   const firebaseReact = useFirebaseApp();
   const db = firebaseReact.firestore();
   const [ticketsFiltered, setTickets] = useState();
@@ -65,7 +65,7 @@ export default function TicketCard({ color, color2, ticket, filter }) {
     <>
       {!loading ? (
         <>
-          <Card color={color} color2={color2}>
+          <Card color={color} color2={color2} theme={theme}>
             <ul className="ticket-view">
               <NavLink className="data-1" to={path + ticket.id}>
                 <h2>
@@ -100,7 +100,12 @@ export default function TicketCard({ color, color2, ticket, filter }) {
                 </h2>
               </NavLink>
               <li className="data-2">
-                <PopUp ticket={ticket} prueba={prueba} getAsesor={getAsesor} />
+                <PopUp
+                  ticket={ticket}
+                  prueba={prueba}
+                  getAsesor={getAsesor}
+                  theme={theme}
+                />
               </li>
             </ul>
           </Card>
@@ -113,7 +118,8 @@ const Card = styled.div`
   .ticket-view {
     width: 100%;
     height: 60px;
-    border-bottom: 1px solid #2f2519;
+    border-bottom: 1px solid
+      ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -134,7 +140,7 @@ const Card = styled.div`
         font-family: "Raleway", sans-serif;
         font-weight: 500;
         font-style: normal;
-        color: #2f2519;
+        color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
         margin-right: 5px;
       }
       h3 {
@@ -176,7 +182,7 @@ const Card = styled.div`
         font-family: "Raleway", sans-serif;
         font-weight: 500;
         font-style: normal;
-        color: #2f2519;
+        color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
         width: 100%;
         margin-right: 5px;
       }

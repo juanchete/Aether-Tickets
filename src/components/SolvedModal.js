@@ -15,7 +15,13 @@ import ButtonSubmit from "../components/buttons/Button-Submit";
 import { IoMdClose } from "react-icons/io";
 import Message from "../components/messages/SuccessM";
 
-export default function SolvedModal({ color, color2, show, showFeedback }) {
+export default function SolvedModal({
+  color,
+  color2,
+  show,
+  showFeedback,
+  theme,
+}) {
   const [submitted, setSubmitted] = useState(false);
   const { user, setUser } = useContext(UserContext);
   const [type, setType] = useState();
@@ -121,9 +127,10 @@ export default function SolvedModal({ color, color2, show, showFeedback }) {
           type={type}
           message={message}
           showMessage={showMessage}
+          theme={theme}
         />
       ) : null}
-      <FeedbackStyle color={color} color2={color2}>
+      <FeedbackStyle color={color} color2={color2} theme={theme}>
         <div className={style}>
           <div className="container">
             {!loading ? (
@@ -134,8 +141,8 @@ export default function SolvedModal({ color, color2, show, showFeedback }) {
                 <div className="content">
                   <form onSubmit={formik.handleSubmit}>
                     <TextArea
-                      color="#2f2519"
-                      color2="#fa7d09"
+                      color={theme ? theme.thirdColor : "#2f2519"}
+                      color2={theme ? theme.primaryColor : "#fa7d09"}
                       label="Problem"
                       placeholder="problem"
                       id="problem"
@@ -154,9 +161,9 @@ export default function SolvedModal({ color, color2, show, showFeedback }) {
                       const stepValue = i + 1;
                       return (
                         <Input
-                          color="#2f2519"
                           deleteS={deleteStep}
-                          color2="#fa7d09"
+                          color={theme ? theme.thirdColor : "#2f2519"}
+                          color2={theme ? theme.primaryColor : "#fa7d09"}
                           label={"Step" + " " + stepValue.toString()}
                           id="name"
                           i={i}
@@ -183,8 +190,8 @@ export default function SolvedModal({ color, color2, show, showFeedback }) {
                     />
 
                     <TextArea
-                      color="#2f2519"
-                      color2="#fa7d09"
+                      color={theme ? theme.thirdColor : "#2f2519"}
+                      color2={theme ? theme.primaryColor : "#fa7d09"}
                       label="Result"
                       placeholder="result"
                       id="result"
@@ -200,7 +207,9 @@ export default function SolvedModal({ color, color2, show, showFeedback }) {
                     />
                     <div className="button-container">
                       {submitted ? (
-                        <Spinner color="#ff4301" />
+                        <Spinner
+                          color={theme ? theme.primaryColor : "#fa7d09"}
+                        />
                       ) : (
                         <ButtonSubmit />
                       )}
@@ -210,7 +219,7 @@ export default function SolvedModal({ color, color2, show, showFeedback }) {
               </div>
             ) : (
               <div className="PageLoading">
-                <Spinner color="#fa7d09" />
+                <Spinner color={theme ? theme.primaryColor : "#fa7d09"} />
               </div>
             )}
           </div>
@@ -260,7 +269,8 @@ const FeedbackStyle = styled.div`
       .labels {
         width: 100%;
         height: 40px;
-        border-bottom: 1px solid #2f2519;
+        border-bottom: 1px solid ${(props) =>
+          props.theme ? props.theme.thirdColor : "#2f2519"};
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -276,7 +286,8 @@ const FeedbackStyle = styled.div`
             letter-spacing: 0.2em;
             font-weight: 500;
             font-style: normal;
-            color: #2f2519;
+            color: ${(props) =>
+              props.theme ? props.theme.thirdColor : "#2f2519"};
             text-transform: uppercase;
             margin-right: 5px;
           }
@@ -289,7 +300,8 @@ const FeedbackStyle = styled.div`
             letter-spacing: 0.2em;
             font-weight: 500;
             font-style: normal;
-            color: #2f2519;
+            color: ${(props) =>
+              props.theme ? props.theme.thirdColor : "#2f2519"};
             text-transform: uppercase;
             width: 100%;
             margin-right: 5px;
@@ -309,7 +321,8 @@ const FeedbackStyle = styled.div`
         .icon {
           width: 40px;
           height: 40px;
-          color: #2f2519;
+          color: ${(props) =>
+            props.theme ? props.theme.thirdColor : "#2f2519"};
           cursor: pointer;
         }
       }
@@ -321,7 +334,7 @@ const FeedbackStyle = styled.div`
         font-weight: 400;
         font-size: 45px;
         font-style: normal;
-        color: #2f2519;
+        color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
         text-transform: uppercase;
         width: 100%;
       }
@@ -332,7 +345,7 @@ const FeedbackStyle = styled.div`
         font-weight: 400;
         font-size: 18px;
         font-style: normal;
-        color: #2f2519;
+        color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
         text-transform: uppercase;
         width: 100%;
       }
@@ -353,7 +366,8 @@ const FeedbackStyle = styled.div`
             font-size: 15px;
             font-weight: 200;
             letter-spacing: 0.1em;
-            color: #fa7d09;
+            color: ${(props) =>
+              props.theme ? props.theme.primaryColor : "#fa7d09"};
             text-transform: uppercase;
             margin-bottom: 15px;
           }
@@ -368,11 +382,13 @@ const FeedbackStyle = styled.div`
         .icon-2 {
             width: 30px;
             height: 30px;
-            color: #fa7d09;
+            color: ${(props) =>
+              props.theme ? props.theme.primaryColor : "#fa7d09"};
             cursor: pointer;
             margin-bottom: 15px;
             &:hover{
-                color:#2f2519;
+                color:${(props) =>
+                  props.theme ? props.theme.thirdColor : "#2f2519"};
             }
 
           }

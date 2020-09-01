@@ -18,6 +18,7 @@ export default function InputTicket({
   marginRight,
   children,
   disable,
+  theme,
   ...rest
 }) {
   return (
@@ -27,6 +28,7 @@ export default function InputTicket({
       color2={color2}
       fontSize={fontSize}
       marginRight={marginRight}
+      theme={theme}
     >
       <label>{label}</label>
       <input
@@ -60,15 +62,17 @@ const Input = styled.div`
     font-size: ${(props) => (props.fontSize ? props.fontSize : "12px")};
     font-weight: 300;
     letter-spacing: 0.1em;
-    color: #2f2519;
+    color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
     text-transform: uppercase;
     margin-bottom: 10px;
   }
   input {
     width: 100%;
-    border: 2px solid #4a3f35;
+    border: 2px solid
+      ${(props) => (props.theme ? props.theme.secondaryColor : "#4a3f35")};
     border-radius: 5px;
-    background: #4a3f35;
+    background: ${(props) =>
+      props.theme ? props.theme.secondaryColor : "#4a3f35"};
     font-family: "Raleway", sans-serif;
     color: white;
     font-size: 15kpx;
@@ -77,7 +81,8 @@ const Input = styled.div`
 
     &:focus {
       opacity: 1;
-      background: #2f2519;
+      background: ${(props) =>
+        props.theme ? props.theme.thirdColor : "#2f2519"};
       outline: none;
       box-shadow: none;
       border: solid 2px ${(props) => (props.color ? props.color : "#fa7d09")} !important;

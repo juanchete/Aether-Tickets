@@ -26,7 +26,13 @@ export default function StarRating(props) {
             <MdStar
               className="star"
               color={
-                ratingValue <= (hover || props.rating) ? "#ff4301" : "#2f2519"
+                ratingValue <= (hover || props.rating)
+                  ? props.theme
+                    ? props.theme.primaryColor
+                    : "#ff4301"
+                  : props.theme
+                  ? props.theme.thirdColor
+                  : "#2f2519"
               }
               size="3em"
               onMouseEnter={() => setHover(ratingValue)}

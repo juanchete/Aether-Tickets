@@ -18,6 +18,7 @@ export default function InputLogin({
   marginBottom,
   marginRight,
   children,
+  theme,
   ...rest
 }) {
   return (
@@ -27,6 +28,7 @@ export default function InputLogin({
       color2={color2}
       fontSize={fontSize}
       marginRight={marginRight}
+      theme={theme}
     >
       <label>{label}</label>
       <textarea
@@ -37,7 +39,11 @@ export default function InputLogin({
         value={value}
         onChange={onChange}
       />
-      {error ? <h4>{error}</h4> : <h4 style={{ color: "#4a3f35" }}>h</h4>}
+      {error ? (
+        <h4>{error}</h4>
+      ) : (
+        <h4 style={{ color: theme ? theme.secondaryColor : "#4a3f35" }}>h</h4>
+      )}
     </TextArea>
   );
 }

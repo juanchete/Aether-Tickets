@@ -19,6 +19,7 @@ export default function SelectTicket({
   disable,
   marginRight,
   children,
+  theme,
   ...rest
 }) {
   return (
@@ -28,6 +29,7 @@ export default function SelectTicket({
       color2={color2}
       fontSize={fontSize}
       marginRight={marginRight}
+      theme={theme}
     >
       <label>{label}</label>
       <select
@@ -42,7 +44,11 @@ export default function SelectTicket({
           <option value={option.id} label={option.name} />
         ))}
       </select>
-      {error ? <h4>{error}</h4> : <h4 style={{ color: "#4a3f35" }}>h</h4>}
+      {error ? (
+        <h4>{error}</h4>
+      ) : (
+        <h4 style={{ color: theme ? theme.secondaryColor : "#4a3f35" }}>h</h4>
+      )}
     </Select>
   );
 }

@@ -12,7 +12,7 @@ import { UserContext } from "../../CreateContext";
 import Cookies from "js-cookie";
 import Spinner from "../../components/Spinner";
 
-export default function SignUpAsesor() {
+export default function SignUpAsesor({ theme }) {
   const firebase = useFirebaseApp();
 
   const usuario = useUser();
@@ -101,7 +101,7 @@ export default function SignUpAsesor() {
   return flag ? (
     <Redirect to="/" />
   ) : (
-    <StyledLogin>
+    <StyledLogin theme={theme}>
       <div className="container">
         <div className="container-login">
           <h1>Sign Up</h1>
@@ -117,8 +117,8 @@ export default function SignUpAsesor() {
           <form onSubmit={formik.handleSubmit}>
             <div className="input-name">
               <Input
-                color="#2f2519"
-                color2="#fa7d09"
+                color={theme ? theme.thirdColor : "#2f2519"}
+                color2={theme ? theme.primaryColor : "#fa7d09"}
                 label="Name"
                 id="name"
                 type="text"
@@ -135,8 +135,8 @@ export default function SignUpAsesor() {
                 }
               />
               <Input
-                color="#2f2519"
-                color2="#fa7d09"
+                color={theme ? theme.thirdColor : "#2f2519"}
+                color2={theme ? theme.primaryColor : "#fa7d09"}
                 label="Last Name"
                 id="lastName"
                 type="text"
@@ -153,8 +153,8 @@ export default function SignUpAsesor() {
               />
             </div>
             <Input
-              color="#2f2519"
-              color2="#fa7d09"
+              color={theme ? theme.thirdColor : "#2f2519"}
+              color2={theme ? theme.primaryColor : "#fa7d09"}
               label="Email"
               id="email"
               type="email"
@@ -170,8 +170,8 @@ export default function SignUpAsesor() {
               }
             />
             <Input
-              color="#2f2519"
-              color2="#fa7d09"
+              color={theme ? theme.thirdColor : "#2f2519"}
+              color2={theme ? theme.primaryColor : "#fa7d09"}
               label="Password"
               id="password"
               type="password"
@@ -189,9 +189,9 @@ export default function SignUpAsesor() {
 
             <div className="button-error">
               {submitted ? (
-                <Spinner color="#fa7d09" />
+                <Spinner color={theme ? theme.primaryColor : "#fa7d09"} />
               ) : (
-                <ButtonSubmit color="#fa7d09" />
+                <ButtonSubmit color={theme ? theme.primaryColor : "#fa7d09"} />
               )}
             </div>
           </form>
@@ -208,7 +208,7 @@ export default function SignUpAsesor() {
   );
 }
 const StyledLogin = styled.nav`
-background: #2f2519;
+background: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
 height: 100vh;
 width: 100vw;
 overflow-x:hidden;
@@ -228,7 +228,8 @@ font-family: 'Raleway', sans-serif;
   width: 500px;
   height: 650px;
   background: white;
-  border: 3px solid #2f2519;
+  border: 3px solid ${(props) =>
+    props.theme ? props.theme.thirdColor : "#2f2519"};
   border-radius: 20px;
   display: flex;
   align-items: center;
@@ -243,13 +244,14 @@ font-family: 'Raleway', sans-serif;
     font-weight: 400;
     font-size: 48px;
     font-style: normal;
-    color: #2f2519;
+    color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
     text-transform: uppercase;
     width: 100%;
   }
 
   .sign-in-google {
-    border: 2px solid #fa7d09;
+    border: 2px solid ${(props) =>
+      props.theme ? props.theme.primaryColor : "#fa7d09"};
     box-sizing: border-box;
     border-radius: 10px;
     display: flex;
@@ -269,13 +271,15 @@ font-family: 'Raleway', sans-serif;
       align-items: center;
       text-align: center;
       letter-spacing: 0.1em;
-      color: #fa7d09;
+      color: ${(props) => (props.theme ? props.theme.primaryColor : "#fa7d09")};
     }
     &:hover {
       opacity: 0.8;
-      background: #fa7d09;
+      background: ${(props) =>
+        props.theme ? props.theme.primaryColor : "#fa7d09"};
       color: white;
-      border-color: #fa7d09;
+      border-color: ${(props) =>
+        props.theme ? props.theme.primaryColor : "#fa7d09"};
       h3 {
         color: white;
       }
@@ -294,7 +298,7 @@ font-family: 'Raleway', sans-serif;
       align-items: flex-end;
       text-align: center;
       letter-spacing: 0.1em;
-      color: #fa7d09;
+      color: ${(props) => (props.theme ? props.theme.primaryColor : "#fa7d09")};
       height:100%;
   }
 
@@ -330,7 +334,8 @@ font-family: 'Raleway', sans-serif;
           font-size: 12px;
           font-weight:200;
           letter-spacing: 0.1em;
-          color: #fa7d09;
+          color: ${(props) =>
+            props.theme ? props.theme.primaryColor : "#fa7d09"};
           margin-top: 5px;
           
       }
@@ -350,21 +355,22 @@ font-family: 'Raleway', sans-serif;
     .line {
       width: 155.01px;
       height: 0px;
-      border: 1px solid #2f2519;
+      border: 1px solid ${(props) =>
+        props.theme ? props.theme.thirdColor : "#2f2519"};
     }
 
     h3 {
       font-family: 'Raleway', sans-serif;
       font-size: 20px;
       letter-spacing: 0.1em;
-      color: #2f2519;
+      color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
       margin-left: 10px;
       margin-right: 10px;
     }
   }
 }
 @media only screen and (max-height: 695px) and (max-width: 1250px)  {
-  background: #2f2519;
+  background: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
   height:auto;
   width: 100vw;
   

@@ -5,7 +5,7 @@ import styled from "styled-components";
 import SidebarAdmin from "../../components/sidebars/SidebarAdmin";
 import TicketCard from "../../components/cards/TicketCard";
 
-export default function TicketsByStatus({ filter }) {
+export default function TicketsByStatus({ filter, theme }) {
   const firebase = useFirebaseApp();
   const [tickets, setTickets] = useState();
   const [loading, setLoading] = useState(true);
@@ -35,8 +35,8 @@ export default function TicketsByStatus({ filter }) {
 
   const user = useUser();
   return (
-    <HomeStyle>
-      <SidebarAdmin ticket={true} />
+    <HomeStyle theme={theme}>
+      <SidebarAdmin ticket={true} theme={theme} />
       <div className="home-view">
         <div className="home-view-title">
           <div style={{ display: "flex", flexDirection: "row" }}>
@@ -68,7 +68,11 @@ export default function TicketsByStatus({ filter }) {
         {!loading ? (
           <>
             {tickets.map((ticket) => (
-              <TicketCard ticket={ticket} />
+              <TicketCard
+                theme={theme}
+                ticket={ticket}
+                color={theme ? theme.primaryColor : "#fa7d09"}
+              />
             ))}
           </>
         ) : null}
@@ -93,15 +97,17 @@ const HomeStyle = styled.div`
       justify-content: center;
       text-align: center;
       height: 80px;
-      background: #4a3f35;
-      border-bottom: 1px solid #2f2519;
+      background: ${(props) =>
+        props.theme ? props.theme.secondaryColor : "#4a3f35"};
+      border-bottom: 1px solid
+        ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
       h1 {
         font-size: 22px;
         font-family: "Raleway", sans-serif;
         letter-spacing: 0.2em;
         font-weight: 500;
         font-style: normal;
-        color: #2f2519;
+        color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
         text-transform: uppercase;
         width: 100%;
       }
@@ -111,7 +117,8 @@ const HomeStyle = styled.div`
         letter-spacing: 0.2em;
         font-weight: 300;
         font-style: normal;
-        color: #fa7d09;
+        color: ${(props) =>
+          props.theme ? props.theme.primaryColor : "#fa7d09"};
         text-transform: uppercase;
         width: 100%;
         margin-right: 5px;
@@ -121,7 +128,8 @@ const HomeStyle = styled.div`
     .labels {
       width: 70vw;
       height: 40px;
-      border-bottom: 1px solid #2f2519;
+      border-bottom: 1px solid
+        ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -140,7 +148,8 @@ const HomeStyle = styled.div`
           letter-spacing: 0.2em;
           font-weight: 500;
           font-style: normal;
-          color: #2f2519;
+          color: ${(props) =>
+            props.theme ? props.theme.thirdColor : "#2f2519"};
           text-transform: uppercase;
           margin-right: 5px;
         }
@@ -153,7 +162,8 @@ const HomeStyle = styled.div`
           letter-spacing: 0.2em;
           font-weight: 500;
           font-style: normal;
-          color: #2f2519;
+          color: ${(props) =>
+            props.theme ? props.theme.thirdColor : "#2f2519"};
           text-transform: uppercase;
           width: 100%;
           margin-right: 5px;

@@ -5,7 +5,7 @@ import { useUser, useFirebaseApp } from "reactfire";
 import { AiFillMinusCircle } from "react-icons/ai";
 import { IoIosAddCircle } from "react-icons/io";
 
-export default function SuggestionCard({ color, color2, suggestion }) {
+export default function SuggestionCard({ color, color2, suggestion, theme }) {
   const firebaseReact = useFirebaseApp();
   const db = firebaseReact.firestore();
   const [category, setCategory] = useState();
@@ -35,7 +35,7 @@ export default function SuggestionCard({ color, color2, suggestion }) {
   return (
     <>
       {!loading ? (
-        <Card color={color} color2={color2}>
+        <Card color={color} color2={color2} theme={theme}>
           <div className="card-title">
             <h2>{suggestion.name}</h2>
             <h3>{category[0].name}</h3>
@@ -81,7 +81,7 @@ const Card = styled.div`
     .icon {
       width: 20px;
       height: 20px;
-      color: #fa7d09;
+      color: ${(props) => (props.theme ? props.theme.primaryColor : "#fa7d09")};
     }
 
     h2 {

@@ -12,6 +12,7 @@ export default function TicketCard({
   ticket,
   prueba,
   getAsesor,
+  theme,
 }) {
   const firebaseReact = useFirebaseApp();
   const { user, setUser } = useContext(UserContext);
@@ -35,7 +36,7 @@ export default function TicketCard({
   };
 
   return (
-    <PopUp show={show}>
+    <PopUp show={show} theme={theme}>
       {" "}
       <BsThreeDots
         className="icon"
@@ -59,14 +60,14 @@ const PopUp = styled.div`
   .icon {
     width: 20px;
     height: 20px;
-    color: #2f2519;
+    color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
     cursor: pointer;
     z-index: 3000;
   }
   .option {
     width: 120px;
     height: auto;
-    background: pink;
+    background: white;
     position: absolute;
     padding-top: 5px;
     padding-bottom: 5px;

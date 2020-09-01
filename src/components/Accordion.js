@@ -11,6 +11,7 @@ export default function Accordion({
   faq,
   index,
   toggleFAQ,
+  theme,
   ...rest
 }) {
   return (
@@ -20,6 +21,7 @@ export default function Accordion({
       color2={color2}
       fontSize={fontSize}
       marginRight={marginRight}
+      theme={theme}
     >
       <div
         className={"faq " + (faq.open ? "open" : "")}
@@ -36,7 +38,8 @@ const AccordionStyle = styled.div`
   .faq {
     margin: 5px;
     padding: 15px;
-    background-color: #2f2519;
+    background-color: ${(props) =>
+      props.theme ? props.theme.thirdColor : "#2f2519"};
     border-radius: 5px;
     z-index: 1;
   }

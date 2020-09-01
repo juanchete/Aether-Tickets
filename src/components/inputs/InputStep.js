@@ -20,11 +20,13 @@ export default function InputLogin({
   marginBottom,
   marginRight,
   children,
+  theme,
   ...rest
 }) {
   return (
     <Input
       marginBottom={marginBottom}
+      theme={theme}
       color={color}
       color2={color2}
       fontSize={fontSize}
@@ -73,7 +75,7 @@ const Input = styled.div`
       width: 20px;
       height: 20px;
       margin-left: 5px;
-      color: #2f2519;
+      color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
       cursor: pointer;
       &:hover {
         color: #fa7d09;

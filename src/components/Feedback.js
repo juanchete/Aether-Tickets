@@ -15,6 +15,7 @@ export default function Feedback({
   showFeedback,
   asesor,
   ticket,
+  theme,
 }) {
   const { user, setUser } = useContext(UserContext);
   const firebaseReact = useFirebaseApp();
@@ -46,7 +47,7 @@ export default function Feedback({
     style = "close";
   }
   return (
-    <FeedbackStyle color={color} color2={color2}>
+    <FeedbackStyle color={color} color2={color2} theme={theme}>
       <div className={style}>
         <div className="container">
           {!loading ? (
@@ -79,6 +80,7 @@ export default function Feedback({
                       showFeedback={showFeedback}
                       usuario={usuario}
                       ticket={ticket}
+                      theme={theme}
                     />
                   ))}
                 </>
@@ -86,7 +88,7 @@ export default function Feedback({
             </div>
           ) : (
             <div className="PageLoading">
-              <Spinner color="#fa7d09" />
+              <Spinner color={theme ? theme.primaryColor : "#fa7d09"} />
             </div>
           )}
         </div>
@@ -135,7 +137,8 @@ const FeedbackStyle = styled.div`
       .labels {
         width: 100%;
         height: 40px;
-        border-bottom: 1px solid #2f2519;
+        border-bottom: 1px solid ${(props) =>
+          props.theme ? props.theme.thirdColor : "#2f2519"};
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -151,7 +154,8 @@ const FeedbackStyle = styled.div`
             letter-spacing: 0.2em;
             font-weight: 500;
             font-style: normal;
-            color: #2f2519;
+            color: ${(props) =>
+              props.theme ? props.theme.thirdColor : "#2f2519"};
             text-transform: uppercase;
             margin-right: 5px;
           }
@@ -164,7 +168,8 @@ const FeedbackStyle = styled.div`
             letter-spacing: 0.2em;
             font-weight: 500;
             font-style: normal;
-            color: #2f2519;
+            color: ${(props) =>
+              props.theme ? props.theme.thirdColor : "#2f2519"};
             text-transform: uppercase;
             width: 100%;
             margin-right: 5px;
@@ -184,7 +189,8 @@ const FeedbackStyle = styled.div`
         .icon {
           width: 40px;
           height: 40px;
-          color: #2f2519;
+          color: ${(props) =>
+            props.theme ? props.theme.thirdColor : "#2f2519"};
           cursor: pointer;
         }
       }
@@ -196,7 +202,7 @@ const FeedbackStyle = styled.div`
         font-weight: 400;
         font-size: 45px;
         font-style: normal;
-        color: #2f2519;
+        color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
         text-transform: uppercase;
         width: 100%;
       }
@@ -207,7 +213,7 @@ const FeedbackStyle = styled.div`
         font-weight: 400;
         font-size: 18px;
         font-style: normal;
-        color: #2f2519;
+        color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
         text-transform: uppercase;
         width: 100%;
       }
@@ -235,7 +241,8 @@ const FeedbackStyle = styled.div`
             font-size: 12px;
             font-weight: 200;
             letter-spacing: 0.1em;
-            color: #2f2519;
+            color: ${(props) =>
+              props.theme ? props.theme.thirdColor : "#2f2519"};
             text-transform: uppercase;
             margin-bottom: 10px;
           }

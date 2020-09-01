@@ -9,49 +9,50 @@ import Input from "../../components/inputs/InputLogin";
 import Swal from "sweetalert2";
 import { Link, Redirect } from "react-router-dom";
 
-function ForgotPassword() {
+function ForgotPassword({ theme }) {
+  const firebase = useFirebaseApp();
+  const [redirectLogin, setrediRectLogin] = useState(false);
 
-    const firebase = useFirebaseApp();
-    const [redirectLogin, setrediRectLogin] = useState(false)
+  const renderRedirectPassword = () => {
+    if (redirectLogin) {
+      return <Redirect to="/login" />;
+    }
+  };
 
-    const renderRedirectPassword = () => {
-        if (redirectLogin) {
-          return <Redirect to="/login" />;
-        }
-      };
-    
+  const formik = useFormik({
+    initialValues: {
+      email: localStorage.getItem("remember-email") || "",
+    },
+    validationSchema: Yup.object({
+      email: Yup.string().email("Invalid Email").required("Required Field"),
+    }),
 
-      const formik = useFormik({
-        initialValues: {
-          email: localStorage.getItem("remember-email") || ""
-        },
-        validationSchema: Yup.object({
-          email: Yup.string().email("Invalid Email").required("Required Field")
-        }),
-    
-        onSubmit: async (valores) => {
-         
-          const { email, password } = valores;
-          try {
-            firebase
+    onSubmit: async (valores) => {
+      const { email, password } = valores;
+      try {
+        firebase
           .auth()
           .sendPasswordResetEmail(email)
           .then(() => {
-            Swal.fire("Correcto", "Se envio el correo satisfactoriamente", "success");
-            setrediRectLogin(true)
-          }).catch(error => {
+            Swal.fire(
+              "Correcto",
+              "Se envio el correo satisfactoriamente",
+              "success"
+            );
+            setrediRectLogin(true);
+          })
+          .catch((error) => {
             Swal.fire("Error", error.message, "error");
-          }) 
+          });
+      } catch (error) {
+        Swal.fire("Error", error.message, "error");
+      }
+    },
+  });
 
-          } catch (error) {
-            Swal.fire("Error", error.message, "error");
-          }
-        },
-      });
-
-    return (
-        <StyledLogin>
-        {renderRedirectPassword()}
+  return (
+    <StyledLogin theme={theme}>
+      {renderRedirectPassword()}
       <div className="container">
         <div className="container-login">
           <h1>Forgot Password</h1>
@@ -61,8 +62,8 @@ function ForgotPassword() {
           </div>
           <form onSubmit={formik.handleSubmit}>
             <Input
-              color="#2f2519"
-              color2="#ff4301"
+              color={theme ? theme.thirdColor : "#2f2519"}
+              color2={theme ? theme.primaryColor : "#fa7d09"}
               label="Email"
               id="email"
               type="email"
@@ -78,19 +79,18 @@ function ForgotPassword() {
               }
             />
 
-            
             <div className="button-error">
-              <ButtonSubmit color="#ff4301" />
+              <ButtonSubmit color2={theme ? theme.primaryColor : "#fa7d09"} />
             </div>
           </form>
         </div>
       </div>
     </StyledLogin>
-    )
+  );
 }
 
 const StyledLogin = styled.nav`
-  background: #2f2519;
+  background: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
   height: 100vh;
   width: 100vw;
   font-family: "Raleway", sans-serif;
@@ -108,7 +108,8 @@ const StyledLogin = styled.nav`
     width: 40%;
     height: 80%;
     background: white;
-    border: 3px solid #2f2519;
+    border: 3px solid ${(props) =>
+      props.theme ? props.theme.thirdColor : "#2f2519"};
     border-radius: 20px;
     display: flex;
     align-items: center;
@@ -122,13 +123,14 @@ const StyledLogin = styled.nav`
       font-weight: 400;
       font-size: 48px;
       font-style: normal;
-      color: #2f2519;
+      color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
       text-transform: uppercase;
       width: 100%;
     }
 
     .sign-in-google {
-      border: 2px solid #ff4301;
+      border: 2px solid ${(props) =>
+        props.theme ? props.theme.primaryColor : "#fa7d09"};
       box-sizing: border-box;
       border-radius: 10px;
       display: flex;
@@ -148,13 +150,16 @@ const StyledLogin = styled.nav`
         align-items: center;
         text-align: center;
         letter-spacing: 0.1em;
-        color: #ff4301;
+        color: ${(props) =>
+          props.theme ? props.theme.primaryColor : "#fa7d09"};
       }
       &:hover {
         opacity: 0.8;
-        background: #ff4301;
+        background: ${(props) =>
+          props.theme ? props.theme.primaryColor : "#fa7d09"};
         color: white;
-        border-color: #ff4301;
+        border-color: ${(props) =>
+          props.theme ? props.theme.primaryColor : "#fa7d09"};
         h3 {
           color: white;
         }
@@ -173,7 +178,8 @@ const StyledLogin = styled.nav`
         align-items: flex-end;
         text-align: center;
         letter-spacing: 0.1em;
-        color: #ff4301;
+        color: ${(props) =>
+          props.theme ? props.theme.primaryColor : "#fa7d09"};
         height:100%;
     }
 
@@ -201,7 +207,8 @@ const StyledLogin = styled.nav`
               font-size: 12px;
               font-weight:200;
               letter-spacing: 0.1em;
-              color: #2f2519;
+              color: ${(props) =>
+                props.theme ? props.theme.thirdColor : "#2f2519"};
               margin-top: 5px;
               margin-bottom: 5px;
               margin-left: 10px;
@@ -223,7 +230,8 @@ const StyledLogin = styled.nav`
                 font-size: 12px;
                 font-weight:200;
                 letter-spacing: 0.1em;
-                color: #ff4301;
+                color: ${(props) =>
+                  props.theme ? props.theme.primaryColor : "#fa7d09"};
                 margin-top: 0px;
                 text-transform:uppercase;
                 
@@ -243,7 +251,8 @@ const StyledLogin = styled.nav`
                 font-size: 12px;
                 font-weight:200;
                 letter-spacing: 0.1em;
-                color: #FF4301;
+                color: ${(props) =>
+                  props.theme ? props.theme.primaryColor : "#fa7d09"};
                 margin-top: 5px;
                 
             }
@@ -263,21 +272,23 @@ const StyledLogin = styled.nav`
       .line {
         width: 155.01px;
         height: 0px;
-        border: 1px solid #2f2519;
+        border: 1px solid ${(props) =>
+          props.theme ? props.theme.thirdColor : "#2f2519"};
       }
 
       h3 {
         font-family: "Raleway", sans-serif;
         font-size: 20px;
         letter-spacing: 0.1em;
-        color: #2f2519;
+        color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
         margin-left: 10px;
         margin-right: 10px;
       }
     }
   }
   @media only screen and (max-height: 695px) and (max-width: 1250px)  {
-    background: #2f2519;
+    background: ${(props) =>
+      props.theme ? props.theme.thirdColor : "#2f2519"};
     height:auto;
     width: 100vw;
     
@@ -421,5 +432,4 @@ const StyledLogin = styled.nav`
   }
 `;
 
-
-export default ForgotPassword
+export default ForgotPassword;

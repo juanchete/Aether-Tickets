@@ -8,7 +8,7 @@ import { IoIosCloseCircle } from "react-icons/io";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import Spinner from "../../components/Spinner";
 
-export default function AllAsesors() {
+export default function AllAsesors({ theme }) {
   const firebase = useFirebaseApp();
   const [filterAvailable, setFilterAvailable] = useState(null);
   const [filterOpen, setFilterOpen] = useState(false);
@@ -71,8 +71,8 @@ export default function AllAsesors() {
 
   const user = useUser();
   return (
-    <HomeStyle filter={filterOpen} sub={subSOpen} subP={subPOpen}>
-      <SidebarAdmin asesor={true} />
+    <HomeStyle filter={filterOpen} sub={subSOpen} subP={subPOpen} theme={theme}>
+      <SidebarAdmin asesor={true} theme={theme} />
       <div className="home-view">
         <div className="home-view-title">
           <div style={{ display: "flex", flexDirection: "row" }}>
@@ -142,12 +142,12 @@ export default function AllAsesors() {
           {!loading ? (
             <>
               {usuarios.map((usuario) => (
-                <UserCard usuario={usuario} />
+                <UserCard usuario={usuario} theme={theme} />
               ))}
             </>
           ) : (
             <div className="PageLoading">
-              <Spinner color="#fa7d09" />
+              <Spinner color={theme ? theme.primaryColor : "#fa7d09"} />
             </div>
           )}
         </div>
@@ -185,15 +185,17 @@ const HomeStyle = styled.div`
       justify-content: center;
       text-align: center;
       height: 80px;
-      background: #4a3f35;
-      border-bottom: 1px solid #2f2519;
+      background: ${(props) =>
+        props.theme ? props.theme.secondaryColor : "#4a3f35"};
+      border-bottom: 1px solid
+        ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
       h1 {
         font-size: 22px;
         font-family: "Raleway", sans-serif;
         letter-spacing: 0.2em;
         font-weight: 500;
         font-style: normal;
-        color: #2f2519;
+        color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
         text-transform: uppercase;
         width: 100%;
       }
@@ -203,7 +205,8 @@ const HomeStyle = styled.div`
         letter-spacing: 0.2em;
         font-weight: 300;
         font-style: normal;
-        color: #fa7d09;
+        color: ${(props) =>
+          props.theme ? props.theme.primaryColor : "#fa7d09"};
         text-transform: uppercase;
         width: 100%;
         margin-right: 5px;
@@ -234,7 +237,8 @@ const HomeStyle = styled.div`
           letter-spacing: 0.2em;
           font-weight: 300;
           font-style: normal;
-          color: #fa7d09;
+          color: ${(props) =>
+            props.theme ? props.theme.primaryColor : "#fa7d09"};
           text-transform: uppercase;
           width: 100%;
           margin-left: 5px;
@@ -269,7 +273,8 @@ const HomeStyle = styled.div`
           letter-spacing: 0.2em;
           font-weight: 300;
           font-style: normal;
-          color: #fa7d09;
+          color: ${(props) =>
+            props.theme ? props.theme.primaryColor : "#fa7d09"};
           text-transform: uppercase;
           width: 100%;
           margin-left: 5px;
@@ -303,7 +308,8 @@ const HomeStyle = styled.div`
           letter-spacing: 0.2em;
           font-weight: 300;
           font-style: normal;
-          color: #fa7d09;
+          color: ${(props) =>
+            props.theme ? props.theme.primaryColor : "#fa7d09"};
           text-transform: uppercase;
           width: 100%;
           margin-left: 5px;
@@ -317,7 +323,8 @@ const HomeStyle = styled.div`
       margin-top: 80px;
       width: 100%;
       height: 50px;
-      border-bottom: 1px solid #2f2519;
+      border-bottom: 1px solid
+        ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
       display: flex;
       flex-direction: row;
       justify-content: flex-start;
@@ -326,7 +333,8 @@ const HomeStyle = styled.div`
       background: white;
 
       .add-filter {
-        border: 2px solid #fa7d09;
+        border: 2px solid
+          ${(props) => (props.theme ? props.theme.primaryColor : "#fa7d09")};
         border-radius: 5px;
         height: 40px;
         margin-left: 10px;
@@ -338,20 +346,23 @@ const HomeStyle = styled.div`
           letter-spacing: 0.2em;
           font-weight: 500;
           font-style: normal;
-          color: #fa7d09;
+          color: ${(props) =>
+            props.theme ? props.theme.primaryColor : "#fa7d09"};
           text-transform: uppercase;
           width: 100%;
           margin-right: 5px;
         }
       }
       .filter-applied {
-        border: 2px solid #fa7d09;
+        border: 2px solid
+          ${(props) => (props.theme ? props.theme.primaryColor : "#fa7d09")};
         border-radius: 5px;
         height: 40px;
         margin-left: 10px;
         padding-left: 5px;
         padding-right: 5px;
-        background: #fa7d09;
+        background: ${(props) =>
+          props.theme ? props.theme.primaryColor : "#fa7d09"};
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -366,13 +377,15 @@ const HomeStyle = styled.div`
         }
 
         .icon-check {
-          color: #4a3f35;
+          color: ${(props) =>
+            props.theme ? props.theme.secondaryColor : "#4a3f35"};
           width: 30px;
           height: 30px;
         }
         .icon {
           display: none;
-          color: #4a3f35;
+          color: ${(props) =>
+            props.theme ? props.theme.secondaryColor : "#4a3f35"};
           width: 30px;
           height: 30px;
         }
@@ -382,7 +395,8 @@ const HomeStyle = styled.div`
           letter-spacing: 0.2em;
           font-weight: 500;
           font-style: normal;
-          color: #4a3f35;
+          color: ${(props) =>
+            props.theme ? props.theme.secondaryColor : "#4a3f35"};
           text-transform: uppercase;
           width: 100%;
           margin-left: 10px;
@@ -392,7 +406,8 @@ const HomeStyle = styled.div`
     .labels {
       width: 70vw;
       height: 40px;
-      border-bottom: 1px solid #2f2519;
+      border-bottom: 1px solid
+        ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -409,7 +424,8 @@ const HomeStyle = styled.div`
           letter-spacing: 0.2em;
           font-weight: 500;
           font-style: normal;
-          color: #2f2519;
+          color: ${(props) =>
+            props.theme ? props.theme.thirdColor : "#2f2519"};
           text-transform: uppercase;
           margin-right: 5px;
         }
@@ -422,7 +438,8 @@ const HomeStyle = styled.div`
           letter-spacing: 0.2em;
           font-weight: 500;
           font-style: normal;
-          color: #2f2519;
+          color: ${(props) =>
+            props.theme ? props.theme.thirdColor : "#2f2519"};
           text-transform: uppercase;
           width: 100%;
           margin-right: 5px;

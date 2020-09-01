@@ -7,7 +7,7 @@ import { UserContext } from "../CreateContext";
 import { BsThreeDots } from "react-icons/bs";
 import Feedback from "../components/Feedback";
 
-export default function TicketCard({ color, color2, ticket }) {
+export default function TicketCard({ color, color2, ticket, theme }) {
   const firebaseReact = useFirebaseApp();
   const { user, setUser } = useContext(UserContext);
   const db = firebaseReact.firestore();
@@ -73,10 +73,11 @@ export default function TicketCard({ color, color2, ticket }) {
           showFeedback={showFeedback}
           asesor={asesor}
           ticket={ticketFeed}
+          theme={theme}
         />
       ) : null}
 
-      <PopUp show={show}>
+      <PopUp show={show} theme={theme}>
         {" "}
         <BsThreeDots
           className="icon"
@@ -101,7 +102,7 @@ const PopUp = styled.div`
   .icon {
     width: 20px;
     height: 20px;
-    color: #2f2519;
+    color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
     cursor: pointer;
     z-index: 3000;
   }
@@ -134,7 +135,8 @@ const PopUp = styled.div`
         letter-spacing: 0.2em;
         font-weight: 300;
         font-style: normal;
-        color: #fa7d09;
+        color: ${(props) =>
+          props.theme ? props.theme.primaryColor : "#fa7d09"};
         text-transform: uppercase;
         width: 100%;
         margin-left: 5px;

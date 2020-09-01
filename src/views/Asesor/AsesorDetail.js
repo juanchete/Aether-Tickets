@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "firebase";
 import { useUser, useFirebaseApp } from "reactfire";
 import styled from "styled-components";
@@ -12,7 +12,7 @@ import { useParams } from "react-router";
 import { MdStar } from "react-icons/md";
 import Slider from "react-slick";
 
-export default function AsesorDetail() {
+export default function AsesorDetail({ theme }) {
   const firebase = useFirebaseApp();
   const [asesor, setAsesor] = useState();
   const [amonestados, setAmonestado] = useState();
@@ -26,18 +26,18 @@ export default function AsesorDetail() {
         label: "Tickets",
         fill: "start",
         lineTension: 0.1,
-        backgroundColor: "#fa7d09",
-        borderColor: "#fa7d09",
+        backgroundColor: theme ? theme.primaryColor : "#fa7d09",
+        borderColor: theme ? theme.primaryColor : "#fa7d09",
         borderCapStyle: "butt",
         borderDash: [],
         borderDashOffset: 0.0,
         borderJoinStyle: "miter",
-        pointBorderColor: "#fa7d09",
-        pointBackgroundColor: "#fa7d09",
+        pointBorderColor: theme ? theme.primaryColor : "#fa7d09",
+        pointBackgroundColor: theme ? theme.primaryColor : "#fa7d09",
         pointBorderWidth: 1,
         pointHoverRadius: 5,
-        pointHoverBackgroundColor: "#fa7d09",
-        pointHoverBorderColor: "#fa7d09",
+        pointHoverBackgroundColor: theme ? theme.primaryColor : "#fa7d09",
+        pointHoverBorderColor: theme ? theme.primaryColor : "#fa7d09",
         pointHoverBorderWidth: 2,
         pointRadius: 1,
         pointHitRadius: 10,
@@ -84,7 +84,32 @@ export default function AsesorDetail() {
 
   useEffect(() => {
     setLoading(true);
-
+    setData({
+      labels: null,
+      datasets: [
+        {
+          label: "Tickets",
+          fill: "start",
+          lineTension: 0.1,
+          backgroundColor: theme ? theme.primaryColor : "#fa7d09",
+          borderColor: theme ? theme.primaryColor : "#fa7d09",
+          borderCapStyle: "butt",
+          borderDash: [],
+          borderDashOffset: 0.0,
+          borderJoinStyle: "miter",
+          pointBorderColor: theme ? theme.primaryColor : "#fa7d09",
+          pointBackgroundColor: theme ? theme.primaryColor : "#fa7d09",
+          pointBorderWidth: 1,
+          pointHoverRadius: 5,
+          pointHoverBackgroundColor: theme ? theme.primaryColor : "#fa7d09",
+          pointHoverBorderColor: theme ? theme.primaryColor : "#fa7d09",
+          pointHoverBorderWidth: 2,
+          pointRadius: 1,
+          pointHitRadius: 10,
+          data: null,
+        },
+      ],
+    });
     const db = firebase.firestore();
 
     let docRef = db.collection("asesores").doc(id);
@@ -256,8 +281,8 @@ export default function AsesorDetail() {
 
   const user = useUser();
   return (
-    <HomeStyle>
-      <SidebarAdmin report={true} />
+    <HomeStyle theme={theme}>
+      <SidebarAdmin report={true} theme={theme} />
       <div className="home-view">
         <div className="home-view-title">
           <div style={{ display: "flex", flexDirection: "row" }}>
@@ -274,6 +299,7 @@ export default function AsesorDetail() {
             <>
               <div className="line-graph">
                 <LineGraph
+                  theme={theme}
                   years={years}
                   getMonths={getMonths}
                   year={year}
@@ -316,6 +342,7 @@ export default function AsesorDetail() {
                     answered={getAnswered(asesor.tickets)}
                     notAnswered={getNotAnswered(asesor.tickets)}
                     delegated={getDelegated(asesor.tickets)}
+                    theme={theme}
                   />
                 </div>
               </div>
@@ -326,7 +353,7 @@ export default function AsesorDetail() {
                   <div className="feedback-container-slider">
                     <Slider {...settings} style={{ margin: "60px" }}>
                       {asesor.feedback.map((feedback) => (
-                        <Card feedback={feedback} />
+                        <Card feedback={feedback} theme={theme} />
                       ))}
                     </Slider>
                   </div>
@@ -357,15 +384,17 @@ const HomeStyle = styled.div`
         justify-content: center;
         text-align: center;
         height: 80px;
-        background: #4a3f35;
-        border-bottom: 1px solid #2f2519;
+        background:  ${(props) =>
+          props.theme ? props.theme.secondaryColor : "#4a3f35"};
+        border-bottom: 1px solid ${(props) =>
+          props.theme ? props.theme.thirdColor : "#2f2519"};
       h1 {
         font-size: 22px;
         font-family: "Raleway", sans-serif;
         letter-spacing: 0.2em;
         font-weight: 500;
         font-style: normal;
-        color: #2f2519;
+        color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
         text-transform: uppercase;
         width: 100%;
       }
@@ -375,7 +404,8 @@ const HomeStyle = styled.div`
         letter-spacing: 0.2em;
         font-weight: 300;
         font-style: normal;
-        color: #fa7d09;
+        color: ${(props) =>
+          props.theme ? props.theme.primaryColor : "#fa7d09"};
         text-transform: uppercase;
         width: 100%;
         margin-right: 5px;
@@ -399,7 +429,8 @@ const HomeStyle = styled.div`
 
           .slick-prev:before,
           .slick-next:before {
-            color: #fa7d09 !important;
+            color: ${(props) =>
+              props.theme ? props.theme.primaryColor : "#fa7d09"} !important;
           }
 
           .slick-slide {
@@ -416,7 +447,8 @@ const HomeStyle = styled.div`
           letter-spacing: 0.2em;
           font-weight: 500;
           font-style: normal;
-          color: #fa7d09;
+          color: ${(props) =>
+            props.theme ? props.theme.primaryColor : "#fa7d09"};
           text-transform: uppercase;
           margin-left: 20px;
         }
@@ -441,11 +473,13 @@ const HomeStyle = styled.div`
           flex-direction: row;
 
           .statistics-avarage-item {
-            background: #2f2519;
+            background:  ${(props) =>
+              props.theme ? props.theme.thirdColor : "#2f2519"};
             width: 200px;
             height: 100%;
             margin-right: 10px;
-            border: 2px solid #2f2519;
+            border: 2px solid  ${(props) =>
+              props.theme ? props.theme.thirdColor : "#2f2519"};
             border-radius: 5px;
 
             .icon-container {
@@ -457,7 +491,8 @@ const HomeStyle = styled.div`
               .icon {
                 width: 60px;
                 height: 60px;
-                color: #4a3f35;
+                color:  ${(props) =>
+                  props.theme ? props.theme.secondaryColor : "#4a3f35"};
               }
             }
 
@@ -467,7 +502,8 @@ const HomeStyle = styled.div`
               letter-spacing: 0.2em;
               font-weight: 500;
               font-style: normal;
-              color: #4a3f35;
+              color:  ${(props) =>
+                props.theme ? props.theme.secondaryColor : "#4a3f35"};
               text-transform: uppercase;
               width: 100%;
               margin-top: 20px;
@@ -479,7 +515,8 @@ const HomeStyle = styled.div`
               letter-spacing: 0.2em;
               font-weight: 200;
               font-style: normal;
-              color: #fa7d09;
+              color: ${(props) =>
+                props.theme ? props.theme.primaryColor : "#fa7d09"};
               text-transform: uppercase;
               margin-left: 10px;
             }
@@ -554,11 +591,13 @@ const HomeStyle = styled.div`
                 align-items:center;
       
                 .statistics-avarage-item {
-                  background: #2f2519;
+                  background:  ${(props) =>
+                    props.theme ? props.theme.thirdColor : "#2f2519"};
                   width: 200px;
                   height: 100%;
                   margin-right: 10px;
-                  border: 2px solid #2f2519;
+                  border: 2px solid  ${(props) =>
+                    props.theme ? props.theme.thirdColor : "#2f2519"};
                   border-radius: 5px;
                 }
             }      

@@ -14,7 +14,7 @@ import { AiFillMinusCircle } from "react-icons/ai";
 import { IoIosAddCircle } from "react-icons/io";
 import { MdEdit } from "react-icons/md";
 
-export default function Category() {
+export default function Category({ theme }) {
   const firebaseReact = useFirebaseApp();
   const db = firebaseReact.firestore();
   const [category, setCategory] = useState();
@@ -80,10 +80,10 @@ export default function Category() {
   };
   const user = useUser();
   return (
-    <HomeStyle>
+    <HomeStyle theme={theme}>
       {!loading && category ? (
         <>
-          <SidebarAdmin category={true} />
+          <SidebarAdmin category={true} theme={theme} />
 
           <div className="home-view">
             <div className="home-view-title">
@@ -95,8 +95,8 @@ export default function Category() {
               <form>
                 <div className="container-title">
                   <Input
-                    color="#2f2519"
-                    color2="#fa7d09"
+                    color={theme ? theme.thirdColor : "#2f2519"}
+                    color2={theme ? theme.primaryColor : "#fa7d09"}
                     label="Name"
                     id="name"
                     type="text"
@@ -137,6 +137,7 @@ export default function Category() {
                     <Suggestion
                       suggestion={suggestion}
                       deleteArray={deleteArray}
+                      theme={theme}
                     />
                   ))}
                 </div>
@@ -184,7 +185,8 @@ const HomeStyle = styled.div`
           align-items: flex-start;
           justify-content: center;
           button {
-            border: 2px solid #fa7d09;
+            border: 2px solid
+              ${(props) => (props.theme ? props.theme.primaryColor : "#fa7d09")};
             border-radius: 5px;
             height: 40px;
             margin-left: 10px;
@@ -196,7 +198,8 @@ const HomeStyle = styled.div`
               letter-spacing: 0.2em;
               font-weight: 500;
               font-style: normal;
-              color: #fa7d09;
+              color: ${(props) =>
+                props.theme ? props.theme.primaryColor : "#fa7d09"};
               text-transform: uppercase;
               width: 100%;
               margin-right: 5px;
@@ -214,8 +217,10 @@ const HomeStyle = styled.div`
       justify-content: center;
       text-align: center;
       height: 80px;
-      background: #4a3f35;
-      border-bottom: 1px solid #2f2519;
+      background: ${(props) =>
+        props.theme ? props.theme.secondaryColor : "#4a3f35"};
+      border-bottom: 1px solid
+        ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
 
       h1 {
         font-size: 22px;
@@ -223,7 +228,7 @@ const HomeStyle = styled.div`
         letter-spacing: 0.2em;
         font-weight: 500;
         font-style: normal;
-        color: #2f2519;
+        color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
         text-transform: uppercase;
         width: 100%;
       }
@@ -233,7 +238,8 @@ const HomeStyle = styled.div`
         letter-spacing: 0.2em;
         font-weight: 300;
         font-style: normal;
-        color: #fa7d09;
+        color: ${(props) =>
+          props.theme ? props.theme.primaryColor : "#fa7d09"};
         text-transform: uppercase;
         width: 100%;
         margin-right: 5px;

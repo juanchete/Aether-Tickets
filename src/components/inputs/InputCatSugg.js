@@ -18,6 +18,7 @@ export default function InputLogin({
   disable,
   marginRight,
   children,
+  theme,
   ...rest
 }) {
   return (
@@ -27,6 +28,7 @@ export default function InputLogin({
       color2={color2}
       fontSize={fontSize}
       marginRight={marginRight}
+      theme={theme}
     >
       <input
         type={type}
@@ -59,7 +61,7 @@ const Input = styled.div`
     letter-spacing: 0.2em;
     font-weight: 500;
     font-style: normal;
-    color: #2f2519;
+    color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
     text-transform: uppercase;
 
     &:focus {

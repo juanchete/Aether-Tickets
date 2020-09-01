@@ -14,12 +14,19 @@ import { NavLink, withRouter } from "react-router-dom";
 import Cookies from "js-cookie";
 import { Redirect } from "react-router-dom";
 
-export default function SidebarAdmin({ ticket, asesor, category, report }) {
+export default function SidebarAdmin({
+  ticket,
+  asesor,
+  category,
+  report,
+  theme,
+  setting,
+}) {
   const [categoryShow, setCategoryShow] = React.useState(false);
   const [suggestionShow, setSuggestionShow] = React.useState(false);
   const [tickets, setTickets] = React.useState(ticket ? true : false);
   const [asesors, setAsesors] = React.useState(asesor ? true : false);
-  const [settings, setSettings] = React.useState(false);
+  const [settings, setSettings] = React.useState(setting ? true : false);
   const [currentUser, setCurrentUser] = React.useState(false);
   const [categories, setCategories] = React.useState(category ? true : false);
   const [reports, setReports] = React.useState(report ? true : false);
@@ -78,9 +85,17 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
 
   return (
     <>
-      <AddCategory show={categoryShow} showCategory={showCategory} />
-      <AddSuggestion show={suggestionShow} showSuggestion={showSuggestion} />
-      <Sidebar categories={category}>
+      <AddCategory
+        theme={theme}
+        show={categoryShow}
+        showCategory={showCategory}
+      />
+      <AddSuggestion
+        theme={theme}
+        show={suggestionShow}
+        showSuggestion={showSuggestion}
+      />
+      <Sidebar categories={category} theme={theme}>
         {renderRedirect()}
         {renderRedirectPassword()}
         {renderRedirectAllAsessors()}
@@ -95,6 +110,7 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
                 setCategories(false);
                 setSettings(false);
                 setCurrentUser(false);
+                setReports(false);
                 setTickets(true);
                 setOpen(!open);
               }}
@@ -111,6 +127,7 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
                   setSettings(false);
                   setCurrentUser(false);
                   setAsesors(true);
+                  setReports(false);
                   setOpen(!open);
                 }}
               >
@@ -124,6 +141,7 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
                 setTickets(false);
                 setAsesors(false);
                 setSettings(false);
+                setReports(false);
                 setCurrentUser(false);
                 setCategories(true);
                 setOpen(!open);
@@ -133,7 +151,18 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
               <h4>Categories & Suggestions</h4>
             </li>
             {user.role === "admin" ? (
-              <li className="utilities-item">
+              <li
+                className="utilities-item"
+                onClick={(event) => {
+                  setTickets(false);
+                  setAsesors(false);
+                  setSettings(false);
+                  setReports(true);
+                  setCurrentUser(false);
+                  setCategories(false);
+                  setOpen(!open);
+                }}
+              >
                 <FaChartBar className="icon" />
                 <h4>Reports</h4>
               </li>
@@ -147,6 +176,7 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
                 setAsesors(false);
                 setCurrentUser(false);
                 setCategories(false);
+                setReports(false);
                 setSettings(true);
                 setOpen(!open);
               }}
@@ -161,6 +191,7 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
                 setAsesors(false);
                 setCategories(false);
                 setSettings(false);
+                setReports(false);
                 setCurrentUser(true);
                 setOpen(!open);
               }}
@@ -600,7 +631,8 @@ const Sidebar = styled.div`
   .navbar {
     height: 100%;
     width: 20%;
-    background: #2f2519;
+    background: ${(props) =>
+      props.theme ? props.theme.thirdColor : "#2f2519"};
     display: flex;
     flex-direction: column;
 
@@ -619,12 +651,14 @@ const Sidebar = styled.div`
         padding-right: 3px;
         cursor: pointer;
         &:hover {
-          background: #4a3f35;
+          background: ${(props) =>
+            props.theme ? props.theme.secondaryColor : "#4a3f35"};
         }
         .icon {
           width: 30px;
           height: 30px;
-          color: #fa7d09;
+          color: ${(props) =>
+            props.theme ? props.theme.primaryColor : "#fa7d09"};
         }
         h4 {
           font-family: "Raleway", sans-serif;
@@ -632,7 +666,8 @@ const Sidebar = styled.div`
           font-weight: 400;
           font-size: 7px;
           font-style: normal;
-          color: #fa7d09;
+          color: ${(props) =>
+            props.theme ? props.theme.primaryColor : "#fa7d09"};
           text-transform: uppercase;
           text-align: center;
           margin-top: 2px;
@@ -656,12 +691,14 @@ const Sidebar = styled.div`
         padding-right: 3px;
         cursor: pointer;
         &:hover {
-          background: #4a3f35;
+          background: ${(props) =>
+            props.theme ? props.theme.secondaryColor : "#4a3f35"};
         }
         .icon {
           width: 30px;
           height: 30px;
-          color: #fa7d09;
+          color: ${(props) =>
+            props.theme ? props.theme.primaryColor : "#fa7d09"};
         }
         h4 {
           font-family: "Raleway", sans-serif;
@@ -669,7 +706,8 @@ const Sidebar = styled.div`
           font-weight: 400;
           font-size: 7px;
           font-style: normal;
-          color: #fa7d09;
+          color: ${(props) =>
+            props.theme ? props.theme.primaryColor : "#fa7d09"};
           text-transform: uppercase;
           text-align: center;
           margin-top: 2px;
@@ -683,7 +721,8 @@ const Sidebar = styled.div`
   .navbar-especific {
     width: 80%;
     height: 100%;
-    background: #4a3f35;
+    background: ${(props) =>
+      props.theme ? props.theme.secondaryColor : "#4a3f35"};
     display: flex;
     flex-direction: column;
     .navbar-title {
@@ -691,7 +730,8 @@ const Sidebar = styled.div`
       display: flex;
       align-items: center;
       height: 80px;
-      border-bottom: 1px solid #2f2519;
+      border-bottom: 1px solid
+        ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
       h2 {
         font-size: ${(props) => (props.categories ? "20px" : "22px")};
         font-family: "Raleway", sans-serif;
@@ -699,7 +739,8 @@ const Sidebar = styled.div`
         font-weight: 300;
         margin-left: 20px;
         font-style: normal;
-        color: #fa7d09;
+        color: ${(props) =>
+          props.theme ? props.theme.primaryColor : "#fa7d09"};
         display: flex;
         align-self: center;
         text-transform: uppercase;
@@ -730,7 +771,8 @@ const Sidebar = styled.div`
 
         .counter {
           width: auto;
-          background: #fa7d09;
+          background: ${(props) =>
+            props.theme ? props.theme.primaryColor : "#fa7d09"};
           margin-left: 10px;
           padding-left: 10px;
           padding-right: 10px;
@@ -758,7 +800,7 @@ const Sidebar = styled.div`
         font-weight: 500;
         font-size: 10px;
         font-style: normal;
-        color: #2f2519;
+        color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
         text-transform: uppercase;
         margin-left: 15px;
       }
@@ -779,7 +821,8 @@ const Sidebar = styled.div`
 
         .counter {
           width: auto;
-          background: #fa7d09;
+          background: ${(props) =>
+            props.theme ? props.theme.primaryColor : "#fa7d09"};
           margin-left: 10px;
           padding-left: 10px;
           padding-right: 10px;
@@ -806,7 +849,7 @@ const Sidebar = styled.div`
         font-weight: 500;
         font-size: 10px;
         font-style: normal;
-        color: #2f2519;
+        color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
         text-transform: uppercase;
         margin-bottom: 10px;
         margin-left: 15px;
@@ -851,7 +894,8 @@ const Sidebar = styled.div`
           .icon {
             width: 30px;
             height: 30px;
-            color: #fa7d09;
+            color: ${(props) =>
+              props.theme ? props.theme.primaryColor : "#fa7d09"};
           }
           h4 {
             display: none;
@@ -871,7 +915,8 @@ const Sidebar = styled.div`
           .icon {
             width: 30px;
             height: 30px;
-            color: #fa7d09;
+            color: ${(props) =>
+              props.theme ? props.theme.primaryColor : "#fa7d09"};
           }
           h4 {
             display: none;
@@ -887,14 +932,16 @@ const Sidebar = styled.div`
       height: 100vh;
       padding-bottom: 100px !important;
       overflow: scroll;
-      background: #4a3f35;
+      background: ${(props) =>
+        props.theme ? props.theme.secondaryColor : "#4a3f35"};
       display: flex;
       flex-direction: column;
       .navbar-title {
         display: flex;
         align-items: center;
         height: 100px;
-        border-bottom: 1px solid #2f2519;
+        border-bottom: 1px solid
+          ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
         h2 {
           font-size: 22px;
           font-family: "Raleway", sans-serif;
@@ -902,7 +949,8 @@ const Sidebar = styled.div`
           font-weight: 300;
           margin-left: 20px;
           font-style: normal;
-          color: #fa7d09;
+          color: ${(props) =>
+            props.theme ? props.theme.primaryColor : "#fa7d09"};
           text-transform: uppercase;
           width: 100%;
         }
@@ -926,7 +974,8 @@ const Sidebar = styled.div`
 
           .counter {
             width: auto;
-            background: #fa7d09;
+            background: ${(props) =>
+              props.theme ? props.theme.primaryColor : "#fa7d09"};
             margin-left: 10px;
             padding-left: 10px;
             padding-right: 10px;
@@ -954,7 +1003,8 @@ const Sidebar = styled.div`
           font-weight: 500;
           font-size: 10px;
           font-style: normal;
-          color: #2f2519;
+          color: ${(props) =>
+            props.theme ? props.theme.thirdColor : "#2f2519"};
           text-transform: uppercase;
           margin-left: 15px;
         }
@@ -974,7 +1024,8 @@ const Sidebar = styled.div`
 
           .counter {
             width: auto;
-            background: #fa7d09;
+            background: ${(props) =>
+              props.theme ? props.theme.primaryColor : "#fa7d09"};
             margin-left: 10px;
             padding-left: 10px;
             padding-right: 10px;
@@ -1001,7 +1052,8 @@ const Sidebar = styled.div`
           font-weight: 500;
           font-size: 10px;
           font-style: normal;
-          color: #2f2519;
+          color: ${(props) =>
+            props.theme ? props.theme.thirdColor : "#2f2519"};
           text-transform: uppercase;
           margin-bottom: 10px;
           margin-left: 15px;
@@ -1045,7 +1097,8 @@ const Sidebar = styled.div`
           .icon {
             width: 30px;
             height: 30px;
-            color: #fa7d09;
+            color: ${(props) =>
+              props.theme ? props.theme.primaryColor : "#fa7d09"};
           }
           h4 {
             display: none;
@@ -1065,7 +1118,8 @@ const Sidebar = styled.div`
           .icon {
             width: 30px;
             height: 30px;
-            color: #fa7d09;
+            color: ${(props) =>
+              props.theme ? props.theme.primaryColor : "#fa7d09"};
           }
           h4 {
             display: none;
@@ -1081,14 +1135,16 @@ const Sidebar = styled.div`
       overflow: scroll;
       width: 100%;
       height: 100vh;
-      background: #4a3f35;
+      background: ${(props) =>
+        props.theme ? props.theme.secondaryColor : "#4a3f35"};
       display: flex;
       flex-direction: column;
       .navbar-title {
         display: flex;
         align-items: center;
         height: 100px;
-        border-bottom: 1px solid #2f2519;
+        border-bottom: 1px solid
+          ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
         h2 {
           font-size: 22px;
           font-family: "Raleway", sans-serif;
@@ -1096,7 +1152,8 @@ const Sidebar = styled.div`
           font-weight: 300;
           margin-left: 20px;
           font-style: normal;
-          color: #fa7d09;
+          color: ${(props) =>
+            props.theme ? props.theme.primaryColor : "#fa7d09"};
           text-transform: uppercase;
           width: 100%;
         }
@@ -1120,7 +1177,8 @@ const Sidebar = styled.div`
 
           .counter {
             width: auto;
-            background: #fa7d09;
+            background: ${(props) =>
+              props.theme ? props.theme.primaryColor : "#fa7d09"};
             margin-left: 10px;
             padding-left: 10px;
             padding-right: 10px;
@@ -1148,7 +1206,8 @@ const Sidebar = styled.div`
           font-weight: 500;
           font-size: 10px;
           font-style: normal;
-          color: #2f2519;
+          color: ${(props) =>
+            props.theme ? props.theme.thirdColor : "#2f2519"};
           text-transform: uppercase;
           margin-left: 15px;
         }
@@ -1168,7 +1227,8 @@ const Sidebar = styled.div`
 
           .counter {
             width: auto;
-            background: #fa7d09;
+            background: ${(props) =>
+              props.theme ? props.theme.primaryColor : "#fa7d09"};
             margin-left: 10px;
             padding-left: 10px;
             padding-right: 10px;
@@ -1195,7 +1255,8 @@ const Sidebar = styled.div`
           font-weight: 500;
           font-size: 10px;
           font-style: normal;
-          color: #2f2519;
+          color: ${(props) =>
+            props.theme ? props.theme.thirdColor : "#2f2519"};
           text-transform: uppercase;
           margin-bottom: 10px;
           margin-left: 15px;

@@ -10,7 +10,13 @@ import Input from "../../components/inputs/InputLogin";
 import { IoMdClose } from "react-icons/io";
 import Spinner from "../../components/Spinner";
 
-export default function AddCategory({ color, color2, show, showCategory }) {
+export default function AddCategory({
+  color,
+  color2,
+  show,
+  showCategory,
+  theme,
+}) {
   const firebase = useFirebaseApp();
   const db = firebase.firestore();
   const [type, setType] = useState();
@@ -69,9 +75,10 @@ export default function AddCategory({ color, color2, show, showCategory }) {
           type={type}
           message={message}
           showMessage={showMessage}
+          theme={theme}
         />
       ) : null}
-      <Category color={color} color2={color2}>
+      <Category color={color} color2={color2} theme={theme}>
         <div className={style}>
           <div className="container">
             <div className="container-add">
@@ -86,8 +93,8 @@ export default function AddCategory({ color, color2, show, showCategory }) {
               <h1>Create Category</h1>
               <form onSubmit={formik.handleSubmit}>
                 <Input
-                  color="#2f2519"
-                  color2="#fa7d09"
+                  color={theme ? theme.thirdColor : "#2f2519"}
+                  color2={theme ? theme.primaryColor : "#fa7d09"}
                   label="Name"
                   id="name"
                   type="text"
@@ -102,7 +109,13 @@ export default function AddCategory({ color, color2, show, showCategory }) {
                   }
                 />
                 <div className="button-error">
-                  {submitted ? <Spinner color="#fa7d09" /> : <ButtonSubmit />}
+                  {submitted ? (
+                    <Spinner color={theme ? theme.primaryColor : "#fa7d09"} />
+                  ) : (
+                    <ButtonSubmit
+                      color={theme ? theme.primaryColor : "#fa7d09"}
+                    />
+                  )}
                 </div>
               </form>
             </div>
@@ -151,7 +164,8 @@ const Category = styled.div`
         .icon {
           width: 40px;
           height: 40px;
-          color: #2f2519;
+          color: ${(props) =>
+            props.theme ? props.theme.thirdColor : "#2f2519"};
           cursor: pointer;
         }
       }
@@ -163,7 +177,7 @@ const Category = styled.div`
         font-weight: 400;
         font-size: 45px;
         font-style: normal;
-        color: #2f2519;
+        color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
         text-transform: uppercase;
         width: 100%;
       }
@@ -194,7 +208,8 @@ const Category = styled.div`
             font-size: 12px;
             font-weight: 200;
             letter-spacing: 0.1em;
-            color: #ff4301;
+            color: ${(props) =>
+              props.theme ? props.theme.primaryColor : "#fa7d09"};
             margin-top: 5px;
           }
         }

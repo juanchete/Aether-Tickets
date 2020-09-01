@@ -6,7 +6,7 @@ import "firebase";
 import { useUser, useFirebaseApp } from "reactfire";
 import { MdStar } from "react-icons/md";
 
-export default function FeedbackCard({ color, color2, feedback }) {
+export default function FeedbackCard({ color, color2, feedback, theme }) {
   const firebaseReact = useFirebaseApp();
   const db = firebaseReact.firestore();
   const [suggestions, setSuggestions] = useState();
@@ -28,7 +28,7 @@ export default function FeedbackCard({ color, color2, feedback }) {
   return (
     <>
       {!loading && usuario ? (
-        <Card color={color} color2={color2}>
+        <Card color={color} color2={color2} theme={theme}>
           <>
             <div className="card-title">
               <h2>
@@ -41,7 +41,9 @@ export default function FeedbackCard({ color, color2, feedback }) {
                   const ratingValue = i + 1;
 
                   return (
-                    <div style={{ color: "#fa7d09" }}>
+                    <div
+                      style={{ color: theme ? theme.primaryColor : "#fa7d09" }}
+                    >
                       <MdStar className="star" size="30px" />
                     </div>
                   );
@@ -49,7 +51,9 @@ export default function FeedbackCard({ color, color2, feedback }) {
               </li>
               <li className="card-content-item-text">
                 <h2>Ticket</h2>
-                <h3 style={{ color: "#fa7d09" }}>{feedback.ticket}</h3>
+                <h3 style={{ color: theme ? theme.primaryColor : "#fa7d09" }}>
+                  {feedback.ticket}
+                </h3>
               </li>
               <li className="card-content-item-text">
                 <h2>Comment</h2>
@@ -80,7 +84,7 @@ const Card = styled.div`
     .icon {
       width: 20px;
       height: 20px;
-      color: #fa7d09;
+      color: ${(props) => (props.theme ? props.theme.primaryColor : "#fa7d09")};
     }
 
     h2 {
@@ -89,7 +93,8 @@ const Card = styled.div`
       letter-spacing: 0.2em;
       font-weight: 600;
       font-style: normal;
-      color: #4a3f35;
+      color: ${(props) =>
+        props.theme ? props.theme.secondaryColor : "#4a3f35"};
       text-transform: uppercase;
       margin-left: 10px;
     }
@@ -114,7 +119,8 @@ const Card = styled.div`
         letter-spacing: 0.2em;
         font-weight: 600;
         font-style: normal;
-        color: #4a3f35;
+        color: ${(props) =>
+          props.theme ? props.theme.secondaryColor : "#4a3f35"};
         text-transform: uppercase;
         margin-top: 10px;
       }
@@ -125,7 +131,8 @@ const Card = styled.div`
         letter-spacing: 0.2em;
         font-weight: 600;
         font-style: normal;
-        color: #4a3f35;
+        color: ${(props) =>
+          props.theme ? props.theme.secondaryColor : "#4a3f35"};
         text-transform: uppercase;
         margin-top: 10px;
       }
@@ -147,7 +154,8 @@ const Card = styled.div`
       letter-spacing: 0.2em;
       font-weight: 600;
       font-style: normal;
-      color: #4a3f35;
+      color: ${(props) =>
+        props.theme ? props.theme.secondaryColor : "#4a3f35"};
       text-transform: uppercase;
       margin-top: 10px;
     }
@@ -158,7 +166,8 @@ const Card = styled.div`
       letter-spacing: 0.2em;
       font-weight: 600;
       font-style: normal;
-      color: #4a3f35;
+      color: ${(props) =>
+        props.theme ? props.theme.secondaryColor : "#4a3f35"};
       text-transform: uppercase;
       margin-top: 10px;
     }

@@ -13,6 +13,7 @@ export default function ClientsCard({
   showFeedback,
   ticket,
   filter,
+  theme,
 }) {
   const firebaseReact = useFirebaseApp();
   const db = firebaseReact.firestore();
@@ -45,7 +46,7 @@ export default function ClientsCard({
   };
 
   return (
-    <Card color={color} color2={color2}>
+    <Card color={color} color2={color2} theme={theme}>
       <ul className="ticket-view" onClick={asignTicket}>
         <li className="data">
           <h2>{usuario.name}</h2>
@@ -54,7 +55,9 @@ export default function ClientsCard({
           <h2>{usuario.lastName}</h2>
         </li>
         <li className="data-1">
-          <h2 style={{ color: "#fa7d09" }}>{usuario.email}</h2>
+          <h2 style={{ color: theme ? theme.primaryColor : "#fa7d09" }}>
+            {usuario.email}
+          </h2>
         </li>
       </ul>
     </Card>
@@ -64,7 +67,8 @@ const Card = styled.div`
   .ticket-view {
     width: 100%;
     height: 60px;
-    border-bottom: 1px solid #2f2519;
+    border-bottom: 1px solid
+      ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -79,7 +83,8 @@ const Card = styled.div`
       .icon {
         width: 25px;
         height: 25px;
-        color: #fa7d09;
+        color: ${(props) =>
+          props.theme ? props.theme.primaryColor : "#fa7d09"};
       }
     }
     .data {
@@ -90,7 +95,7 @@ const Card = styled.div`
         font-family: "Raleway", sans-serif;
         font-weight: 500;
         font-style: normal;
-        color: #2f2519;
+        color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
         width: 100%;
         margin-right: 5px;
       }
@@ -133,7 +138,7 @@ const Card = styled.div`
         font-family: "Raleway", sans-serif;
         font-weight: 500;
         font-style: normal;
-        color: #2f2519;
+        color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
         margin-right: 5px;
       }
       h3 {

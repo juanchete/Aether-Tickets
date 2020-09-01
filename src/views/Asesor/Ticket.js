@@ -14,7 +14,7 @@ import { useParams } from "react-router";
 import moment from "moment";
 import Swal from "sweetalert2";
 
-export default function TicketAsesor() {
+export default function TicketAsesor({ theme }) {
   const { user, setUser } = useContext(UserContext);
   const firebaseReact = useFirebaseApp();
   const db = firebaseReact.firestore();
@@ -102,7 +102,6 @@ export default function TicketAsesor() {
 
           setTicket(doc.data());
 
-
           if (doc.data().status === "Solved" && !doc.data().solvedModal) {
             setSolvedShow(true);
           }
@@ -120,10 +119,7 @@ export default function TicketAsesor() {
       fieldRef.current.scrollIntoView({ behavior: "smooth" });
     }
     setLoading(false);
-    
   }, []);
-
-  
 
   const sendMessage = async (e) => {
     try {
@@ -203,7 +199,6 @@ export default function TicketAsesor() {
           newTicket.asesor = user.id;
           setTicket(newTicket);
           getAsesor(newTicket, user.id);
-          var ref = db.collection("asesores").doc(user.id);
         });
     } catch (error) {}
   };
@@ -282,71 +277,72 @@ export default function TicketAsesor() {
   };
 
   const delegateTicket = async (e) => {
-
     const ticket = await db.collection("tickets").doc(id).get();
 
     const ticketData = ticket.data();
 
     Promise.all([
-      db
-        .collection("messages")
-        .add({
-          sender: {
-            id: user.id ? user.id : null,
-            email: user.email,
-            name: user.name,
-            lastName: user.lastName,
+      db.collection("messages").add({
+        sender: {
+          id: user.id ? user.id : null,
+          email: user.email,
+          name: user.name,
+          lastName: user.lastName,
+        },
+        contentHtml:
+          "Your ticket had been delegated to the Administrator, He will be contacting you in a few moments.",
+        ticket: id,
+        content: content,
+        files: files,
+        date: new Date(),
+      }),
+
+      db.collection("mail").add({
+        to: "ticket@aethersol.com",
+        template: {
+          name: "delegate-ticket",
+          data: {
+            id: id,
+            category: category.name,
+            title: ticketData.subject,
+            description: ticketData.description,
+            email: ticketData.usuario.email,
           },
-          contentHtml: 'Your ticket had been delegated to the Administrator, He will be contacting you in a few moments.',
-          ticket: id,
-          content: content,
-          files: files,
-          date: new Date(),
+        },
+      }),
+      db
+        .collection("tickets")
+        .doc(id)
+        .update({
+          asesor: null,
+          asesorUpdate: firebase.firestore.Timestamp.now(),
+          status: "Unsolved",
+        })
+        .then(async function (doc) {
+          var ref = db.collection("asesores").doc(user.id);
+          ref.update({
+            tickets: firebase.firestore.FieldValue.arrayUnion({
+              ticket: id,
+              status: "Delegated",
+              updatedAt: firebase.firestore.Timestamp.now(),
+            }),
+          });
         }),
-
-        db.collection("mail").add({
-          to: 'ticket@aethersol.com',
-          template: {
-            name: 'delegate-ticket',
-            data: {
-             id: id,
-             category: category.name,
-             title: ticketData.subject,
-             description: ticketData.description,
-             email: ticketData.usuario.email
-            }
-           },
-        }),
-        db
-    .collection("tickets")
-    .doc(id)
-    .update({
-      asesor: null,
-      asesorUpdate: firebase.firestore.Timestamp.now(),
-      status: 'Delegated'
-    })
-    .then(async function (doc) {
-      var ref = db.collection("asesores").doc(user.id);
-      ref.update({
-        tickets: firebase.firestore.FieldValue.arrayUnion({
-          ticket: id,
-          status: "Delegated",
-          updatedAt: firebase.firestore.Timestamp.now(),
-        }),
-      });
-    })
-  ])
-
+    ]);
   };
 
   return (
     <>
-      <Feedback show={feedbackShow} showFeedback={showFeedback} />
+      <Feedback show={feedbackShow} showFeedback={showFeedback} theme={theme} />
       {!loading && ticket && user && asesor ? (
         <>
           {asesor.email == user.email ? (
             <>
-              <SolvedModal show={solvedShow} showFeedback={showSolved} />
+              <SolvedModal
+                show={solvedShow}
+                showFeedback={showSolved}
+                theme={theme}
+              />
             </>
           ) : null}
         </>
@@ -356,8 +352,9 @@ export default function TicketAsesor() {
         toggleDet={toggleDet}
         screenWidth={window.innerWidth}
         show={show}
+        theme={theme}
       >
-        <SidebarAdmin ticket={true} />
+        <SidebarAdmin ticket={true} theme={theme} />
         <div className="home-view">
           <div className="home-view-title">
             <div style={{ display: "flex", flexDirection: "row" }}>
@@ -458,6 +455,7 @@ export default function TicketAsesor() {
                     <TextEditor
                       onEditorChange={onEditorChange}
                       onFilesChange={onFilesChange}
+                      theme={theme}
                     />
                     <div className="button-container">
                       <IoMdRefresh
@@ -625,7 +623,7 @@ export default function TicketAsesor() {
                       className="button-submit"
                       type="submit"
                       // disabled={user.id === ticket.asesor ? false : true}
-                      onClick={e => delegateTicket()}
+                      onClick={(e) => delegateTicket()}
                     >
                       <h2>Delegate to Aether</h2>
                     </button>
@@ -689,8 +687,10 @@ const HomeStyle = styled.div`
       justify-content: center;
       text-align: center;
       height: 80px;
-      background: #4a3f35;
-      border-bottom: 1px solid #2f2519;
+      background: ${(props) =>
+        props.theme ? props.theme.secondaryColor : "#4a3f35"};
+      border-bottom: 1px solid ${(props) =>
+        props.theme ? props.theme.thirdColor : "#2f2519"};
       .icon {
         display: none;
       }
@@ -700,7 +700,7 @@ const HomeStyle = styled.div`
         letter-spacing: 0.2em;
         font-weight: 500;
         font-style: normal;
-        color: #2f2519;
+        color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
         text-transform: uppercase;
         width: 100%;
         display: flex;
@@ -712,7 +712,8 @@ const HomeStyle = styled.div`
         letter-spacing: 0.2em;
         font-weight: 300;
         font-style: normal;
-        color: #fa7d09;
+        color: ${(props) =>
+          props.theme ? props.theme.primaryColor : "#fa7d09"};
         text-transform: uppercase;
         width: 100%;
         margin-right: 5px;
@@ -739,7 +740,8 @@ const HomeStyle = styled.div`
           letter-spacing: 0.2em;
           font-weight: 300;
           font-style: normal;
-          color: #fa7d09;
+          color: ${(props) =>
+            props.theme ? props.theme.primaryColor : "#fa7d09"};
           text-transform: uppercase;
           width: 100%;
           margin-right: 5px;
@@ -754,7 +756,8 @@ const HomeStyle = styled.div`
           letter-spacing: 0.2em;
           font-weight: 400;
           font-style: normal;
-          color: #2f2519;
+          color: ${(props) =>
+            props.theme ? props.theme.thirdColor : "#2f2519"};
           width: 100%;
           display: flex;
           align-self: center;
@@ -769,13 +772,15 @@ const HomeStyle = styled.div`
           width: 100%;
           height: 70%;
           overflow-y: scroll;
-          background: #4a3f35;
+          background: ${(props) =>
+            props.theme ? props.theme.secondaryColor : "#4a3f35"};
           padding-top: 10px;
           padding-bottom: 10px;
           padding-right: 5px;
           padding-left: 5px;
           margin-bottom: 10px;
-          border: 1px solid #4a3f35;
+          border: 1px solid ${(props) =>
+            props.theme ? props.theme.secondaryColor : "#4a3f35"};
           border-radius: 5px;
 
           .chat-message {
@@ -783,12 +788,14 @@ const HomeStyle = styled.div`
             width: 100%;
             height: auto;
             background: white;
-            border: 1px solid #2f2519;
+            border: 1px solid ${(props) =>
+              props.theme ? props.theme.thirdColor : "#2f2519"};
             border-radius: 5px;
 
             .chat-screen-header-2 {
               width: 100%;
-              background: #fa7d09;
+              background: ${(props) =>
+                props.theme ? props.theme.primaryColor : "#fa7d09"};
               height: 50px;
               border: 1px solid transparent;
               border-radius: 3px;
@@ -808,7 +815,8 @@ const HomeStyle = styled.div`
                   letter-spacing: 0.2em;
                   font-weight: 300;
                   font-style: italics;
-                  color: #2f2519;
+                  color: ${(props) =>
+                    props.theme ? props.theme.thirdColor : "#2f2519"};
                   margin-right: 5px;
                 }
               }
@@ -826,7 +834,8 @@ const HomeStyle = styled.div`
                   letter-spacing: 0.2em;
                   font-weight: 300;
                   font-style: italics;
-                  color: #2f2519;
+                  color: ${(props) =>
+                    props.theme ? props.theme.thirdColor : "#2f2519"};
                   margin-right: 5px;
                 }
               }
@@ -834,7 +843,8 @@ const HomeStyle = styled.div`
 
             .chat-screen-header {
               width: 100%;
-              background: #2f2519;
+              background: ${(props) =>
+                props.theme ? props.theme.thirdColor : "#2f2519"};
               height: 50px;
               border: 1px solid transparent;
               border-radius: 3px;
@@ -854,7 +864,8 @@ const HomeStyle = styled.div`
                   letter-spacing: 0.2em;
                   font-weight: 300;
                   font-style: italics;
-                  color: #fa7d09;
+                  color: ${(props) =>
+                    props.theme ? props.theme.primaryColor : "#fa7d09"};
                   margin-right: 5px;
                 }
               }
@@ -872,7 +883,8 @@ const HomeStyle = styled.div`
                   letter-spacing: 0.2em;
                   font-weight: 300;
                   font-style: italics;
-                  color: #fa7d09;
+                  color: ${(props) =>
+                    props.theme ? props.theme.primaryColor : "#fa7d09"};
                   margin-right: 5px;
                 }
               }
@@ -905,18 +917,22 @@ const HomeStyle = styled.div`
               height: 30px;
               width: 30px;
               margin-right: 10px;
-              color: #fa7d09;
+              color: ${(props) =>
+                props.theme ? props.theme.primaryColor : "#fa7d09"};
               cursor: pointer;
               &:hover {
-                color: #2f2519;
+                color: ${(props) =>
+                  props.theme ? props.theme.thirdColor : "#2f2519"};
               }
             }
             .button-submit {
               padding-left: 50px;
               padding-right: 50px;
               height: 40px;
-              background: #4a3f35;
-              border: 1px solid #fa7d09;
+              background: ${(props) =>
+                props.theme ? props.theme.secondaryColor : "#4a3f35"};
+              border: 1px solid ${(props) =>
+                props.theme ? props.theme.primaryColor : "#fa7d09"};
               border-radius: 5px;
 
               h2 {
@@ -925,7 +941,8 @@ const HomeStyle = styled.div`
                 letter-spacing: 0.2em;
                 font-weight: 300;
                 font-style: normal;
-                color: #fa7d09;
+                color: ${(props) =>
+                  props.theme ? props.theme.primaryColor : "#fa7d09"};
                 text-transform: uppercase;
               }
             }
@@ -959,7 +976,8 @@ const HomeStyle = styled.div`
             font-weight: 500;
             font-style: normal;
             margin-left: 0px !important;
-            color: #fa7d09 !important;
+            color: ${(props) =>
+              props.theme ? props.theme.primaryColor : "#fa7d09"} !important;
             text-transform: uppercase;
             width: 100%;
           }
@@ -973,7 +991,8 @@ const HomeStyle = styled.div`
           justify-content: center;
           .button-submit {
             height: 50px;
-            border: 1px solid #fa7d09;
+            border: 1px solid ${(props) =>
+              props.theme ? props.theme.primaryColor : "#fa7d09"};
             border-radius: 5px;
             width: 70%;
             outline: none;
@@ -987,7 +1006,8 @@ const HomeStyle = styled.div`
               letter-spacing: 0.2em;
               font-weight: 300;
               font-style: normal;
-              color: #fa7d09;
+              color: ${(props) =>
+                props.theme ? props.theme.primaryColor : "#fa7d09"};
               text-transform: uppercase;
             }
           }
@@ -1000,8 +1020,10 @@ const HomeStyle = styled.div`
           justify-content: center;
           text-align: center;
           height: 50px;
-          background: #4a3f35;
-          border: 1px solid #2f2519;
+          background: ${(props) =>
+            props.theme ? props.theme.secondaryColor : "#4a3f35"};
+          border: 1px solid ${(props) =>
+            props.theme ? props.theme.thirdColor : "#2f2519"};
           border-radius: 5px;
           h2 {
             font-size: 25px;
@@ -1009,7 +1031,8 @@ const HomeStyle = styled.div`
             letter-spacing: 0.2em;
             font-weight: 300;
             font-style: normal;
-            color: #fa7d09;
+            color: ${(props) =>
+              props.theme ? props.theme.primaryColor : "#fa7d09"};
             text-transform: uppercase;
             width: 100%;
           }
@@ -1019,8 +1042,10 @@ const HomeStyle = styled.div`
           display: flex;
           flex-direction: column;
           height: auto;
-          background: #fa7d09;
-          border: 1px solid #fa7d09;
+          background: ${(props) =>
+            props.theme ? props.theme.primaryColor : "#fa7d09"};
+          border: 1px solid ${(props) =>
+            props.theme ? props.theme.primaryColor : "#fa7d09"};
           border-radius: 5px;
           margin-top: 5px;
           padding-bottom: 10px;
@@ -1083,7 +1108,8 @@ const HomeStyle = styled.div`
                   letter-spacing: 0.2em;
                   font-weight: 300;
                   font-style: normal;
-                  color: #fa7d09;
+                  color: ${(props) =>
+                    props.theme ? props.theme.primaryColor : "#fa7d09"};
                   text-transform: uppercase;
                   width: 100%;
                   margin-left: 5px;
@@ -1120,7 +1146,10 @@ const HomeStyle = styled.div`
                   font-weight: 500;
                   font-style: normal;
                   margin-left: 0px !important;
-                  color: #fa7d09 !important;
+                  color: ${(props) =>
+                    props.theme
+                      ? props.theme.primaryColor
+                      : "#fa7d09"} !important;
                   text-transform: uppercase;
                   width: 100%;
                 }
@@ -1186,7 +1215,8 @@ const HomeStyle = styled.div`
         .icon {
           width: 40px;
           height: 40px;
-          color: #2f2519;
+          color: ${(props) =>
+            props.theme ? props.theme.thirdColor : "#2f2519"};
           display: flex;
           margin-left: 5px;
         }

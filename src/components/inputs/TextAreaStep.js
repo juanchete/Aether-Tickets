@@ -17,6 +17,7 @@ export default function InputLogin({
   marginBottom,
   marginRight,
   children,
+  theme,
   ...rest
 }) {
   return (
@@ -26,6 +27,7 @@ export default function InputLogin({
       color2={color2}
       fontSize={fontSize}
       marginRight={marginRight}
+      theme={theme}
     >
       <div className="lab">
         <label>{label}</label>{" "}
@@ -64,10 +66,11 @@ const Input = styled.div`
       width: 20px;
       height: 20px;
       margin-left: 5px;
-      color: #2f2519;
+      color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
       cursor: pointer;
       &:hover {
-        color: #fa7d09;
+        color: ${(props) =>
+          props.theme ? props.theme.primaryColor : "#fa7d09"};
       }
     }
   }
@@ -76,7 +79,7 @@ const Input = styled.div`
     font-size: 15px;
     font-weight: 200;
     letter-spacing: 0.1em;
-    color: #fa7d09;
+    color: ${(props) => (props.theme ? props.theme.primaryColor : "#fa7d09")};
     text-transform: uppercase;
     margin-bottom: 10px;
   }

@@ -6,88 +6,63 @@ import "firebase/auth";
 import { useFirebaseApp, useAuth, FirebaseAppProvider } from "reactfire";
 import ButtonSubmit from "../../components/buttons/Button-Submit";
 import Input from "../../components/inputs/InputLogin";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import { UserContext } from "../../CreateContext";
 import firebase from "firebase";
 
-
-
-export default function ChangePassword () {
+export default function ChangePassword({ theme }) {
   const auth = useAuth();
-  const {user} = useContext(UserContext)
+  const { user } = useContext(UserContext);
   const formik = useFormik({
     initialValues: {
-      old_password: '',
+      old_password: "",
       password: "",
-      confirm_password:''
+      confirm_password: "",
     },
     validationSchema: Yup.object({
-       old_password: Yup.string().required("Required Field"),
+      old_password: Yup.string().required("Required Field"),
       password: Yup.string().required("Required Field"),
       confirm_password: Yup.string().when("password", {
-        is: val => (val && val.length > 0 ? true : false),
+        is: (val) => (val && val.length > 0 ? true : false),
         then: Yup.string().oneOf(
           [Yup.ref("password")],
           "Both password need to be the same"
-        )
-      })
+        ),
+      }),
     }),
 
     onSubmit: async (valores) => {
       const { old_password, password } = valores;
 
-
-      const {email} = user;
+      const { email } = user;
 
       const credential = firebase.auth.EmailAuthProvider.credential(
-            email,
-            old_password
-         )
-    
+        email,
+        old_password
+      );
 
       try {
+        await auth.currentUser.reauthenticateWithCredential(credential);
 
+        await auth.currentUser.updatePassword(password);
 
-        await auth.currentUser.reauthenticateWithCredential(credential)
-
-        await auth.currentUser.updatePassword(password)
-
-
-        Swal.fire(
-            'Correcto',
-            'Contraseña Cambiada Correcctamente',
-            'success'
-        )
-          
+        Swal.fire("Correcto", "Contraseña Cambiada Correcctamente", "success");
       } catch (error) {
-
-        Swal.fire(
-            'Error',
-            error.message,
-            'error'
-        )
-          
+        Swal.fire("Error", error.message, "error");
       }
-      
-        
-      
-       
-        
-      
     },
   });
 
-
   return (
-    <StyledLogin>
+    <StyledLogin theme={theme}>
       <div className="container">
         <div className="container-login">
           <h1>Restore Password</h1>
-          
+
           <form onSubmit={formik.handleSubmit}>
             <Input
-              color="#2f2519"
-              color2="#ff4301"
+              color={theme ? theme.thirdColor : "#2f2519"}
+              color2={theme ? theme.primaryColor : "#fa7d09"}
               label="Current Password"
               id="old_password"
               type="password"
@@ -104,8 +79,8 @@ export default function ChangePassword () {
             />
 
             <Input
-              color="#2f2519"
-              color2="#ff4301"
+              color={theme ? theme.thirdColor : "#2f2519"}
+              color2={theme ? theme.primaryColor : "#fa7d09"}
               label="Password"
               id="password"
               type="password"
@@ -121,8 +96,8 @@ export default function ChangePassword () {
             />
 
             <Input
-              color="#2f2519"
-              color2="#ff4301"
+              color={theme ? theme.thirdColor : "#2f2519"}
+              color2={theme ? theme.primaryColor : "#fa7d09"}
               label="Confirm Password"
               id="confirm_password"
               type="Password"
@@ -131,27 +106,26 @@ export default function ChangePassword () {
               onBlur={formik.handleBlur}
               value={formik.values.confirm_password}
               error={
-                formik.touched.confirm_password && formik.errors.confirm_password
+                formik.touched.confirm_password &&
+                formik.errors.confirm_password
                   ? `${formik.errors.confirm_password}`
                   : null
               }
             />
 
-            
             <div className="button-error">
-              <ButtonSubmit color="#ff4301" />
+              <ButtonSubmit color={theme ? theme.primaryColor : "#fa7d09"} />
 
               {/* <h4>Erroooooooooooooooor</h4> */}
             </div>
           </form>
-          
         </div>
       </div>
     </StyledLogin>
   );
 }
 const StyledLogin = styled.nav`
-  background: #2f2519;
+  background: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
   height: 100vh;
   width: 100vw;
   font-family: "Raleway", sans-serif;
@@ -169,7 +143,8 @@ const StyledLogin = styled.nav`
     width: 40%;
     height: 80%;
     background: white;
-    border: 3px solid #2f2519;
+    border: 3px solid ${(props) =>
+      props.theme ? props.theme.thirdColor : "#2f2519"};
     border-radius: 20px;
     display: flex;
     align-items: center;
@@ -183,13 +158,14 @@ const StyledLogin = styled.nav`
       font-weight: 400;
       font-size: 48px;
       font-style: normal;
-      color: #2f2519;
+      color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
       text-transform: uppercase;
       width: 100%;
     }
 
     .sign-in-google {
-      border: 2px solid #ff4301;
+      border: 2px solid ${(props) =>
+        props.theme ? props.theme.primaryColor : "#fa7d09"};
       box-sizing: border-box;
       border-radius: 10px;
       display: flex;
@@ -209,13 +185,16 @@ const StyledLogin = styled.nav`
         align-items: center;
         text-align: center;
         letter-spacing: 0.1em;
-        color: #ff4301;
+        color: ${(props) =>
+          props.theme ? props.theme.primaryColor : "#fa7d09"};
       }
       &:hover {
         opacity: 0.8;
-        background: #ff4301;
+        background: ${(props) =>
+          props.theme ? props.theme.primaryColor : "#fa7d09"};
         color: white;
-        border-color: #ff4301;
+        border-color: ${(props) =>
+          props.theme ? props.theme.primaryColor : "#fa7d09"};
         h3 {
           color: white;
         }
@@ -234,7 +213,8 @@ const StyledLogin = styled.nav`
         align-items: flex-end;
         text-align: center;
         letter-spacing: 0.1em;
-        color: #ff4301;
+        color: ${(props) =>
+          props.theme ? props.theme.primaryColor : "#fa7d09"};
         height:100%;
     }
 
@@ -262,7 +242,8 @@ const StyledLogin = styled.nav`
               font-size: 12px;
               font-weight:200;
               letter-spacing: 0.1em;
-              color: #2f2519;
+              color: ${(props) =>
+                props.theme ? props.theme.thirdColor : "#2f2519"};
               margin-top: 5px;
               margin-bottom: 5px;
               margin-left: 10px;
@@ -284,7 +265,8 @@ const StyledLogin = styled.nav`
                 font-size: 12px;
                 font-weight:200;
                 letter-spacing: 0.1em;
-                color: #ff4301;
+                color: ${(props) =>
+                  props.theme ? props.theme.primaryColor : "#fa7d09"};
                 margin-top: 0px;
                 text-transform:uppercase;
                 
@@ -306,7 +288,8 @@ const StyledLogin = styled.nav`
                 font-size: 12px;
                 font-weight:200;
                 letter-spacing: 0.1em;
-                color: #FF4301;
+                color: ${(props) =>
+                  props.theme ? props.theme.primaryColor : "#fa7d09"};
                 margin-top: 5px;
                 
             }
@@ -326,21 +309,23 @@ const StyledLogin = styled.nav`
       .line {
         width: 155.01px;
         height: 0px;
-        border: 1px solid #2f2519;
+        border: 1px solid ${(props) =>
+          props.theme ? props.theme.thirdColor : "#2f2519"};
       }
 
       h3 {
         font-family: "Raleway", sans-serif;
         font-size: 20px;
         letter-spacing: 0.1em;
-        color: #2f2519;
+        color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
         margin-left: 10px;
         margin-right: 10px;
       }
     }
   }
   @media only screen and (max-height: 695px) and (max-width: 1250px)  {
-    background: #2f2519;
+    background: ${(props) =>
+      props.theme ? props.theme.thirdColor : "#2f2519"};
     height:auto;
     width: 100vw;
     

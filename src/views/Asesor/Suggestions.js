@@ -5,7 +5,7 @@ import styled from "styled-components";
 import SidebarAdmin from "../../components/sidebars/SidebarAdmin";
 import Card from "../../components/cards/SuggestionCard";
 
-export default function Categories() {
+export default function Suggestions({ theme }) {
   const firebase = useFirebaseApp();
   const [suggestions, setSuggestions] = useState();
   const [loading, setLoading] = useState(true);
@@ -30,8 +30,8 @@ export default function Categories() {
 
   const user = useUser();
   return (
-    <HomeStyle>
-      <SidebarAdmin category={true} />
+    <HomeStyle theme={theme}>
+      <SidebarAdmin category={true} theme={theme} />
       <div className="home-view">
         <div className="home-view-title">
           <div style={{ display: "flex", flexDirection: "row" }}>
@@ -48,8 +48,9 @@ export default function Categories() {
                   {suggestions.map((suggestion) => (
                     <Card
                       suggestion={suggestion}
-                      color="#2f2519"
-                      color2="#fa7d09"
+                      color={theme ? theme.thirdColor : "#2f2519"}
+                      color2={theme ? theme.primaryColor : "#fa7d09"}
+                      theme={theme}
                     />
                   ))}
                 </>
@@ -78,15 +79,17 @@ const HomeStyle = styled.div`
       justify-content: center;
       text-align: center;
       height: 80px;
-      background: #4a3f35;
-      border-bottom: 1px solid #2f2519;
+      background: ${(props) =>
+        props.theme ? props.theme.secondaryColor : "#4a3f35"};
+      border-bottom: 1px solid
+        ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
       h1 {
         font-size: 22px;
         font-family: "Raleway", sans-serif;
         letter-spacing: 0.2em;
         font-weight: 500;
         font-style: normal;
-        color: #2f2519;
+        color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
         text-transform: uppercase;
         width: 100%;
       }
@@ -96,7 +99,8 @@ const HomeStyle = styled.div`
         letter-spacing: 0.2em;
         font-weight: 300;
         font-style: normal;
-        color: #fa7d09;
+        color: ${(props) =>
+          props.theme ? props.theme.primaryColor : "#fa7d09"};
         text-transform: uppercase;
         width: 100%;
         margin-right: 5px;

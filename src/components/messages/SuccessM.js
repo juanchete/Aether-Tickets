@@ -12,6 +12,7 @@ export default function SuccessMessage({
   showMessage,
   type,
   message,
+  theme,
 }) {
   let style;
   if (show) {
@@ -20,7 +21,7 @@ export default function SuccessMessage({
     style = "close";
   }
   return (
-    <Success color={color} color2={color2}>
+    <Success color={color} color2={color2} theme={theme}>
       <div className={style}>
         <div className="container">
           <div className="container-add">
@@ -28,7 +29,7 @@ export default function SuccessMessage({
             <h2>{message}!</h2>
             <div className="button-error">
               <ButtonSubmit
-                color="#fa7d09"
+                color={theme ? theme.primaryColor : "#fa7d09"}
                 onClick={(event) => {
                   showMessage();
                 }}
@@ -78,7 +79,7 @@ const Success = styled.div`
         font-weight: 400;
         font-size: 45px;
         font-style: normal;
-        color: #2f2519;
+        color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
         text-transform: uppercase;
         width: 100%;
       }
@@ -90,7 +91,7 @@ const Success = styled.div`
         font-weight: 400;
         font-size: 20px;
         font-style: normal;
-        color: #2f2519;
+        color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
         text-transform: uppercase;
         width: 100%;
       }
@@ -109,7 +110,8 @@ const Success = styled.div`
           font-size: 12px;
           font-weight: 200;
           letter-spacing: 0.1em;
-          color: #ff4301;
+          color: ${(props) =>
+            props.theme ? props.theme.primaryColor : "#fa7d09"};
           margin-top: 5px;
         }
       }

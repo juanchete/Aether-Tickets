@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Line } from "react-chartjs-2";
 import styled from "styled-components";
 
@@ -10,6 +10,7 @@ export default function LineGraph({
   month,
   tickets,
   data,
+  theme,
 }) {
   const [loading, setLoading] = useState(true);
   const [label, setLabel] = useState(null);
@@ -33,7 +34,7 @@ export default function LineGraph({
       labels: {
         // This more specific font property overrides the global property
         fontFamily: `"Raleway", sans-serif`,
-        fontColor: "#2f2519",
+        fontColor: theme ? theme.thirdColor : "#2f2519",
       },
     },
     maintainAspectRatio: false,
@@ -46,7 +47,7 @@ export default function LineGraph({
           ticks: {
             display: true,
             fontFamily: `"Raleway", sans-serif`,
-            fontColor: "#2f2519",
+            fontColor: theme ? theme.thirdColor : "#2f2519",
           },
         },
       ],
@@ -63,7 +64,7 @@ export default function LineGraph({
     },
   };
   return (
-    <HomeStyle>
+    <HomeStyle theme={theme}>
       <>
         <div className="years-containers">
           {years.map((year) => (
@@ -102,17 +103,19 @@ export default function LineGraph({
 const HomeStyle = styled.div`
   width: 100%;
   height: auto;
-  background: #2f2519;
+  background: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
   padding: 10px;
   .graph {
     width: "100%";
     height: "300px";
-    background: #4a3f35;
+    background: ${(props) =>
+      props.theme ? props.theme.secondaryColor : "#4a3f35"};
     font-family: "Raleway", sans-serif;
   }
 
   .years-containers {
-    background: #4a3f35;
+    background: ${(props) =>
+      props.theme ? props.theme.secondaryColor : "#4a3f35"};
     width: 100%;
     height: 50px;
     display: flex;
@@ -123,7 +126,8 @@ const HomeStyle = styled.div`
     padding-right: 10px;
 
     .year-button {
-      border: 2px solid #fa7d09;
+      border: 2px solid
+        ${(props) => (props.theme ? props.theme.primaryColor : "#fa7d09")};
       border-radius: 5px;
       height: 30px;
       margin-left: 10px;
@@ -137,7 +141,8 @@ const HomeStyle = styled.div`
         letter-spacing: 0.2em;
         font-weight: 500;
         font-style: normal;
-        color: #fa7d09;
+        color: ${(props) =>
+          props.theme ? props.theme.primaryColor : "#fa7d09"};
         text-transform: uppercase;
         width: 100%;
       }

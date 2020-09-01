@@ -6,64 +6,61 @@ import "firebase/auth";
 import { useFirebaseApp } from "reactfire";
 import ButtonSubmit from "../../components/buttons/Button-Submit";
 import Input from "../../components/inputs/InputLogin";
-import Swal from 'sweetalert2'
+import Swal from "sweetalert2";
 
-export default function InviteToRegister() {
+export default function InviteToRegister({ theme }) {
   const firebase = useFirebaseApp();
   const formik = useFormik({
     initialValues: {
       email: "juan.lopez@correo.unimet.edu.ve",
-      confirm_email:'juan.lopez@correo.unimet.edu.ve'
+      confirm_email: "juan.lopez@correo.unimet.edu.ve",
     },
     validationSchema: Yup.object({
       email: Yup.string().email("Invalid Email").required("Required Field"),
       confirm_email: Yup.string().when("email", {
-        is: val => (val && val.length > 0 ? true : false),
+        is: (val) => (val && val.length > 0 ? true : false),
         then: Yup.string().oneOf(
           [Yup.ref("email")],
           "Both emails need to be the same"
-        )
-      })
+        ),
+      }),
     }),
 
     onSubmit: async (valores) => {
       var actionCodeSettings = {
         // URL you want to redirect back to. The domain (www.example.com) for this
         // URL must be whitelisted in the Firebase Console.
-        url: 'http://localhost:3000/sign-up-asesores',
+        url: "http://localhost:3000/sign-up-asesores",
         // This must be true.
-        handleCodeInApp: true
+        handleCodeInApp: true,
       };
       try {
+        await firebase
+          .auth()
+          .sendSignInLinkToEmail(valores.email, actionCodeSettings)
+          .then(console.log("completado"));
 
-        
-          await firebase.auth().sendSignInLinkToEmail(valores.email, actionCodeSettings).then(console.log('completado'))
-
-         Swal.fire(
-          'Correcto',
-          'Se envio la invitacion correctamente',
-          'success'
-      )
-        
-
+        Swal.fire(
+          "Correcto",
+          "Se envio la invitacion correctamente",
+          "success"
+        );
       } catch (error) {
         console.log(error);
       }
     },
   });
 
-  
-
   return (
-    <StyledLogin>
+    <StyledLogin theme={theme}>
       <div className="container">
         <div className="container-login">
           <h1>Invite Register</h1>
-          
+
           <form onSubmit={formik.handleSubmit}>
             <Input
-              color="#2f2519"
-              color2="#ff4301"
+              color={theme ? theme.thirdColor : "#2f2519"}
+              color2={theme ? theme.primaryColor : "#fa7d09"}
               label="Email"
               id="email"
               type="email"
@@ -80,8 +77,8 @@ export default function InviteToRegister() {
             />
 
             <Input
-              color="#2f2519"
-              color2="#ff4301"
+              color={theme ? theme.thirdColor : "#2f2519"}
+              color2={theme ? theme.primaryColor : "#fa7d09"}
               label="Confirm Email"
               id="confirm_email"
               type="email"
@@ -96,21 +93,19 @@ export default function InviteToRegister() {
               }
             />
 
-            
             <div className="button-error">
-              <ButtonSubmit color="#ff4301" />
+              <ButtonSubmit color={theme ? theme.primaryColor : "#fa7d09"} />
 
               {/* <h4>Erroooooooooooooooor</h4> */}
             </div>
           </form>
-          
         </div>
       </div>
     </StyledLogin>
   );
 }
 const StyledLogin = styled.nav`
-  background: #2f2519;
+  background: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
   height: 100vh;
   width: 100vw;
   font-family: "Raleway", sans-serif;
@@ -128,7 +123,8 @@ const StyledLogin = styled.nav`
     width: 40%;
     height: 80%;
     background: white;
-    border: 3px solid #2f2519;
+    border: 3px solid ${(props) =>
+      props.theme ? props.theme.thirdColor : "#2f2519"};
     border-radius: 20px;
     display: flex;
     align-items: center;
@@ -142,13 +138,14 @@ const StyledLogin = styled.nav`
       font-weight: 400;
       font-size: 48px;
       font-style: normal;
-      color: #2f2519;
+      color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
       text-transform: uppercase;
       width: 100%;
     }
 
     .sign-in-google {
-      border: 2px solid #ff4301;
+      border: 2px solid ${(props) =>
+        props.theme ? props.theme.primaryColor : "#fa7d09"};
       box-sizing: border-box;
       border-radius: 10px;
       display: flex;
@@ -168,13 +165,16 @@ const StyledLogin = styled.nav`
         align-items: center;
         text-align: center;
         letter-spacing: 0.1em;
-        color: #ff4301;
+        color: ${(props) =>
+          props.theme ? props.theme.primaryColor : "#fa7d09"};
       }
       &:hover {
         opacity: 0.8;
-        background: #ff4301;
+        background: ${(props) =>
+          props.theme ? props.theme.primaryColor : "#fa7d09"};
         color: white;
-        border-color: #ff4301;
+        border-color: ${(props) =>
+          props.theme ? props.theme.primaryColor : "#fa7d09"};
         h3 {
           color: white;
         }
@@ -193,7 +193,8 @@ const StyledLogin = styled.nav`
         align-items: flex-end;
         text-align: center;
         letter-spacing: 0.1em;
-        color: #ff4301;
+        color: ${(props) =>
+          props.theme ? props.theme.primaryColor : "#fa7d09"};
         height:100%;
     }
 
@@ -221,7 +222,8 @@ const StyledLogin = styled.nav`
               font-size: 12px;
               font-weight:200;
               letter-spacing: 0.1em;
-              color: #2f2519;
+              color: ${(props) =>
+                props.theme ? props.theme.thirdColor : "#2f2519"};
               margin-top: 5px;
               margin-bottom: 5px;
               margin-left: 10px;
@@ -243,7 +245,8 @@ const StyledLogin = styled.nav`
                 font-size: 12px;
                 font-weight:200;
                 letter-spacing: 0.1em;
-                color: #ff4301;
+                color: ${(props) =>
+                  props.theme ? props.theme.primaryColor : "#fa7d09"};
                 margin-top: 0px;
                 text-transform:uppercase;
                 
@@ -265,7 +268,8 @@ const StyledLogin = styled.nav`
                 font-size: 12px;
                 font-weight:200;
                 letter-spacing: 0.1em;
-                color: #FF4301;
+                color: ${(props) =>
+                  props.theme ? props.theme.primaryColor : "#fa7d09"};
                 margin-top: 5px;
                 
             }
@@ -285,21 +289,23 @@ const StyledLogin = styled.nav`
       .line {
         width: 155.01px;
         height: 0px;
-        border: 1px solid #2f2519;
+        border: 1px solid ${(props) =>
+          props.theme ? props.theme.thirdColor : "#2f2519"};
       }
 
       h3 {
         font-family: "Raleway", sans-serif;
         font-size: 20px;
         letter-spacing: 0.1em;
-        color: #2f2519;
+        color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
         margin-left: 10px;
         margin-right: 10px;
       }
     }
   }
   @media only screen and (max-height: 695px) and (max-width: 1250px)  {
-    background: #2f2519;
+    background: ${(props) =>
+      props.theme ? props.theme.thirdColor : "#2f2519"};
     height:auto;
     width: 100vw;
     

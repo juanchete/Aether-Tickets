@@ -7,13 +7,18 @@ import { AiFillMinusCircle } from "react-icons/ai";
 import { IoIosAddCircle } from "react-icons/io";
 import { NavLink, withRouter } from "react-router-dom";
 
-export default function CategoriySuggestionCard({ color, color2, category }) {
+export default function CategoriySuggestionCard({
+  color,
+  color2,
+  category,
+  theme,
+}) {
   const firebaseReact = useFirebaseApp();
   const db = firebaseReact.firestore();
   const [suggestions, setSuggestions] = useState();
   const [loading, setLoading] = useState(true);
   let [path, setPath] = React.useState("/category/");
-  
+
   useEffect(() => {
     if (category.suggestions.length > 0) {
       setLoading(true);
@@ -48,7 +53,7 @@ export default function CategoriySuggestionCard({ color, color2, category }) {
   return (
     <>
       {!loading ? (
-        <Card color={color} color2={color2}>
+        <Card color={color} color2={color2} theme={theme}>
           <div className="card-title">
             <NavLink className="h2" to={path + category.id}>
               {category.name}
@@ -108,7 +113,7 @@ const Card = styled.div`
     .icon {
       width: 20px;
       height: 20px;
-      color: #fa7d09;
+      color: ${(props) => (props.color2 ? props.color2 : "#fa7d09")};
     }
 
     .h2 {

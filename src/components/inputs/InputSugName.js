@@ -16,6 +16,7 @@ export default function InputLogin({
   fontSize,
   marginBottom,
   disable,
+  theme,
   marginRight,
   children,
   ...rest
@@ -27,6 +28,7 @@ export default function InputLogin({
       color2={color2}
       fontSize={fontSize}
       marginRight={marginRight}
+      theme={theme}
     >
       <input
         type={type}
@@ -37,7 +39,11 @@ export default function InputLogin({
         onChange={onChange}
         disabled={disable ? true : false}
       />
-      {error ? <h4>{error}</h4> : <h4 style={{ color: "#4a3f35" }}>h</h4>}
+      {error ? (
+        <h4>{error}</h4>
+      ) : (
+        <h4 style={{ color: theme ? theme.secondaryColor : "#4a3f35" }}>h</h4>
+      )}
     </Input>
   );
 }
@@ -51,7 +57,8 @@ const Input = styled.div`
 
   input {
     height: 40px;
-    background: #4a3f35;
+    background: ${(props) =>
+      props.theme ? props.theme.secondaryColor : "#4a3f35"};
     color: white;
     font-size: 18px;
     font-family: "Raleway", sans-serif;
@@ -64,7 +71,8 @@ const Input = styled.div`
 
     &:focus {
       opacity: 1;
-      background: #4a3f35;
+      background: ${(props) =>
+        props.theme ? props.theme.secondaryColor : "#4a3f35"};
       outline: none;
       box-shadow: none;
     }

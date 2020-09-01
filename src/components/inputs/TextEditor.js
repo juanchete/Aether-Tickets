@@ -249,13 +249,17 @@ export default class QuillEditor extends React.Component {
 
   render() {
     return (
-      <textEditorStyle>
+      <textEditorStyle theme={this.props.theme}>
         <div>
           <div
             id="toolbar"
             style={{
-              backgroundColor: "#2f2519",
-              border: "2px solid #2f2519",
+              backgroundColor: this.props.theme
+                ? this.props.theme.thirdColor
+                : "#2f2519",
+              border: this.props.theme
+                ? `2px solid ${this.props.theme.thirdColor}`
+                : "2px solid #2f2519",
               borderRadius: "5px",
               color: "#434343",
             }}
@@ -286,9 +290,16 @@ export default class QuillEditor extends React.Component {
               onChange={(e) => e.persist()}
             >
               <option selected="selected" value="white" />
-              <option value="#ff4301" />
-              <option value="#fa7d09" />
-              <option value="#29E2F3" />
+              <option
+                value={
+                  this.props.theme ? this.props.theme.primaryCColor : "#ff4301"
+                }
+              />
+              <option
+                value={
+                  this.props.theme ? this.props.theme.primaryColor : "#fa7d09"
+                }
+              />
             </select>
             <select
               className="ql-align"
@@ -312,8 +323,12 @@ export default class QuillEditor extends React.Component {
             value={this.state.editorHtml}
             className="font"
             style={{
-              backgroundColor: "#4A3F35",
-              border: "2px solid #4A3F35",
+              backgroundColor: this.props.theme
+                ? this.props.theme.secondaryColor
+                : "#4A3F35",
+              border: this.props.theme
+                ? `2px solid ${this.props.theme.secondaryColor}`
+                : "2px solid #4a3f35",
               borderRadius: "5px",
               color: "white",
               height: "100px",

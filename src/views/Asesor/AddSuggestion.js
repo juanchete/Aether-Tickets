@@ -13,7 +13,13 @@ import { IoMdClose } from "react-icons/io";
 import firebase from "firebase";
 import Spinner from "../../components/Spinner";
 
-export default function AddSuggestion({ color, color2, show, showSuggestion }) {
+export default function AddSuggestion({
+  color,
+  color2,
+  show,
+  showSuggestion,
+  theme,
+}) {
   const firebaseReact = useFirebaseApp();
   const db = firebaseReact.firestore();
   const [categories, setCategories] = useState();
@@ -102,9 +108,10 @@ export default function AddSuggestion({ color, color2, show, showSuggestion }) {
           type={type}
           message={message}
           showMessage={showMessage}
+          theme={theme}
         />
       ) : null}
-      <Category color={color} color2={color2}>
+      <Category color={color} color2={color2} theme={theme}>
         <div className={style}>
           <div className="container">
             <div className="container-add">
@@ -120,8 +127,8 @@ export default function AddSuggestion({ color, color2, show, showSuggestion }) {
               {!loading ? (
                 <form onSubmit={formik.handleSubmit}>
                   <Input
-                    color="#2f2519"
-                    color2="#fa7d09"
+                    color={theme ? theme.thirdColor : "#2f2519"}
+                    color2={theme ? theme.primaryColor : "#fa7d09"}
                     label="Name"
                     id="name"
                     type="text"
@@ -136,8 +143,8 @@ export default function AddSuggestion({ color, color2, show, showSuggestion }) {
                     }
                   />
                   <Select
-                    color="#2f2519"
-                    color2="#fa7d09"
+                    color={theme ? theme.thirdColor : "#2f2519"}
+                    color2={theme ? theme.primaryColor : "#fa7d09"}
                     label="Category"
                     id="category"
                     fontSize="10px"
@@ -154,8 +161,8 @@ export default function AddSuggestion({ color, color2, show, showSuggestion }) {
                     }
                   />
                   <TextArea
-                    color="#2f2519"
-                    color2="#fa7d09"
+                    color={theme ? theme.thirdColor : "#2f2519"}
+                    color2={theme ? theme.primaryColor : "#fa7d09"}
                     label="Suggestion"
                     id="suggestion"
                     placeholder="suggestion"
@@ -170,7 +177,13 @@ export default function AddSuggestion({ color, color2, show, showSuggestion }) {
                   />
 
                   <div className="button-error">
-                    {submitted ? <Spinner color="#fa7d09" /> : <ButtonSubmit />}
+                    {submitted ? (
+                      <Spinner color={theme ? theme.primaryColor : "#fa7d09"} />
+                    ) : (
+                      <ButtonSubmit
+                        color={theme ? theme.primaryColor : "#fa7d09"}
+                      />
+                    )}
                   </div>
                 </form>
               ) : null}
@@ -220,7 +233,8 @@ const Category = styled.div`
         .icon {
           width: 40px;
           height: 40px;
-          color: #2f2519;
+          color: ${(props) =>
+            props.theme ? props.theme.thirdColor : "#2f2519"};
           cursor: pointer;
         }
       }
@@ -233,7 +247,7 @@ const Category = styled.div`
         font-weight: 400;
         font-size: 45px;
         font-style: normal;
-        color: #2f2519;
+        color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
         text-transform: uppercase;
         width: 100%;
       }
@@ -263,7 +277,8 @@ const Category = styled.div`
             font-size: 12px;
             font-weight: 200;
             letter-spacing: 0.1em;
-            color: #ff4301;
+            color: ${(props) =>
+              props.theme ? props.theme.primaryColor : "#fa7d09"};
             margin-top: 5px;
           }
         }

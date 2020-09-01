@@ -18,6 +18,7 @@ export default function SuggestionForm({
   color2,
   suggestion,
   deleteArray,
+  theme,
 }) {
   const firebaseReact = useFirebaseApp();
   const db = firebaseReact.firestore();
@@ -101,13 +102,13 @@ export default function SuggestionForm({
     } catch (error) {}
   };
   return (
-    <Category color={color} color2={color2}>
+    <Category color={color} color2={color2} theme={theme}>
       {!loading && suggestions ? (
         <form className="suggestion-specific">
           <div className="suggestion-specific-title">
             <Input
-              color="#2f2519"
-              color2="#fa7d09"
+              color={theme ? theme.thirdColor : "#2f2519"}
+              color2={theme ? theme.primaryColor : "#fa7d09"}
               label="Name"
               id="name"
               type="text"
@@ -156,8 +157,8 @@ export default function SuggestionForm({
           </div>
           <div className="suggestion-specific-answer">
             <Select
-              color="#2f2519"
-              color2="#fa7d09"
+              color={theme ? theme.thirdColor : "#2f2519"}
+              color2={theme ? theme.primaryColor : "#fa7d09"}
               label="Category"
               id="category"
               fontSize="12px"
@@ -176,8 +177,8 @@ export default function SuggestionForm({
             />
             <div className="suggestion-specific-answer-textarea">
               <TextArea
-                color="#2f2519"
-                color2="#fa7d09"
+                color={theme ? theme.thirdColor : "#2f2519"}
+                color2={theme ? theme.primaryColor : "#fa7d09"}
                 label="Suggestion"
                 id="answer"
                 disable={!edit}
@@ -206,23 +207,28 @@ const Category = styled.div`
 
   .suggestion-specific {
     width: 90%;
-    background: #2f2519;
+    background: ${(props) =>
+      props.theme ? props.theme.thirdColor : "#2f2519"};
     height: auto;
     display: flex;
     flex-direction: column;
-    border: 3px solid #2f2519;
+    border: 3px solid
+      ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
     border-radius: 5px;
 
     .suggestion-specific-answer {
       margin: 10px;
       width: fit;
-      background: #2f2519;
+      background: ${(props) =>
+        props.theme ? props.theme.thirdColor : "#2f2519"};
       padding: 5px;
 
       .suggestion-specific-answer-textarea {
-        border: 1px solid #4a3f35;
+        border: 1px solid
+          ${(props) => (props.theme ? props.theme.secondaryColor : "#4a3f35")};
         border-radius: 5px;
-        background: #4a3f35;
+        background: ${(props) =>
+          props.theme ? props.theme.secondaryColor : "#4a3f35"};
       }
     }
 
@@ -230,9 +236,11 @@ const Category = styled.div`
       display: flex;
       flex-direction: row;
       align-items: flex-start;
-      background: #4a3f35;
+      background: ${(props) =>
+        props.theme ? props.theme.secondaryColor : "#4a3f35"};
       padding: 10px;
-      border: 1px solid #4a3f35;
+      border: 1px solid
+        ${(props) => (props.theme ? props.theme.secondaryColor : "#4a3f35")};
       border-radius: 5px;
 
       h1 {
@@ -241,7 +249,8 @@ const Category = styled.div`
         letter-spacing: 0.2em;
         font-weight: 500;
         font-style: normal;
-        color: #fa7d09;
+        color: ${(props) =>
+          props.theme ? props.theme.primaryColor : "#fa7d09"};
         text-transform: uppercase;
         width: 100%;
         margin-right: 5px;
@@ -253,7 +262,8 @@ const Category = styled.div`
         color: white;
         cursor: pointer;
         &: hover {
-          color: #fa7d09;
+          color: ${(props) =>
+            props.theme ? props.theme.primaryColor : "#fa7d09"};
         }
       }
     }
