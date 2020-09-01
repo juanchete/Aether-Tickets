@@ -13,7 +13,7 @@ import { AiFillClockCircle } from "react-icons/ai";
 import { FaTicketAlt } from "react-icons/fa";
 import { IoIosWarning } from "react-icons/io";
 
-export default function AllAsesors({ theme }) {
+export default function AllAsesors({ theme, logo }) {
   const firebase = useFirebaseApp();
   const [filterAvailable, setFilterAvailable] = useState(null);
   const [filterOpen, setFilterOpen] = useState(false);
@@ -235,7 +235,7 @@ export default function AllAsesors({ theme }) {
   const user = useUser();
   return (
     <HomeStyle filter={filterOpen} sub={subSOpen} subP={subPOpen} theme={theme}>
-      <SidebarAdmin report={true} theme={theme} />
+      <SidebarAdmin logo={logo} report={true} theme={theme} />
       <div className="home-view">
         <div className="home-view-title">
           <div style={{ display: "flex", flexDirection: "row" }}>

@@ -12,7 +12,7 @@ import { useParams } from "react-router";
 import { MdStar } from "react-icons/md";
 import Slider from "react-slick";
 
-export default function AsesorDetail({ theme }) {
+export default function AsesorDetail({ theme, logo }) {
   const firebase = useFirebaseApp();
   const [asesor, setAsesor] = useState();
   const [amonestados, setAmonestado] = useState();
@@ -282,7 +282,7 @@ export default function AsesorDetail({ theme }) {
   const user = useUser();
   return (
     <HomeStyle theme={theme}>
-      <SidebarAdmin report={true} theme={theme} />
+      <SidebarAdmin logo={logo} report={true} theme={theme} />
       <div className="home-view">
         <div className="home-view-title">
           <div style={{ display: "flex", flexDirection: "row" }}>

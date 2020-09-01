@@ -14,7 +14,7 @@ import { useParams } from "react-router";
 import moment from "moment";
 import Swal from "sweetalert2";
 
-export default function TicketAsesor({ theme }) {
+export default function TicketAsesor({ theme, logo }) {
   const { user, setUser } = useContext(UserContext);
   const firebaseReact = useFirebaseApp();
   const db = firebaseReact.firestore();
@@ -354,7 +354,7 @@ export default function TicketAsesor({ theme }) {
         show={show}
         theme={theme}
       >
-        <SidebarAdmin ticket={true} theme={theme} />
+        <SidebarAdmin logo={logo} ticket={true} theme={theme} />
         <div className="home-view">
           <div className="home-view-title">
             <div style={{ display: "flex", flexDirection: "row" }}>

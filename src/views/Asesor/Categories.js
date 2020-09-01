@@ -5,7 +5,7 @@ import styled from "styled-components";
 import SidebarAdmin from "../../components/sidebars/SidebarAdmin";
 import Card from "../../components/cards/Category&SuggestionCard";
 
-export default function Categories({ theme }) {
+export default function Categories({ theme, logo }) {
   const firebase = useFirebaseApp();
   const [categories, setCategories] = useState();
   const [loading, setLoading] = useState(true);
@@ -29,7 +29,7 @@ export default function Categories({ theme }) {
   const user = useUser();
   return (
     <HomeStyle theme={theme}>
-      <SidebarAdmin category={true} theme={theme} />
+      <SidebarAdmin logo={logo} category={true} theme={theme} />
       <div className="home-view">
         <div className="home-view-title">
           <div style={{ display: "flex", flexDirection: "row" }}>

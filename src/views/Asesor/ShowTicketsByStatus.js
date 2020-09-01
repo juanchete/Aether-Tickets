@@ -5,7 +5,7 @@ import styled from "styled-components";
 import SidebarAdmin from "../../components/sidebars/SidebarAdmin";
 import TicketCard from "../../components/cards/TicketCard";
 
-export default function TicketsByStatus({ filter, theme }) {
+export default function TicketsByStatus({ filter, theme, logo }) {
   const firebase = useFirebaseApp();
   const [tickets, setTickets] = useState();
   const [loading, setLoading] = useState(true);
@@ -36,7 +36,7 @@ export default function TicketsByStatus({ filter, theme }) {
   const user = useUser();
   return (
     <HomeStyle theme={theme}>
-      <SidebarAdmin ticket={true} theme={theme} />
+      <SidebarAdmin logo={logo} ticket={true} theme={theme} />
       <div className="home-view">
         <div className="home-view-title">
           <div style={{ display: "flex", flexDirection: "row" }}>

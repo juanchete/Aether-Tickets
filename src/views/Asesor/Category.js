@@ -14,7 +14,7 @@ import { AiFillMinusCircle } from "react-icons/ai";
 import { IoIosAddCircle } from "react-icons/io";
 import { MdEdit } from "react-icons/md";
 
-export default function Category({ theme }) {
+export default function Category({ theme, logo }) {
   const firebaseReact = useFirebaseApp();
   const db = firebaseReact.firestore();
   const [category, setCategory] = useState();
@@ -83,7 +83,7 @@ export default function Category({ theme }) {
     <HomeStyle theme={theme}>
       {!loading && category ? (
         <>
-          <SidebarAdmin category={true} theme={theme} />
+          <SidebarAdmin logo={logo} category={true} theme={theme} />
 
           <div className="home-view">
             <div className="home-view-title">

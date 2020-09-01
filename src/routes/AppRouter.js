@@ -38,13 +38,13 @@ function AppRouter() {
             <Route
               exact
               path="/category/:id"
-              component={() => <Category theme={themes} />}
+              component={() => <Category theme={themes} logo={logos} />}
             />
 
             <AdminRoutes
               exact
               path="/invite-register"
-              component={() => <InviteToRegister theme={themes} />}
+              component={() => <InviteToRegister theme={themes} logo={logos} />}
             />
             <AdminRoutes
               exact
@@ -54,115 +54,127 @@ function AppRouter() {
             <AdminRoutes
               exact
               path="/asesores/all-asesors"
-              component={() => <AllAsesors theme={themes} />}
+              component={() => <AllAsesors theme={themes} logo={logos} />}
             />
             <AdminRoutes
               exact
               path="/asesores/reports"
               component={Reports}
-              component={() => <Reports theme={themes} />}
+              component={() => <Reports theme={themes} logo={logos} />}
             />
             <AdminRoutes
               exact
               path="/asesores/individual-reports"
-              component={() => <IndividualReports theme={themes} />}
+              component={() => (
+                <IndividualReports theme={themes} logo={logos} />
+              )}
             />
             <AdminRoutes
               exact
               path="/asesores/admonished-asesors"
-              component={() => <Amonestados theme={themes} />}
+              component={() => <Amonestados theme={themes} logo={logos} />}
             />
             <AdminRoutes
               exact
               path="/asesor/:id"
-              component={() => <AsesorDetail theme={themes} />}
+              component={() => <AsesorDetail theme={themes} logo={logos} />}
             />
             <AdminRoutes
               exact
               path="/asesores/all-clients"
-              component={() => <AllClients theme={themes} />}
+              component={() => <AllClients theme={themes} logo={logos} />}
             />
             <InviteRoutes
               exact
               path="/sign-up-asesores"
-              component={() => <SignUpAsesor theme={themes} />}
+              component={() => <SignUpAsesor theme={themes} logo={logos} />}
             />
 
             <Route
               exact
               path="/login"
-              component={() => <LoginAsesores theme={themes} />}
+              component={() => <LoginAsesores theme={themes} logo={logos} />}
             />
             <Route
               exact
               path="/forgot-password"
-              component={() => <ForgotPassword theme={themes} />}
+              component={() => <ForgotPassword theme={themes} logo={logos} />}
             />
 
             <AsesorRoutes
               exact
               path="/tickets/pending"
-              component={() => <ShowTickets filter="Pending" theme={themes} />}
+              component={() => (
+                <ShowTickets filter="Pending" theme={themes} logo={logos} />
+              )}
             />
             <AsesorRoutes
               exact
               path="/tickets/open"
-              component={() => <ShowTickets filter="Open" theme={themes} />}
+              component={() => (
+                <ShowTickets filter="Open" theme={themes} logo={logos} />
+              )}
             />
             <AsesorRoutes
               exact
               path="/tickets/solved"
-              component={() => <ShowTickets filter="Solved" theme={themes} />}
+              component={() => (
+                <ShowTickets filter="Solved" theme={themes} logo={logos} />
+              )}
             />
             <AsesorRoutes
               exact
               path="/tickets/unsolved"
-              component={() => <ShowTickets filter="Unsolved" theme={themes} />}
+              component={() => (
+                <ShowTickets filter="Unsolved" theme={themes} logo={logos} />
+              )}
             />
             <AsesorRoutes
               exact
               path="/tickets/closed"
-              component={() => <ShowTickets filter="Closed" theme={themes} />}
+              component={() => (
+                <ShowTickets filter="Closed" theme={themes} logo={logos} />
+              )}
             />
             <AsesorRoutes
               exact
               path="/asesores/add-categories"
-              component={() => <AddCategory theme={themes} />}
+              component={() => <AddCategory theme={themes} logo={logos} />}
             />
             <AsesorRoutes
               exact
               path="/asesores/categories"
-              component={() => <Categories theme={themes} />}
+              component={() => <Categories theme={themes} logo={logos} />}
             />
             <AsesorRoutes
               exact
               path="/asesores/add-suggestion"
-              component={() => <AddSuggestion theme={themes} />}
+              component={() => <AddSuggestion theme={themes} logo={logos} />}
             />
             <AsesorRoutes
               exact
               path="/asesores/suggestion"
-              component={() => <Suggestions theme={themes} />}
+              component={() => <Suggestions theme={themes} logo={logos} />}
             />
             <AsesorRoutes
               exact
               path="/asesores/change-password"
-              component={() => <ChangePassword theme={themes} />}
+              component={() => <ChangePassword theme={themes} logo={logos} />}
             />
             <AsesorRoutes
               exact
               path="/asesores/ticket/:id"
-              component={() => <TicketAsesor theme={themes} />}
+              component={() => <TicketAsesor theme={themes} logo={logos} />}
             />
             <AsesorRoutes
               exact
               path="/"
-              component={() => <Home theme={themes} />}
+              component={() => <Home theme={themes} logo={logos} />}
             />
             <AsesorRoutes
               exact
               path="/home"
-              component={() => <Home theme={themes} />}
+              component={() => <Home theme={themes} logo={logos} />}
             />
           </Switch>
         </Router>

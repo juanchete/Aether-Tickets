@@ -8,7 +8,7 @@ import { IoIosCloseCircle } from "react-icons/io";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import Spinner from "../../components/Spinner";
 
-export default function Amonestados({ theme }) {
+export default function Amonestados({ theme, logo }) {
   const firebase = useFirebaseApp();
   const [filterAmonestado, setFilterAmonestado] = useState(null);
   const [filterOpen, setFilterOpen] = useState(false);
@@ -72,7 +72,7 @@ export default function Amonestados({ theme }) {
   const user = useUser();
   return (
     <HomeStyle filter={filterOpen} sub={subSOpen} subP={subPOpen} theme={theme}>
-      <SidebarAdmin asesor={true} theme={theme} />
+      <SidebarAdmin logo={logo} asesor={true} theme={theme} />
       <div className="home-view">
         <div className="home-view-title">
           <div style={{ display: "flex", flexDirection: "row" }}>
