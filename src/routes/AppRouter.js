@@ -15,6 +15,8 @@ import AddSuggestion from "../views/Asesor/AddSuggestion";
 import AllAsesors from "../views/Asesor/AllAsesors";
 import AsesorDetail from "../views/Asesor/AsesorDetail";
 import AllClients from "../views/Asesor/AllClients";
+import Reports from "../views/Asesor/Reports";
+import IndividualReports from "../views/Asesor/IndividualReports";
 import TicketAsesor from "../views/Asesor/Ticket";
 import Amonestados from "../views/Asesor/Amonestados";
 import AdminRoutes from "../routes/AdminRoutes";
@@ -37,6 +39,12 @@ function AppRouter() {
           exact
           path="/asesores/all-asesors"
           component={AllAsesors}
+        />
+        <AdminRoutes exact path="/asesores/reports" component={Reports} />
+        <AdminRoutes
+          exact
+          path="/asesores/individual-reports"
+          component={IndividualReports}
         />
         <AdminRoutes
           exact

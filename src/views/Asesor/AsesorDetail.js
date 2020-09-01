@@ -119,6 +119,18 @@ export default function AsesorDetail() {
             });
             yearArray.sort();
             setYears(yearArray);
+          } else {
+            let yearItem;
+
+            const yearArray = [];
+
+            yearItem = new Date();
+            yearItem = yearItem.getFullYear();
+            setYear(yearItem);
+            getMonths(yearItem, null);
+
+            yearArray.push(yearItem);
+            setYears(yearArray);
           }
           setLoading(false);
         } else {
@@ -194,42 +206,58 @@ export default function AsesorDetail() {
   };
 
   const getRating = (feedback) => {
-    let rating = 0;
-    for (let i = 0; i < feedback.length; i++) {
-      rating = rating + feedback[i].rating;
-    }
+    if (feedback) {
+      let rating = 0;
+      for (let i = 0; i < feedback.length; i++) {
+        rating = rating + feedback[i].rating;
+      }
 
-    return rating / feedback.length;
+      return rating / feedback.length;
+    } else {
+      return 0;
+    }
   };
 
   const getAnswered = (tickets) => {
-    let answered = 0;
-    var newArray = tickets.filter(function (el) {
-      return el.status == "Answered";
-    });
-    return newArray.length;
+    if (tickets) {
+      let answered = 0;
+      var newArray = tickets.filter(function (el) {
+        return el.status == "Answered";
+      });
+      return newArray.length;
+    } else {
+      return 0;
+    }
   };
 
   const getDelegated = (tickets) => {
-    let answered = 0;
-    var newArray = tickets.filter(function (el) {
-      return el.status == "Delegated";
-    });
-    return newArray.length;
+    if (tickets) {
+      let answered = 0;
+      var newArray = tickets.filter(function (el) {
+        return el.status == "Delegated";
+      });
+      return newArray.length;
+    } else {
+      return 0;
+    }
   };
 
   const getNotAnswered = (tickets) => {
-    let answered = 0;
-    var newArray = tickets.filter(function (el) {
-      return el.status == "Not Answered";
-    });
-    return newArray.length;
+    if (tickets) {
+      let answered = 0;
+      var newArray = tickets.filter(function (el) {
+        return el.status == "Not Answered";
+      });
+      return newArray.length;
+    } else {
+      return 0;
+    }
   };
 
   const user = useUser();
   return (
     <HomeStyle>
-      <SidebarAdmin category={true} />
+      <SidebarAdmin report={true} />
       <div className="home-view">
         <div className="home-view-title">
           <div style={{ display: "flex", flexDirection: "row" }}>
@@ -291,17 +319,19 @@ export default function AsesorDetail() {
                   />
                 </div>
               </div>
-              <div className="feedback-container">
-                {" "}
-                <h1>Feedback</h1>
-                <div className="feedback-container-slider">
-                  <Slider {...settings} style={{ margin: "60px" }}>
-                    {asesor.feedback.map((feedback) => (
-                      <Card feedback={feedback} />
-                    ))}
-                  </Slider>
+              {asesor.feedback ? (
+                <div className="feedback-container">
+                  {" "}
+                  <h1>Feedback</h1>
+                  <div className="feedback-container-slider">
+                    <Slider {...settings} style={{ margin: "60px" }}>
+                      {asesor.feedback.map((feedback) => (
+                        <Card feedback={feedback} />
+                      ))}
+                    </Slider>
+                  </div>
                 </div>
-              </div>
+              ) : null}
             </>
           ) : null}{" "}
         </div>
@@ -316,18 +346,19 @@ const HomeStyle = styled.div`
   .home-view {
     width: 70%;
     margin-left: 30%;
+    height: 500px;
 
     .home-view-title {
-      width: 70%;
-      position: fixed;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      height: 80px;
-      background: #4a3f35;
-      border-bottom: 1px solid #2f2519;
+        width: 70%;
+        position: fixed;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        height: 80px;
+        background: #4a3f35;
+        border-bottom: 1px solid #2f2519;
       h1 {
         font-size: 22px;
         font-family: "Raleway", sans-serif;
@@ -351,12 +382,13 @@ const HomeStyle = styled.div`
       }
     }
     .container {
-      margin-top: 80px;
-      width: 70vw;
-      height: auto;
-      display: flex;
-      flex-direction: column;
-
+        margin-top: 80px;
+        width: 70vw;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      max-width: none;
       .feedback-container {
         width: 100%;
         height: auto;
@@ -410,7 +442,7 @@ const HomeStyle = styled.div`
 
           .statistics-avarage-item {
             background: #2f2519;
-            width: 30%;
+            width: 200px;
             height: 100%;
             margin-right: 10px;
             border: 2px solid #2f2519;
@@ -454,33 +486,140 @@ const HomeStyle = styled.div`
           }
         }
         .statistics-graph {
-          width: 35%;
+          width: 300px;
           height: 100%;
         }
       }
+    }
     }
   }
   @media only screen and (max-width: 1100px) {
     flex-direction: column;
     .home-view {
-      width: 100%;
-      margin-top: 90px;
+      width: 100vw;
       margin-left: 0;
 
       .home-view-title {
         width: 100%;
         height: 80px;
+        margin-top: 90px;
       }
       .container {
-        margin-top: 80px;
+        margin-top:170px;
         width: 100vw;
-        height: auto;
-        padding: 0;
         display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
+        flex-direction: column;
         justify-content: center;
-        align-items: center;
+      }
+    }
+  }
+  @media only screen and (max-width: 800px) {
+    flex-direction: column;
+    .home-view {
+      width: 100vw;
+      margin-left: 0;
+
+      .home-view-title {
+        width: 100%;
+        height: 80px;
+        margin-top: 90px;
+      }
+      .container {
+        margin-top:170px;
+        width: 100vw;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        .statistics {
+            width: 100%;
+            height: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content:center;
+            align-items:center;
+            margin-top: 20px;
+            .statistics-graph {
+                width: 300px;
+                height: 300px;
+              }
+            .statistics-avarage {
+                width: 100%;
+                height: 300px;
+                padding: 10px;
+                padding-right: 0;
+                display: flex;
+                flex-direction: row;
+                justify-content:center;
+                align-items:center;
+      
+                .statistics-avarage-item {
+                  background: #2f2519;
+                  width: 200px;
+                  height: 100%;
+                  margin-right: 10px;
+                  border: 2px solid #2f2519;
+                  border-radius: 5px;
+                }
+            }      
+        }
+      }
+    }
+  }
+
+  @media only screen and (max-width: 600px) {
+    flex-direction: column;
+    .home-view {
+      width: 100vw;
+      margin-left: 0;
+
+      .home-view-title {
+        width: 100%;
+        height: 80px;
+        margin-top: 90px;
+      }
+      .container {
+        margin-top:170px;
+        width: 100vw;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        .statistics {
+            width: 100%;
+            height: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content:center;
+            align-items:center;
+            margin-top: 20px;
+            .statistics-graph {
+                width: 300px;
+                height: 300px;
+              }
+            .statistics-avarage {
+                width: 100%;
+                height: auto;
+                padding: 10px;
+                padding-right: 0;
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                justify-content:center;
+                align-items:center;
+      
+                .statistics-avarage-item {
+                  background: #2f2519;
+                  width: 200px;
+                  height: 300px;
+                  margin-right: 10px;
+                  border: 2px solid #2f2519;
+                  border-radius: 5px;
+                  margin-bottom:15px;
+                }
+            }      
+        }
       }
     }
   }

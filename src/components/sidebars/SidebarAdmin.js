@@ -313,7 +313,7 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
 
               <ul className="nav-links2">
                 <NavLink to="/asesores/admonished-asesors" className="link-1">
-                  <h3>Admonished Asesors</h3>
+                  <h3>Reprimanded Asesors</h3>
                 </NavLink>
               </ul>
             </div>
@@ -348,7 +348,7 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
                 </ul>
                 <ul className="nav-links2">
                   <NavLink to="/asesores/admonished-asesors" className="link-1">
-                    <h3>Admonished Asesors</h3>
+                    <h3>Reprimanded Asesors</h3>
                   </NavLink>
                 </ul>
               </div>
@@ -432,6 +432,38 @@ export default function SidebarAdmin({ ticket, asesor, category, report }) {
                   >
                     <h3>Suggestion</h3>
                   </li>
+                </ul>
+              </div>
+            ) : null}
+          </>
+        ) : null}
+        {reports ? (
+          <>
+            <div className="navbar-especific">
+              <div className="navbar-title">
+                <h2>Reports</h2>
+              </div>
+              <ul className="nav-links">
+                <NavLink to="/asesores/reports" className="link-1">
+                  <h3>General Reports</h3>
+                </NavLink>
+                <NavLink to="/asesores/individual-reports" className="link-1">
+                  <h3>Individual Reports</h3>
+                </NavLink>
+              </ul>
+            </div>
+            {open ? (
+              <div className="navbar-especific-phone">
+                <div className="navbar-title">
+                  <h2>Reports</h2>
+                </div>
+                <ul className="nav-links">
+                  <NavLink to="/asesores/reports" className="link-1">
+                    <h3>General Reports</h3>
+                  </NavLink>
+                  <NavLink to="/asesores/individual-reports" className="link-1">
+                    <h3>Individual Reports</h3>
+                  </NavLink>
                 </ul>
               </div>
             ) : null}

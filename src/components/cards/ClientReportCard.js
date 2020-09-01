@@ -29,33 +29,15 @@ export default function ClientsCard({
   return (
     <Card color={color} color2={color2}>
       <ul className="ticket-view">
-        <li className="data">
+        <NavLink to={path + usuario.id} className="data">
           <h2>{usuario.name}</h2>
-        </li>
-        <li className="data">
+        </NavLink>
+        <NavLink to={path + usuario.id} className="data">
           <h2>{usuario.lastName}</h2>
-        </li>
-        <li className="data-1">
+        </NavLink>
+        <NavLink to={path + usuario.id} className="data-1">
           <h2 style={{ color: "#fa7d09" }}>{usuario.email}</h2>
-        </li>
-
-        <li className="data-2">
-          {usuario.available ? (
-            <AiFillMinusCircle
-              onClick={() => {
-                changeAvailable(false);
-              }}
-              className="icon"
-            />
-          ) : (
-            <IoIosAddCircle
-              onClick={() => {
-                changeAvailable(true);
-              }}
-              className="icon"
-            />
-          )}
-        </li>
+        </NavLink>
       </ul>
     </Card>
   );

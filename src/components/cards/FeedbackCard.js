@@ -164,4 +164,11 @@ const Card = styled.div`
     }
   }
 }
+@media only screen and (max-width: 500px) {
+width:70vw;
+  .card-content {
+    width: 70vw;
+  }
+
+}
 `;
