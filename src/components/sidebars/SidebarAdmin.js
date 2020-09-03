@@ -66,12 +66,12 @@ export default function SidebarAdmin({
 
   const logout = async () => {
     try {
-      await firebase.auth().signOut();
-
-      setUser({});
-
       sessionStorage.removeItem("user");
       Cookies.remove("user");
+      await firebase.auth().signOut();
+
+      setUser(null);
+
     } catch (error) {
       console.log(error);
     }

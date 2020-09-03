@@ -26,6 +26,8 @@ import AdminRoutes from "../routes/AdminRoutes";
 import AsesorRoutes from "../routes/AsesorRoutes";
 import InviteRoutes from "../routes/InviteRoutes";
 import ForgotPassword from "../views/Asesor/ForgotPassword";
+import AuthRoutes from "./AuthRoutes";
+
 
 function AppRouter() {
   const { themes, setTheme } = useContext(ThemeContext);
@@ -90,7 +92,7 @@ function AppRouter() {
               component={() => <SignUpAsesor theme={themes} logo={logos} />}
             />
 
-            <Route
+            <AuthRoutes
               exact
               path="/login"
               component={() => <LoginAsesores theme={themes} logo={logos} />}

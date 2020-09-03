@@ -40,7 +40,7 @@ exports.addMessage = functions.https.onRequest(async (req, res) => {
                       const prueba = mail.subject.split(": ");
                       const flag = prueba.includes("Response of your ticket with id")
                     
-                      const mensajePrueba = mail.text.split("On ");
+                    
                       const {value} = mail.from
                       const senderEmail= value[0].address 
 
@@ -48,24 +48,29 @@ exports.addMessage = functions.https.onRequest(async (req, res) => {
 
                       if (flag == true) {
 
-                        console.log(mail.text);
-                      console.log(mensajePrueba[0]) 
-                      console.log(mensajePrueba);
+                        // console.log(mail.textAsHtml);
+                        var mySubString = mail.textAsHtml.substring(
+                          mail.textAsHtml.indexOf("<p>") + 3, 
+                          mail.textAsHtml.indexOf("</p>")
+                      );
+                        console.log(mySubString);
+                      // console.log(mensajePrueba[0]) 
+                      // console.log(mensajePrueba);
 
-                      console.log(flag);
-                      console.log(prueba[2])
-                      console.log(prueba);
+                      // console.log(flag);
+                      // console.log(prueba[2])
+                      // console.log(prueba);
 
                         const usuarioData = await admin.firestore().collection('tickets').where('usuario.email','==',senderEmail.trim()).limit(1).get()
 
 
                 const usuario = usuarioData.docs[0].data().usuario;
 
-                console.log(usuario);
+                // console.log(usuario);
 
                       await admin.firestore().collection('messages').add({
-                        content: mensajePrueba[0],
-                        contentHtml: `<p>${mensajePrueba[0]}</p>`,
+                        content: mySubString,
+                        contentHtml: `<p>${mySubString}</p>`,
                         date: new Date(),
                         files:{},
                         sender: usuario,
