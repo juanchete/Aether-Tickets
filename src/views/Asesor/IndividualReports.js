@@ -83,12 +83,12 @@ export default function AllAsesors({ theme, logo }) {
   const user = useUser();
   return (
     <HomeStyle filter={filterOpen} sub={subSOpen} subP={subPOpen} theme={theme}>
-      <SidebarAdmin logo={logo} asesor={true} theme={theme} />
+      <SidebarAdmin logo={logo} report={true} theme={theme} />
       <div className="home-view">
         <div className="home-view-title">
           <div style={{ display: "flex", flexDirection: "row" }}>
-            <h2>All</h2>
-            <h1>Asesors</h1>
+            <h2>Individual</h2>
+            <h1>Reports</h1>
           </div>
         </div>
         <div className="filters">
@@ -216,7 +216,8 @@ const HomeStyle = styled.div`
         letter-spacing: 0.2em;
         font-weight: 300;
         font-style: normal;
-        color: #fa7d09;
+        color: ${(props) =>
+          props.theme ? props.theme.primaryColor : "#fa7d09"};
         text-transform: uppercase;
         width: 100%;
         margin-right: 5px;
