@@ -17,14 +17,17 @@ export default function FeedbackCard({ color, color2, feedback, theme }) {
     setLoading(true);
 
     const db = firebase.firestore();
+    console.log(feedback);
     if (feedback) {
-      let docRef = db.collection("usuarios").doc(feedback.usuario);
-      docRef.get().then(function (doc) {
-        setUsuario(doc.data());
-        setLoading(false);
-      });
+      if (feedback.usuario) {
+        let docRef = db.collection("usuarios").doc(feedback.usuario);
+        docRef.get().then(function (doc) {
+          setUsuario(doc.data());
+          setLoading(false);
+        });
+      }
     }
-  }, []);
+  }, [feedback]);
 
   return (
     <>
@@ -70,15 +73,17 @@ export default function FeedbackCard({ color, color2, feedback, theme }) {
 const Card = styled.div`
   width: 330px;
   height: 220px;
-  background: ${(props) => (props.color ? props.color : "#2f2519")};
+  background: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
   margin: 10px;
-  border: 1px solid ${(props) => (props.color ? props.color : "#2f2519")};
+  border: 1px solid ${(props) =>
+    props.theme ? props.theme.thirdColor : "#2f2519"};
   border-radius: 5px;
 
   .card-title {
     width: 100%;
     height: 40px;
-    background: ${(props) => (props.color ? props.color : "#2f2519")};
+    background: ${(props) =>
+      props.theme ? props.theme.thirdColor : "#2f2519"};
     display: flex;
     align-items: flex-end;
 
@@ -147,7 +152,8 @@ const Card = styled.div`
     justify-content: center;
 
     .star {
-      color: #ffa7d09 !important;
+      color:${(props) =>
+        props.theme ? props.theme.primaryColor : "#ffa7d09"} !important;
     }
     h2 {
       font-size: 10px;
