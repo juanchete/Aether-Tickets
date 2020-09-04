@@ -28,12 +28,16 @@ export default function Home({ theme, logo }) {
     const db = firebase.firestore();
     return db
       .collection("tickets")
+      .orderBy("priority", "desc")
       .orderBy("createdAt", "desc")
       .onSnapshot((snapshot) => {
-        const ticketData = [];
+        let ticketData = [];
         snapshot.forEach((doc) =>
           ticketData.push({ ...doc.data(), id: doc.id })
         );
+        ticketData = ticketData.filter(function (el) {
+          return el.status != "Solved" && el.status != "Unsolved";
+        });
         console.log(ticketData); // <------
         setTickets(ticketData);
         setLoading(false);
@@ -46,12 +50,16 @@ export default function Home({ theme, logo }) {
       .collection("tickets")
       .where("priority", "==", filterP)
       .where("status", "==", filterS)
+      .orderBy("priority", "desc")
       .orderBy("createdAt", "desc")
       .onSnapshot((snapshot) => {
-        const ticketData = [];
+        let ticketData = [];
         snapshot.forEach((doc) =>
           ticketData.push({ ...doc.data(), id: doc.id })
         );
+        ticketData = ticketData.filter(function (el) {
+          return el.status != "Solved" && el.status != "Unsolved";
+        });
         console.log(ticketData); // <------
         setTickets(ticketData);
         setLoading(false);
@@ -66,12 +74,14 @@ export default function Home({ theme, logo }) {
       return db
         .collection("tickets")
         .where("status", "==", filter)
+        .orderBy("priority", "desc")
         .orderBy("createdAt", "desc")
         .onSnapshot((snapshot) => {
-          const ticketData = [];
+          let ticketData = [];
           snapshot.forEach((doc) =>
             ticketData.push({ ...doc.data(), id: doc.id })
           );
+
           console.log(ticketData); // <------
           setTickets(ticketData);
           setLoading(false);
@@ -83,12 +93,16 @@ export default function Home({ theme, logo }) {
       return db
         .collection("tickets")
         .where("priority", "==", filter)
+        .orderBy("priority", "desc")
         .orderBy("createdAt", "desc")
         .onSnapshot((snapshot) => {
-          const ticketData = [];
+          let ticketData = [];
           snapshot.forEach((doc) =>
             ticketData.push({ ...doc.data(), id: doc.id })
           );
+          ticketData = ticketData.filter(function (el) {
+            return el.status != "Solved" && el.status != "Unsolved";
+          });
           console.log(ticketData); // <------
           setTickets(ticketData);
           setLoading(false);
@@ -98,12 +112,16 @@ export default function Home({ theme, logo }) {
       const db = firebase.firestore();
       return db
         .collection("tickets")
+        .orderBy("priority", "desc")
         .orderBy("createdAt", "desc")
         .onSnapshot((snapshot) => {
-          const ticketData = [];
+          let ticketData = [];
           snapshot.forEach((doc) =>
             ticketData.push({ ...doc.data(), id: doc.id })
           );
+          ticketData = ticketData.filter(function (el) {
+            return el.status != "Solved" && el.status != "Unsolved";
+          });
           console.log(ticketData); // <------
           setTickets(ticketData);
           setLoading(false);
@@ -297,17 +315,7 @@ export default function Home({ theme, logo }) {
           >
             <h2>Urgent</h2>
           </li>
-          <li
-            className="filter-sub-item"
-            onClick={() => {
-              setFilterPriority("High");
-              setFilter("priority", "High");
-              setSubPOpen(false);
-              setFilterOpen(false);
-            }}
-          >
-            <h2>High</h2>
-          </li>
+
           <li
             className="filter-sub-item"
             onClick={() => {
