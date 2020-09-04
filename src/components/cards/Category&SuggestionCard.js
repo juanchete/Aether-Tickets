@@ -51,17 +51,16 @@ export default function CategoriySuggestionCard({
         .update({
           available: value,
         })
-        .then(async (docRef) => {
+        .then(function (doc) {
           db.collection("suggestions")
             .where("category", "==", category.id)
             .onSnapshot((snapshot) => {
-              const suggestionsData = [];
-              snapshot.forEach(async (doc) => {
-                console.log(doc.id);
-                db.collection("suggestions").doc(doc.id).update({
+              const amonestadoData = [];
+              snapshot.forEach((doc2) =>
+                db.collection("suggestions").doc(doc2.id).update({
                   available: value,
-                });
-              });
+                })
+              );
             });
         });
     } catch (error) {}
