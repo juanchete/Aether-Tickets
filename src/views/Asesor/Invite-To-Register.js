@@ -30,7 +30,7 @@ export default function InviteToRegister({ theme }) {
       var actionCodeSettings = {
         // URL you want to redirect back to. The domain (www.example.com) for this
         // URL must be whitelisted in the Firebase Console.
-        url: "http://localhost:3000/sign-up-asesores",
+        url: "https://aether-ticket-support.web.app/sign-up-asesores",
         // This must be true.
         handleCodeInApp: true,
       };

@@ -377,6 +377,7 @@ export default function Home({ theme, logo }) {
 const HomeStyle = styled.div`
   width: 100vw;
   display: flex;
+  -ms-overflow
   flex-direction: row;
   .home-view {
     width: 70%;
@@ -393,6 +394,11 @@ const HomeStyle = styled.div`
       width: 100%;
       height: auto;
       margin-top: 170px;
+      -ms-overflow-style:none;
+      scrollbar-width: none;
+    }
+    .content::-webkit-scrollbar {
+      display:none;
     }
     .home-view-title {
       width: 70%;
