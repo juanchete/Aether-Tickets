@@ -1,118 +1,86 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "firebase";
 import { useUser, useFirebaseApp } from "reactfire";
 import styled from "styled-components";
-import SidebarAdmin from "../../components/sidebars/SidebarAdmin";
-import TicketCard from "../../components/cards/UserCard";
-import Spinner from "../../components/Spinner";
 import { UserContext } from "../../CreateContext";
+import SidebarAdmin from "../../components/sidebars/SidebarAdmin";
+import TicketCard from "../../components/cards/TicketCard";
 
-export default function TicketsByStatus({ filter, logo, theme }) {
+export default function TicketsByStatus({ filter, theme, logo }) {
   const { user, setUser } = useContext(UserContext);
   const firebase = useFirebaseApp();
   const [tickets, setTickets] = useState();
-  const [asesor, setAsesor] = useState(null);
   const [loading, setLoading] = useState(true);
   const db = firebase.firestore();
-  const [open, setOpen] = React.useState(false);
-
-  const handleOpen = () => {
-    setOpen(!open);
+  const logout = async () => {
+    await firebase.auth().signOut();
   };
 
   useEffect(() => {
     let lastWeek = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    setLoading(true);
 
-    console.log(lastWeek);
-    if (user) {
-      setLoading(true);
-      const db = firebase.firestore();
-      let docRef = db.collection("asesores").doc(user.id);
-      docRef
-        .get()
-        .then(function (doc) {
-          if (doc.exists) {
-            db.collection("tickets")
-              .where("asesor", "==", user.id)
-              .where("createdAt", ">=", lastWeek)
-              .orderBy("createdAt", "desc")
-              .onSnapshot((snapshot) => {
-                const ticketData = [];
-                snapshot.forEach((doc) =>
-                  ticketData.push({ ...doc.data(), id: doc.id })
-                );
-                setTickets(ticketData);
-                console.log(ticketData);
-                setLoading(false);
-              });
-          } else {
-            // doc.data() will be undefined in this case
-            console.log("No such document!");
-            setLoading(false);
-          }
-        })
-        .catch(function (error) {
-          console.log("Error getting document:", error);
-        });
-    }
+    const db = firebase.firestore();
+    return db
+      .collection("tickets")
+      .where("asesor", "==", user.id)
+      .where("createdAt", ">=", lastWeek)
+      .orderBy("createdAt", "desc")
+      .onSnapshot((snapshot) => {
+        const ticketData = [];
+        snapshot.forEach((doc) =>
+          ticketData.push({ ...doc.data(), id: doc.id })
+        );
+        console.log(ticketData); // <------
+        setTickets(ticketData);
+        setLoading(false);
+      });
   }, [filter]);
 
   return (
-    <>
-      <HomeStyle open={open} theme={theme}>
-        <SidebarAdmin
-          logo={logo}
-          ticket={true}
-          open={open}
-          handleOpen={handleOpen}
-          theme={theme}
-        />
-        <div className="home-view">
-          <div className="home-view-title">
-            <div style={{ display: "flex", flexDirection: "row" }}>
-              <h2>Last </h2>
-              <h1>week's</h1>
-            </div>
-          </div>
-
-          <ul className="labels">
-            <li className="label-1">
-              <h2>Requester</h2>
-            </li>
-            <li className="label">
-              <h2>Subject</h2>
-            </li>
-            <li className="label">
-              <h2>Assigned To</h2>
-            </li>
-            <li className="label">
-              <h2>Priority</h2>
-            </li>
-            <li className="label-1">
-              <h2>Status</h2>
-            </li>
-            <li className="label-1">
-              <h2>Created At</h2>
-            </li>
-
-            <li className="label-2"></li>
-          </ul>
-          <div className="content">
-            {!loading ? (
-              <>
-                {tickets.map((ticket) => (
-                  <TicketCard theme={theme} key={ticket.id} ticket={ticket} />
-                ))}
-              </>
-            ) : (
-              <div className="PageLoading">
-                <Spinner color={theme ? theme.primaryCColor : "#ff4301"} />
-              </div>
-            )}
+    <HomeStyle theme={theme}>
+      <SidebarAdmin logo={logo} ticket={true} theme={theme} />
+      <div className="home-view">
+        <div className="home-view-title">
+          <div style={{ display: "flex", flexDirection: "row" }}>
+            <h2>Last</h2>
+            <h1>Week's</h1>
           </div>
         </div>
-      </HomeStyle>
-    </>
+
+        <ul className="labels">
+          <li className="label-1">
+            <h2>Requester</h2>
+          </li>
+          <li className="label">
+            <h2>Subject</h2>
+          </li>
+          <li className="label">
+            <h2>Assigned To</h2>
+          </li>
+          <li className="label">
+            <h2>Priority</h2>
+          </li>
+          <li className="label-1">
+            <h2>Status</h2>
+          </li>
+          <li className="label-1">
+            <h2>Created At</h2>
+          </li>
+        </ul>
+        {!loading ? (
+          <>
+            {tickets.map((ticket) => (
+              <TicketCard
+                theme={theme}
+                ticket={ticket}
+                color={theme ? theme.primaryColor : "#fa7d09"}
+              />
+            ))}
+          </>
+        ) : null}
+      </div>
+    </HomeStyle>
   );
 }
 const HomeStyle = styled.div`
@@ -122,19 +90,7 @@ const HomeStyle = styled.div`
   .home-view {
     width: 70%;
     margin-left: 30%;
-    .PageLoading {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100%;
-      width: 100%;
-      margin-top: 140px;
-    }
-    .content {
-      width: 100%;
-      height: auto;
-      margin-top: 120px;
-    }
+
     .home-view-title {
       width: 70%;
       position: fixed;
@@ -165,7 +121,7 @@ const HomeStyle = styled.div`
         font-weight: 300;
         font-style: normal;
         color: ${(props) =>
-          props.theme ? props.theme.primaryCColor : "#ff4301"};
+          props.theme ? props.theme.primaryColor : "#fa7d09"};
         text-transform: uppercase;
         width: 100%;
         margin-right: 5px;
@@ -178,28 +134,15 @@ const HomeStyle = styled.div`
       border-bottom: 1px solid
         ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
       display: flex;
-      position: fixed;
       flex-direction: row;
       align-items: center;
       padding-left: 10px;
       padding-right: 10px;
       margin-top: 80px;
-      background: white;
-
-      .label {
-        width: 15%;
-        h2 {
-          font-size: 12px;
-          font-family: "Raleway", sans-serif;
-          letter-spacing: 0.2em;
-          font-weight: 500;
-          font-style: normal;
-          color: ${(props) =>
-            props.theme ? props.theme.thirdColor : "#2f2519"};
-          text-transform: uppercase;
-          margin-right: 5px;
-        }
+      .label-2 {
+        width: 10%;
       }
+
       .label-1 {
         width: 15%;
         h2 {
@@ -214,8 +157,20 @@ const HomeStyle = styled.div`
           margin-right: 5px;
         }
       }
-      .label-2 {
-        width: 10%;
+      .label {
+        width: 15%;
+        h2 {
+          font-size: 12px;
+          font-family: "Raleway", sans-serif;
+          letter-spacing: 0.2em;
+          font-weight: 500;
+          font-style: normal;
+          color: ${(props) =>
+            props.theme ? props.theme.thirdColor : "#2f2519"};
+          text-transform: uppercase;
+          width: 100%;
+          margin-right: 5px;
+        }
       }
     }
   }
@@ -225,20 +180,21 @@ const HomeStyle = styled.div`
       width: 100%;
       margin-left: 0;
       .PageLoading {
-        margin-top: 250px;
+        margin-top: 300px;
       }
       .content {
         width: 100%;
         height: auto;
-        margin-top: 210px;
+        margin-top: 100px;
       }
       .home-view-title {
         height: 80px;
         margin-top: 90px;
         width: 100%;
       }
+
       .labels {
-        margin-top: 170px;
+        margin-top: 175px;
         width: 100vw;
         .label {
           width: 33.333%;
