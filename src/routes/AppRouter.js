@@ -9,6 +9,9 @@ import LoginAsesores from "../views/Asesor/Login";
 import Categories from "../views/Asesor/Categories";
 import Category from "../views/Asesor/Category";
 import Suggestions from "../views/Asesor/Suggestions";
+import ShowTicketsWeek from "../views/Asesor/ShowTicketsLastWeek";
+import ShowTicketsOpen from "../views/Asesor/ShowOpenTickets";
+import ShowTicketsToHandle from "../views/Asesor/ShowTicketsToHandle";
 import ShowTickets from "../views/Asesor/ShowTicketsByStatus";
 import Home from "../views/Asesor/Home";
 import ChangePassword from "../views/Shared/change-password";
@@ -27,7 +30,6 @@ import AsesorRoutes from "../routes/AsesorRoutes";
 import InviteRoutes from "../routes/InviteRoutes";
 import ForgotPassword from "../views/Asesor/ForgotPassword";
 import AuthRoutes from "./AuthRoutes";
-
 
 function AppRouter() {
   const { themes, setTheme } = useContext(ThemeContext);
@@ -53,6 +55,7 @@ function AppRouter() {
               path="/settings"
               component={() => <Settings theme={themes} logo={logos} />}
             />
+
             <AdminRoutes
               exact
               path="/asesores/all-asesors"
@@ -108,6 +111,23 @@ function AppRouter() {
               path="/tickets/pending"
               component={() => (
                 <ShowTickets filter="Pending" theme={themes} logo={logos} />
+              )}
+            />
+            <AsesorRoutes
+              exact
+              path="/mytickets/last-week"
+              component={() => <ShowTicketsWeek theme={themes} logo={logos} />}
+            />
+            <AsesorRoutes
+              exact
+              path="/mytickets/open"
+              component={() => <ShowTicketsOpen theme={themes} logo={logos} />}
+            />
+            <AsesorRoutes
+              exact
+              path="/mytickets/to-handle"
+              component={() => (
+                <ShowTicketsToHandle theme={themes} logo={logos} />
               )}
             />
             <AsesorRoutes

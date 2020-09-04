@@ -119,7 +119,7 @@ export default function TicketAsesor({ theme, logo }) {
       fieldRef.current.scrollIntoView({ behavior: "smooth" });
     }
     setLoading(false);
-  }, []);
+  }, [messages]);
 
   const sendMessage = async (e) => {
     try {
@@ -577,6 +577,13 @@ export default function TicketAsesor({ theme, logo }) {
                             <div className="button-container-status">
                               <button
                                 type="button"
+                                disabled={
+                                  ticket.status === "Solved" ||
+                                  ticket.status === "Unsolved" ||
+                                  ticket.asesor != user.id
+                                    ? true
+                                    : false
+                                }
                                 className="status-button"
                                 onClick={assumeTicket}
                               >
@@ -590,6 +597,13 @@ export default function TicketAsesor({ theme, logo }) {
                               <button
                                 type="button"
                                 className="status-button"
+                                disabled={
+                                  ticket.status === "Solved" ||
+                                  ticket.status === "Unsolved" ||
+                                  ticket.asesor != user.id
+                                    ? true
+                                    : false
+                                }
                                 onClick={() => {
                                   showFeedback(true);
                                 }}

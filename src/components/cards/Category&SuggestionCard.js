@@ -45,9 +45,25 @@ export default function CategoriySuggestionCard({
 
   const changeAvailable = async (value) => {
     try {
-      await db.collection("categories").doc(category.id).update({
-        available: value,
-      });
+      await db
+        .collection("categories")
+        .doc(category.id)
+        .update({
+          available: value,
+        })
+        .then(async (docRef) => {
+          db.collection("suggestions")
+            .where("category", "==", category.id)
+            .onSnapshot((snapshot) => {
+              const suggestionsData = [];
+              snapshot.forEach(async (doc) => {
+                console.log(doc.id);
+                db.collection("suggestions").doc(doc.id).update({
+                  available: value,
+                });
+              });
+            });
+        });
     } catch (error) {}
   };
   return (

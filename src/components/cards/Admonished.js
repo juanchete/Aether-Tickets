@@ -112,6 +112,9 @@ const Card = styled.div`
     }
     .data-2 {
       width: 10%;
+      overflow: hidden;
+      padding-left: 5px;
+      padding-right: 5px;
       .icon {
         width: 25px;
         height: 25px;
@@ -121,6 +124,9 @@ const Card = styled.div`
     }
     .data {
       width: 16.66%;
+      overflow: hidden;
+      padding-left: 5px;
+      padding-right: 5px;
 
       h2 {
         font-size: 14px;
@@ -164,6 +170,9 @@ const Card = styled.div`
     }
     .data-1 {
       width: 16.66%;
+      overflow: hidden;
+      padding-left: 5px;
+      padding-right: 5px;
 
       h2 {
         font-size: 14px;

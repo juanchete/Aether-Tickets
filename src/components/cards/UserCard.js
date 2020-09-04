@@ -88,7 +88,7 @@ export default function TicketCard({ color, color2, ticket, theme }) {
                 <Tags title={ticket.priority} color="#EE220C" theme={theme} />
               </NavLink>
               <NavLink className="data-1" to={path + ticket.id}>
-                <Tags title={ticket.status} color="#29E2F3" />
+                <Tags title={ticket.status} color="#29E2F3" theme={theme} />
               </NavLink>
               <NavLink className="data-1" to={path + ticket.id}>
                 <h2>CREATED AT</h2>
@@ -119,9 +119,15 @@ const Card = styled.div`
     list-style: none;
     .data-2 {
       width: 10%;
+      overflow: hidden;
+      padding-left: 5px;
+      padding-right: 5px;
     }
     .data {
       width: 16.66%;
+      overflow: hidden;
+      padding-left: 5px;
+      padding-right: 5px;
 
       h2 {
         font-size: 14px;
@@ -166,6 +172,9 @@ const Card = styled.div`
     }
     .data-1 {
       width: 16.66%;
+      overflow: hidden;
+      padding-left: 5px;
+      padding-right: 5px;
 
       h2 {
         font-size: 14px;

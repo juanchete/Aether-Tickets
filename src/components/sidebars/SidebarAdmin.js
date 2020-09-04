@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import styled from "styled-components";
 import { useUser, useFirebaseApp } from "reactfire";
 import { FaTicketAlt } from "react-icons/fa";
@@ -7,6 +7,7 @@ import { FaUserAlt } from "react-icons/fa";
 import { FaEdit } from "react-icons/fa";
 import { FaChartBar } from "react-icons/fa";
 import { IoMdSettings } from "react-icons/io";
+import Spinner from "../../components/Spinner";
 import AddCategory from "../../views/Asesor/AddCategory";
 import AddSuggestion from "../../views/Asesor/AddSuggestion";
 import { UserContext } from "../../CreateContext";
@@ -25,6 +26,12 @@ export default function SidebarAdmin({
 }) {
   const [categoryShow, setCategoryShow] = React.useState(false);
   const [suggestionShow, setSuggestionShow] = React.useState(false);
+  const [categoriesSide, setCategoriesSide] = React.useState();
+  const [suggestionsSide, setSuggestionsSide] = React.useState();
+  const [asesorSide, setAsesorSide] = React.useState();
+  const [clientsSide, setClientsSide] = React.useState();
+  const [ticketsSide, setTicketsSide] = React.useState();
+  const [loading, setLoading] = React.useState(true);
   const [tickets, setTickets] = React.useState(ticket ? true : false);
   const [asesors, setAsesors] = React.useState(asesor ? true : false);
   const [settings, setSettings] = React.useState(setting ? true : false);
@@ -71,11 +78,57 @@ export default function SidebarAdmin({
       await firebase.auth().signOut();
 
       setUser(null);
-
     } catch (error) {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    const db = firebase.firestore();
+
+    db.collection("tickets").onSnapshot((snapshot) => {
+      const ticketsData = [];
+      snapshot.forEach((doc) =>
+        ticketsData.push({ ...doc.data(), id: doc.id })
+      );
+      console.log(ticketsData); // <------
+      setTicketsSide(ticketsData);
+    });
+
+    db.collection("categories").onSnapshot((snapshot) => {
+      const categoriesData = [];
+      snapshot.forEach((doc) =>
+        categoriesData.push({ ...doc.data(), id: doc.id })
+      );
+      console.log(categoriesData); // <------
+      setCategoriesSide(categoriesData);
+    });
+    db.collection("suggestions").onSnapshot((snapshot) => {
+      const suggestionsData = [];
+      snapshot.forEach((doc) =>
+        suggestionsData.push({ ...doc.data(), id: doc.id })
+      );
+      console.log(suggestionsData); // <------
+      setSuggestionsSide(suggestionsData);
+    });
+    db.collection("usuarios").onSnapshot((snapshot) => {
+      const clientsData = [];
+      snapshot.forEach((doc) =>
+        clientsData.push({ ...doc.data(), id: doc.id })
+      );
+      console.log(clientsData); // <------
+      setClientsSide(clientsData);
+    });
+    db.collection("asesores").onSnapshot((snapshot) => {
+      const asesoresData = [];
+      snapshot.forEach((doc) =>
+        asesoresData.push({ ...doc.data(), id: doc.id })
+      );
+      console.log(asesoresData); // <------
+      setAsesorSide(asesoresData);
+    });
+    setLoading(false);
+  }, [user]);
 
   const showCategory = (e) => {
     setCategoryShow(!categoryShow);
@@ -84,533 +137,646 @@ export default function SidebarAdmin({
     setSuggestionShow(!suggestionShow);
   };
 
+  const allTickets = (tickets) => {
+    if (tickets) {
+      var newArray = tickets.filter(function (el) {
+        return el.status != "Solved" && el.status != "Unsolved";
+      });
+      if (newArray) {
+        return newArray.length;
+      } else {
+        return 0;
+      }
+    } else {
+      return 0;
+    }
+  };
+
+  const allCategories = (categories) => {
+    if (categories) {
+      return categories.length;
+    } else {
+      return 0;
+    }
+  };
+
+  const allSuggestions = (suggestions) => {
+    if (suggestions) {
+      return suggestions.length;
+    } else {
+      return 0;
+    }
+  };
+
+  const allAsesores = (asesors) => {
+    if (asesors) {
+      return asesors.length;
+    } else {
+      return 0;
+    }
+  };
+
+  const allClientes = (clients) => {
+    if (clients) {
+      return clients.length;
+    } else {
+      return 0;
+    }
+  };
+
+  const allOpenTickets = (tickets) => {
+    if (tickets) {
+      var newArray = tickets.filter(function (el) {
+        return el.status === "Open" && el.asesor === user.id;
+      });
+      if (newArray) {
+        return newArray.length;
+      } else {
+        return 0;
+      }
+    } else {
+      return 0;
+    }
+  };
+
+  const allTicketsToHandle = (tickets) => {
+    if (tickets) {
+      var newArray = tickets.filter(function (el) {
+        return (
+          el.status != "Solved" &&
+          el.status != "Unsolved" &&
+          el.asesor === user.id
+        );
+      });
+      if (newArray) {
+        return newArray.length;
+      } else {
+        return 0;
+      }
+    } else {
+      return 0;
+    }
+  };
+
   return (
     <>
-      <AddCategory
-        theme={theme}
-        show={categoryShow}
-        showCategory={showCategory}
-      />
-      <AddSuggestion
-        theme={theme}
-        show={suggestionShow}
-        showSuggestion={showSuggestion}
-      />
-      <Sidebar categories={category} theme={theme}>
-        {renderRedirect()}
-        {renderRedirectPassword()}
-        {renderRedirectAllAsessors()}
-        {renderRedirectAllUsers()}
-        <div className="navbar">
-          <ul className="utilities">
-            <li className="utilities-item">
-              {logo ? <img className="photo" src={logo.logoImage} /> : null}
-            </li>
-            <li
-              className="utilities-item"
-              onClick={(event) => {
-                setAsesors(false);
-                setCategories(false);
-                setSettings(false);
-                setCurrentUser(false);
-                setReports(false);
-                setTickets(true);
-                setOpen(!open);
-              }}
-            >
-              <FaTicketAlt className="icon" />
-              <h4>Tickets</h4>
-            </li>
-            {user.role === "admin" ? (
-              <li
-                className="utilities-item"
-                onClick={(event) => {
-                  setTickets(false);
-                  setCategories(false);
-                  setSettings(false);
-                  setCurrentUser(false);
-                  setAsesors(true);
-                  setReports(false);
-                  setOpen(!open);
-                }}
-              >
-                <FaUsers className="icon" />
-                <h4>Asesors</h4>
-              </li>
-            ) : null}
-            <li
-              className="utilities-item"
-              onClick={(event) => {
-                setTickets(false);
-                setAsesors(false);
-                setSettings(false);
-                setReports(false);
-                setCurrentUser(false);
-                setCategories(true);
-                setOpen(!open);
-              }}
-            >
-              <FaEdit className="icon" />
-              <h4>Categories & Suggestions</h4>
-            </li>
-            {user.role === "admin" ? (
-              <li
-                className="utilities-item"
-                onClick={(event) => {
-                  setTickets(false);
-                  setAsesors(false);
-                  setSettings(false);
-                  setReports(true);
-                  setCurrentUser(false);
-                  setCategories(false);
-                  setOpen(!open);
-                }}
-              >
-                <FaChartBar className="icon" />
-                <h4>Reports</h4>
-              </li>
-            ) : null}
-          </ul>
-          <ul className="user">
-            <li
-              className="user-item"
-              onClick={(event) => {
-                setTickets(false);
-                setAsesors(false);
-                setCurrentUser(false);
-                setCategories(false);
-                setReports(false);
-                setSettings(true);
-                setOpen(!open);
-              }}
-            >
-              <IoMdSettings className="icon" />
-              <h4>Settings</h4>
-            </li>
-            <li
-              className="user-item"
-              onClick={(event) => {
-                setTickets(false);
-                setAsesors(false);
-                setCategories(false);
-                setSettings(false);
-                setReports(false);
-                setCurrentUser(true);
-                setOpen(!open);
-              }}
-            >
-              <FaUserAlt className="icon" />
-              <h4>User</h4>
-            </li>
-          </ul>
-        </div>
-        {tickets ? (
-          <>
-            <div className="navbar-especific">
-              <div className="navbar-title">
-                <h2>Tickets</h2>
-              </div>
-              <ul className="nav-links">
-                <NavLink to="/" className="link-1">
-                  <h3>All Tickets</h3>
-                  <div className="counter">
-                    <h4>4</h4>
-                  </div>
-                </NavLink>
-                <li className="link-1">
-                  <h3>Tickets to Handle</h3>
-                  <div className="counter">
-                    <h4>4</h4>
-                  </div>
-                </li>
-              </ul>
-              <ul className="nav-links2">
-                <h2>My Tickets</h2>
-                <li className="link-1">
-                  <h3>My Open Tickets</h3>
-                  <div className="counter">
-                    <h4>4</h4>
-                  </div>
-                </li>
-                <li className="link-1">
-                  <h3>My tickets in the last week</h3>
-                </li>
-              </ul>
-              <ul className="nav-links3">
-                <h2>Statuses</h2>
-                <NavLink to="/tickets/open" className="link-1">
-                  <h3>Open</h3>
-                </NavLink>
-                <NavLink to="/tickets/pending" className="link-1">
-                  <h3>Pending</h3>
-                </NavLink>
-                <NavLink to="/tickets/closed" className="link-1">
-                  <h3>Closed</h3>
-                </NavLink>
-                <NavLink to="/tickets/solved" className="link-1">
-                  <h3>Solved</h3>
-                </NavLink>
-                <NavLink to="/tickets/unsolved" className="link-1">
-                  <h3>Unsolved</h3>
-                </NavLink>
-              </ul>
-            </div>
-            {open ? (
-              <div className="navbar-especific-phone">
-                <div
-                  className="navbar-title"
-                  style={{
-                    paddingTop: "30px",
-                    paddingBottom: "30px",
-                  }}
-                >
-                  <h2>Tickets</h2>
-                </div>
-                <ul className="nav-links">
-                  <li className="link-1">
-                    <h3>All Tickets</h3>
-                    <div className="counter">
-                      <h4>4</h4>
-                    </div>
-                  </li>
-                  <li className="link-1">
-                    <h3>Tickets to Handle</h3>
-                    <div className="counter">
-                      <h4>4</h4>
-                    </div>
-                  </li>
-                </ul>
-                <ul className="nav-links2">
-                  <h2>My Tickets</h2>
-                  <li className="link-1">
-                    <h3>My Open Tickets</h3>
-                    <div className="counter">
-                      <h4>4</h4>
-                    </div>
-                  </li>
-                  <li className="link-1">
-                    <h3>My tickets in the last week</h3>
-                  </li>
-                </ul>
-                <ul className="nav-links3">
-                  <h2>Statuses</h2>
-                  <NavLink to="/tickets/open" className="link-1">
-                    <h3>Open</h3>
-                  </NavLink>
-                  <NavLink to="/tickets/pending" className="link-1">
-                    <h3>Pending</h3>
-                  </NavLink>
-                  <NavLink to="/tickets/closed" className="link-1">
-                    <h3>Closed</h3>
-                  </NavLink>
-                  <NavLink to="/tickets/solved" className="link-1">
-                    <h3>Solved</h3>
-                  </NavLink>
-                  <NavLink to="/tickets/unsolved" className="link-1">
-                    <h3>Unsolved</h3>
-                  </NavLink>
-                </ul>
-              </div>
-            ) : null}
-          </>
-        ) : null}
-        {asesors && user.role === "admin" ? (
-          <>
-            <div className="navbar-especific">
-              <div className="navbar-title">
-                <h2>Users</h2>
-              </div>
-              <ul className="nav-links">
-                <li
-                  className="link-1"
-                  onClick={(event) => {
-                    setAllAsesors(true);
-                  }}
-                >
-                  <h3>All Asesors</h3>
-                  <div className="counter">
-                    <h4>4</h4>
-                  </div>
+      {!loading ? (
+        <>
+          <AddCategory
+            theme={theme}
+            show={categoryShow}
+            showCategory={showCategory}
+          />
+          <AddSuggestion
+            theme={theme}
+            show={suggestionShow}
+            showSuggestion={showSuggestion}
+          />
+          <Sidebar categories={category} theme={theme}>
+            {renderRedirect()}
+            {renderRedirectPassword()}
+            {renderRedirectAllAsessors()}
+            {renderRedirectAllUsers()}
+            <div className="navbar">
+              <ul className="utilities">
+                <li className="utilities-item">
+                  {logo ? <img className="photo" src={logo.logoImage} /> : null}
                 </li>
                 <li
-                  className="link-1"
+                  className="utilities-item"
                   onClick={(event) => {
-                    setAllClients(true);
+                    setAsesors(false);
+                    setCategories(false);
+                    setSettings(false);
+                    setCurrentUser(false);
+                    setReports(false);
+                    setTickets(true);
+                    setOpen(!open);
                   }}
                 >
-                  <h3>All Clients</h3>
-                  <div className="counter">
-                    <h4>4</h4>
-                  </div>
+                  <FaTicketAlt className="icon" />
+                  <h4>Tickets</h4>
                 </li>
-              </ul>
-
-              <ul className="nav-links2">
-                <NavLink to="/asesores/admonished-asesors" className="link-1">
-                  <h3>Reprimanded Asesors</h3>
-                </NavLink>
-              </ul>
-            </div>
-            {open ? (
-              <div className="navbar-especific-phone">
-                <div className="navbar-title">
-                  <h2>Users</h2>
-                </div>
-                <ul className="nav-links">
+                {user.role === "admin" ? (
                   <li
-                    className="link-1"
+                    className="utilities-item"
                     onClick={(event) => {
-                      setAllAsesors(true);
+                      setTickets(false);
+                      setCategories(false);
+                      setSettings(false);
+                      setCurrentUser(false);
+                      setAsesors(true);
+                      setReports(false);
+                      setOpen(!open);
                     }}
                   >
-                    <h3>All Asesors</h3>
-                    <div className="counter">
-                      <h4>4</h4>
-                    </div>
+                    <FaUsers className="icon" />
+                    <h4>Asesors</h4>
                   </li>
-                  <li
-                    className="link-1"
-                    onClick={(event) => {
-                      setAllClients(true);
-                    }}
-                  >
-                    <h3>All Clients</h3>
-                    <div className="counter">
-                      <h4>4</h4>
-                    </div>
-                  </li>
-                </ul>
-                <ul className="nav-links2">
-                  <NavLink to="/asesores/admonished-asesors" className="link-1">
-                    <h3>Reprimanded Asesors</h3>
-                  </NavLink>
-                </ul>
-              </div>
-            ) : null}
-          </>
-        ) : null}
-        {categories ? (
-          <>
-            <div className="navbar-especific">
-              <div className="navbar-title">
-                <h2>Categories & Suggestions</h2>
-              </div>
-              <ul className="nav-links">
-                <NavLink to="/asesores/categories" className="link-1">
-                  <h3>All Categories</h3>
-                  <div className="counter">
-                    <h4>4</h4>
-                  </div>
-                </NavLink>
-                <NavLink to="/asesores/suggestion" className="link-1">
-                  <h3>All Suggestions</h3>
-                  <div className="counter">
-                    <h4>4</h4>
-                  </div>
-                </NavLink>
-              </ul>
-              <ul className="nav-links2">
-                <h2>Create</h2>
+                ) : null}
                 <li
-                  className="link-1"
+                  className="utilities-item"
                   onClick={(event) => {
-                    showCategory();
+                    setTickets(false);
+                    setAsesors(false);
+                    setSettings(false);
+                    setReports(false);
+                    setCurrentUser(false);
+                    setCategories(true);
+                    setOpen(!open);
                   }}
                 >
-                  <h3>Category</h3>
+                  <FaEdit className="icon" />
+                  <h4>Categories & Suggestions</h4>
+                </li>
+                {user.role === "admin" ? (
+                  <li
+                    className="utilities-item"
+                    onClick={(event) => {
+                      setTickets(false);
+                      setAsesors(false);
+                      setSettings(false);
+                      setReports(true);
+                      setCurrentUser(false);
+                      setCategories(false);
+                      setOpen(!open);
+                    }}
+                  >
+                    <FaChartBar className="icon" />
+                    <h4>Reports</h4>
+                  </li>
+                ) : null}
+              </ul>
+              <ul className="user">
+                <li
+                  className="user-item"
+                  onClick={(event) => {
+                    setTickets(false);
+                    setAsesors(false);
+                    setCurrentUser(false);
+                    setCategories(false);
+                    setReports(false);
+                    setSettings(true);
+                    setOpen(!open);
+                  }}
+                >
+                  <IoMdSettings className="icon" />
+                  <h4>Settings</h4>
                 </li>
                 <li
-                  className="link-1"
+                  className="user-item"
                   onClick={(event) => {
-                    showSuggestion();
+                    setTickets(false);
+                    setAsesors(false);
+                    setCategories(false);
+                    setSettings(false);
+                    setReports(false);
+                    setCurrentUser(true);
+                    setOpen(!open);
                   }}
                 >
-                  <h3>Suggestion</h3>
+                  <FaUserAlt className="icon" />
+                  <h4>User</h4>
                 </li>
               </ul>
             </div>
-            {open ? (
-              <div className="navbar-especific-phone">
-                <div className="navbar-title">
-                  <h2>Categories & Suggestions</h2>
+            {tickets ? (
+              <>
+                <div className="navbar-especific">
+                  <div className="navbar-title">
+                    <h2>Tickets</h2>
+                  </div>
+                  <ul className="nav-links">
+                    <NavLink to="/" className="link-1">
+                      <h3>All Tickets</h3>
+                      <div className="counter">
+                        <h4>{allTickets(ticketsSide).toString()}</h4>
+                      </div>
+                    </NavLink>
+                    <NavLink to="/mytickets/to-handle" className="link-1">
+                      <h3>Tickets to Handle</h3>
+                      <div className="counter">
+                        <h4>{allTicketsToHandle(ticketsSide).toString()}</h4>
+                      </div>
+                    </NavLink>
+                  </ul>
+                  <ul className="nav-links2">
+                    <h2>My Tickets</h2>
+                    <NavLink to="/mytickets/open" className="link-1">
+                      <h3>My Open Tickets</h3>
+                      <div className="counter">
+                        <h4>{allOpenTickets(ticketsSide).toString()}</h4>
+                      </div>
+                    </NavLink>
+                    <NavLink to="/mytickets/last-week" className="link-1">
+                      <h3>My tickets in the last week</h3>
+                    </NavLink>
+                  </ul>
+                  <ul className="nav-links3">
+                    <h2>Statuses</h2>
+                    <NavLink to="/tickets/open" className="link-1">
+                      <h3>Open</h3>
+                    </NavLink>
+                    <NavLink to="/tickets/pending" className="link-1">
+                      <h3>Pending</h3>
+                    </NavLink>
+                    <NavLink to="/tickets/closed" className="link-1">
+                      <h3>Closed</h3>
+                    </NavLink>
+                    <NavLink to="/tickets/solved" className="link-1">
+                      <h3>Solved</h3>
+                    </NavLink>
+                    <NavLink to="/tickets/unsolved" className="link-1">
+                      <h3>Unsolved</h3>
+                    </NavLink>
+                  </ul>
                 </div>
-                <ul className="nav-links">
-                  <li className="link-1">
-                    <h3>All Categories</h3>
-                    <div className="counter">
-                      <h4>4</h4>
+                {open ? (
+                  <div className="navbar-especific-phone">
+                    <div
+                      className="navbar-title"
+                      style={{
+                        paddingTop: "30px",
+                        paddingBottom: "30px",
+                      }}
+                    >
+                      <h2>Tickets</h2>
                     </div>
-                  </li>
-                  <li className="link-1">
-                    <h3>All Suggestions</h3>
-                    <div className="counter">
-                      <h4>4</h4>
-                    </div>
-                  </li>
-                </ul>
-                <ul className="nav-links2">
-                  <h2>Create</h2>
-                  <li
-                    className="link-1"
-                    onClick={(event) => {
-                      showCategory();
-                    }}
-                  >
-                    <h3>Category</h3>
-                  </li>
-                  <li
-                    className="link-1"
-                    onClick={(event) => {
-                      showSuggestion();
-                    }}
-                  >
-                    <h3>Suggestion</h3>
-                  </li>
-                </ul>
-              </div>
+                    <ul className="nav-links">
+                      <NavLink to="/" className="link-1">
+                        <h3>All Tickets</h3>
+                        <div className="counter">
+                          <h4>{allTickets(ticketsSide).toString()}</h4>
+                        </div>
+                      </NavLink>
+                      <NavLink to="/mytickets/to-handle" className="link-1">
+                        <h3>Tickets to Handle</h3>
+                        <div className="counter">
+                          <h4>{allTicketsToHandle(ticketsSide).toString()}</h4>
+                        </div>
+                      </NavLink>
+                    </ul>
+                    <ul className="nav-links2">
+                      <h2>My Tickets</h2>
+                      <NavLink to="/mytickets/open" className="link-1">
+                        <h3>My Open Tickets</h3>
+                        <div className="counter">
+                          <h4>{allOpenTickets(ticketsSide).toString()}</h4>
+                        </div>
+                      </NavLink>
+                      <NavLink to="/mytickets/last-week" className="link-1">
+                        <h3>My tickets in the last week</h3>
+                      </NavLink>
+                    </ul>
+                    <ul className="nav-links3">
+                      <h2>Statuses</h2>
+                      <NavLink to="/tickets/open" className="link-1">
+                        <h3>Open</h3>
+                      </NavLink>
+                      <NavLink to="/tickets/pending" className="link-1">
+                        <h3>Pending</h3>
+                      </NavLink>
+                      <NavLink to="/tickets/closed" className="link-1">
+                        <h3>Closed</h3>
+                      </NavLink>
+                      <NavLink to="/tickets/solved" className="link-1">
+                        <h3>Solved</h3>
+                      </NavLink>
+                      <NavLink to="/tickets/unsolved" className="link-1">
+                        <h3>Unsolved</h3>
+                      </NavLink>
+                    </ul>
+                  </div>
+                ) : null}
+              </>
             ) : null}
-          </>
-        ) : null}
-        {reports ? (
-          <>
-            <div className="navbar-especific">
-              <div className="navbar-title">
-                <h2>Reports</h2>
-              </div>
-              <ul className="nav-links">
-                <NavLink to="/asesores/reports" className="link-1">
-                  <h3>General Reports</h3>
-                </NavLink>
-                <NavLink to="/asesores/individual-reports" className="link-1">
-                  <h3>Individual Reports</h3>
-                </NavLink>
-              </ul>
-            </div>
-            {open ? (
-              <div className="navbar-especific-phone">
-                <div className="navbar-title">
-                  <h2>Reports</h2>
-                </div>
-                <ul className="nav-links">
-                  <NavLink to="/asesores/reports" className="link-1">
-                    <h3>General Reports</h3>
-                  </NavLink>
-                  <NavLink to="/asesores/individual-reports" className="link-1">
-                    <h3>Individual Reports</h3>
-                  </NavLink>
-                </ul>
-              </div>
-            ) : null}
-          </>
-        ) : null}
-        {settings ? (
-          <>
-            <div className="navbar-especific">
-              <div className="navbar-title">
-                <h2>Settings</h2>
-              </div>
-              <ul className="nav-links">
-                <li
-                  className="link-1"
-                  onClick={(event) => {
-                    setChangePassword(true);
-                  }}
-                >
-                  <h3>Change Passwword</h3>
-                </li>
-                <NavLink to="/settings" className="link-1">
-                  <h3>Settings</h3>
-                </NavLink>
-              </ul>
-            </div>
-            {open ? (
-              <div className="navbar-especific-phone">
-                <div className="navbar-title">
-                  <h2>Settings</h2>
-                </div>
-                <ul className="nav-links">
-                  <li
-                    className="link-1"
-                    onClick={(event) => {
-                      setChangePassword(true);
-                    }}
-                  >
-                    <h3>Change Passwword</h3>
-                  </li>
-                  <NavLink to="/settings" className="link-1">
-                    <h3>Settings</h3>
-                  </NavLink>
-                </ul>
-              </div>
-            ) : null}
-          </>
-        ) : null}
-        {currentUser ? (
-          <>
-            <div className="navbar-especific">
-              <div className="navbar-title">
-                <h2>Hello {user.name}</h2>
-              </div>
-              {user.role == "admin" ? (
-                <ul className="nav-links">
-                  <li
-                    className="link-1"
-                    onClick={(event) => {
-                      setFlag(true);
-                    }}
-                  >
-                    <h3>Invite an Asesor</h3>
-                  </li>
-
-                  <li
-                    className="link-1"
-                    onClick={(event) => {
-                      logout();
-                    }}
-                  >
-                    <h3>Log Out</h3>
-                  </li>
-                </ul>
-              ) : (
-                <></>
-              )}
-            </div>
-            {open ? (
-              <div className="navbar-especific-phone">
-                <div className="navbar-title">
-                  <h2>Hello {user.name}</h2>
-                </div>
-                {user.role == "admin" ? (
+            {asesors && user.role === "admin" ? (
+              <>
+                <div className="navbar-especific">
+                  <div className="navbar-title">
+                    <h2>Users</h2>
+                  </div>
                   <ul className="nav-links">
                     <li
                       className="link-1"
                       onClick={(event) => {
-                        setFlag(true);
+                        setAllAsesors(true);
                       }}
                     >
-                      <h3>Invite an Asesor</h3>
+                      <h3>All Asesors</h3>
+                      <div className="counter">
+                        <h4>{allAsesores(asesorSide).toString()}</h4>
+                      </div>
                     </li>
-
                     <li
                       className="link-1"
                       onClick={(event) => {
-                        logout();
+                        setAllClients(true);
                       }}
                     >
-                      <h3>Log Out</h3>
+                      <h3>All Clients</h3>
+                      <div className="counter">
+                        <h4>{allClientes(clientsSide).toString()}</h4>
+                      </div>
                     </li>
                   </ul>
-                ) : (
-                  <></>
-                )}
-              </div>
+
+                  <ul className="nav-links2">
+                    <NavLink
+                      to="/asesores/admonished-asesors"
+                      className="link-1"
+                    >
+                      <h3>Reprimanded Asesors</h3>
+                    </NavLink>
+                  </ul>
+                </div>
+                {open ? (
+                  <div className="navbar-especific-phone">
+                    <div className="navbar-title">
+                      <h2>Users</h2>
+                    </div>
+                    <ul className="nav-links">
+                      <li
+                        className="link-1"
+                        onClick={(event) => {
+                          setAllAsesors(true);
+                        }}
+                      >
+                        <h3>All Asesors</h3>
+                        <div className="counter">
+                          <h4>{allAsesores(asesorSide).toString()}</h4>
+                        </div>
+                      </li>
+                      <li
+                        className="link-1"
+                        onClick={(event) => {
+                          setAllClients(true);
+                        }}
+                      >
+                        <h3>All Clients</h3>
+                        <div className="counter">
+                          <h4>{allClientes(clientsSide).toString()}</h4>
+                        </div>
+                      </li>
+                    </ul>
+                    <ul className="nav-links2">
+                      <NavLink
+                        to="/asesores/admonished-asesors"
+                        className="link-1"
+                      >
+                        <h3>Reprimanded Asesors</h3>
+                      </NavLink>
+                    </ul>
+                  </div>
+                ) : null}
+              </>
             ) : null}
-          </>
-        ) : null}
-      </Sidebar>
+            {categories ? (
+              <>
+                <div className="navbar-especific">
+                  <div className="navbar-title">
+                    <h2>Categories & Suggestions</h2>
+                  </div>
+                  <ul className="nav-links">
+                    <NavLink to="/asesores/categories" className="link-1">
+                      <h3>All Categories</h3>
+                      <div className="counter">
+                        <h4>{allCategories(categoriesSide).toString()}</h4>
+                      </div>
+                    </NavLink>
+                    <NavLink to="/asesores/suggestion" className="link-1">
+                      <h3>All Suggestions</h3>
+                      <div className="counter">
+                        <h4>{allSuggestions(suggestionsSide).toString()}</h4>
+                      </div>
+                    </NavLink>
+                  </ul>
+                  <ul className="nav-links2">
+                    <h2>Create</h2>
+                    <li
+                      className="link-1"
+                      onClick={(event) => {
+                        showCategory();
+                      }}
+                    >
+                      <h3>Category</h3>
+                    </li>
+                    <li
+                      className="link-1"
+                      onClick={(event) => {
+                        showSuggestion();
+                      }}
+                    >
+                      <h3>Suggestion</h3>
+                    </li>
+                  </ul>
+                </div>
+                {open ? (
+                  <div className="navbar-especific-phone">
+                    <div className="navbar-title">
+                      <h2>Categories & Suggestions</h2>
+                    </div>
+                    <ul className="nav-links">
+                      <li className="link-1">
+                        <h3>All Categories</h3>
+                        <div className="counter">
+                          <h4>{allCategories(categoriesSide).toString()}</h4>
+                        </div>
+                      </li>
+                      <li className="link-1">
+                        <h3>All Suggestions</h3>
+                        <div className="counter">
+                          <h4>{allSuggestions(suggestionsSide).toString()}</h4>
+                        </div>
+                      </li>
+                    </ul>
+                    <ul className="nav-links2">
+                      <h2>Create</h2>
+                      <li
+                        className="link-1"
+                        onClick={(event) => {
+                          showCategory();
+                        }}
+                      >
+                        <h3>Category</h3>
+                      </li>
+                      <li
+                        className="link-1"
+                        onClick={(event) => {
+                          showSuggestion();
+                        }}
+                      >
+                        <h3>Suggestion</h3>
+                      </li>
+                    </ul>
+                  </div>
+                ) : null}
+              </>
+            ) : null}
+            {reports ? (
+              <>
+                <div className="navbar-especific">
+                  <div className="navbar-title">
+                    <h2>Reports</h2>
+                  </div>
+                  <ul className="nav-links">
+                    <NavLink to="/asesores/reports" className="link-1">
+                      <h3>General Reports</h3>
+                    </NavLink>
+                    <NavLink
+                      to="/asesores/individual-reports"
+                      className="link-1"
+                    >
+                      <h3>Individual Reports</h3>
+                    </NavLink>
+                  </ul>
+                </div>
+                {open ? (
+                  <div className="navbar-especific-phone">
+                    <div className="navbar-title">
+                      <h2>Reports</h2>
+                    </div>
+                    <ul className="nav-links">
+                      <NavLink to="/asesores/reports" className="link-1">
+                        <h3>General Reports</h3>
+                      </NavLink>
+                      <NavLink
+                        to="/asesores/individual-reports"
+                        className="link-1"
+                      >
+                        <h3>Individual Reports</h3>
+                      </NavLink>
+                    </ul>
+                  </div>
+                ) : null}
+              </>
+            ) : null}
+            {settings ? (
+              <>
+                <div className="navbar-especific">
+                  <div className="navbar-title">
+                    <h2>Settings</h2>
+                  </div>
+                  <ul className="nav-links">
+                    <li
+                      className="link-1"
+                      onClick={(event) => {
+                        setChangePassword(true);
+                      }}
+                    >
+                      <h3>Change Passwword</h3>
+                    </li>
+                    <NavLink to="/settings" className="link-1">
+                      <h3>Settings</h3>
+                    </NavLink>
+                  </ul>
+                </div>
+                {open ? (
+                  <div className="navbar-especific-phone">
+                    <div className="navbar-title">
+                      <h2>Settings</h2>
+                    </div>
+                    <ul className="nav-links">
+                      <li
+                        className="link-1"
+                        onClick={(event) => {
+                          setChangePassword(true);
+                        }}
+                      >
+                        <h3>Change Passwword</h3>
+                      </li>
+                      <NavLink to="/settings" className="link-1">
+                        <h3>Settings</h3>
+                      </NavLink>
+                    </ul>
+                  </div>
+                ) : null}
+              </>
+            ) : null}
+            {currentUser ? (
+              <>
+                <div className="navbar-especific">
+                  <div className="navbar-title">
+                    <h2>Hello {user.name}</h2>
+                  </div>
+                  {user.role == "admin" ? (
+                    <ul className="nav-links">
+                      <li
+                        className="link-1"
+                        onClick={(event) => {
+                          setFlag(true);
+                        }}
+                      >
+                        <h3>Invite an Asesor</h3>
+                      </li>
+
+                      <li
+                        className="link-1"
+                        onClick={(event) => {
+                          logout();
+                        }}
+                      >
+                        <h3>Log Out</h3>
+                      </li>
+                    </ul>
+                  ) : (
+                    <></>
+                  )}
+                </div>
+                {open ? (
+                  <div className="navbar-especific-phone">
+                    <div className="navbar-title">
+                      <h2>Hello {user.name}</h2>
+                    </div>
+                    {user.role == "admin" ? (
+                      <ul className="nav-links">
+                        <li
+                          className="link-1"
+                          onClick={(event) => {
+                            setFlag(true);
+                          }}
+                        >
+                          <h3>Invite an Asesor</h3>
+                        </li>
+
+                        <li
+                          className="link-1"
+                          onClick={(event) => {
+                            logout();
+                          }}
+                        >
+                          <h3>Log Out</h3>
+                        </li>
+                      </ul>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
+                ) : null}
+              </>
+            ) : null}
+          </Sidebar>
+        </>
+      ) : (
+        <PageLoading>
+          {" "}
+          <Spinner color={theme ? theme.primaryColor : "#fa7d09"} />
+        </PageLoading>
+      )}
     </>
   );
 }
+
+const PageLoading = styled.div`
+  width: 100vw;
+  height: 100vh;
+  background: white;
+  position: fixed;
+  z-index: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
 const Sidebar = styled.div`
   height: 100vh;
   width: 30%;

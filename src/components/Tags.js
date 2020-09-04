@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-export default function Tags({ title }) {
+export default function Tags({ title, theme }) {
   const [color, setColor] = useState();
   const [color2, setColor2] = useState();
   const getColor = () => {
-    if (title === "High" || title === "Urgent") {
+    if (title === "Urgent") {
       return "#EE220C";
     }
     if (title === "Medium") {
@@ -18,24 +18,30 @@ export default function Tags({ title }) {
       return "#29E2F3";
     }
     if (title === "Pending") {
-      return "#2F2519";
+      if (theme) {
+        return theme.thirdColor;
+      } else {
+        return "#2f2519";
+      }
     }
     if (title === "Open") {
-      return "#fa7d09";
+      if (theme) {
+        return theme.primaryColor;
+      } else {
+        return "#ff4301";
+      }
     }
     if (title === "Unsolved") {
-      return "#ff4301";
+      if (theme) {
+        return theme.primaryCColor;
+      } else {
+        return "#ff4301";
+      }
     }
   };
-  const getColor2 = () => {
-    if (title === "Urgent") {
-      return "black";
-    } else {
-      return null;
-    }
-  };
+
   return (
-    <Tag color={getColor()} color2={getColor2()}>
+    <Tag color={getColor()}>
       <h2 color={color}>{title}</h2>
     </Tag>
   );
