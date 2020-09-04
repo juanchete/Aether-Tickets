@@ -259,6 +259,7 @@ export default function AllAsesors({ theme, logo }) {
                   data={data}
                 />
               </div>
+              <h1>Historic Records</h1>
               <div className="statistics">
                 <div className="statistics-avarage">
                   <div className="statistics-avarage-item">
@@ -351,6 +352,17 @@ flex-direction: row;
       flex-direction: column;
       justify-content: center;
     max-width: none;
+    h1 {
+      font-size: 30px;
+      font-family: "Raleway", sans-serif;
+      letter-spacing: 0.2em;
+      font-weight: 500;
+      font-style: normal;
+      color: ${(props) => (props.theme ? props.theme.primaryColor : "#fa7d09")};
+      text-transform: uppercase;
+      margin-left: 20px;
+      margin-top:10px;
+    }
     .feedback-container {
       width: 100%;
       height: auto;
