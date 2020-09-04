@@ -17,12 +17,13 @@ export default function FeedbackCard({ color, color2, feedback, theme }) {
     setLoading(true);
 
     const db = firebase.firestore();
-
-    let docRef = db.collection("usuarios").doc(feedback.usuario);
-    docRef.get().then(function (doc) {
-      setUsuario(doc.data());
-      setLoading(false);
-    });
+    if (feedback) {
+      let docRef = db.collection("usuarios").doc(feedback.usuario);
+      docRef.get().then(function (doc) {
+        setUsuario(doc.data());
+        setLoading(false);
+      });
+    }
   }, []);
 
   return (

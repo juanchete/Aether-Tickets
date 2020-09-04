@@ -237,7 +237,7 @@ export default function AsesorDetail({ theme, logo }) {
         rating = rating + feedback[i].rating;
       }
 
-      return rating / feedback.length;
+      return (rating / feedback.length).toFixed(1);
     } else {
       return 0;
     }
@@ -309,6 +309,7 @@ export default function AsesorDetail({ theme, logo }) {
                   data={data}
                 />
               </div>
+              <h1>Historic Records</h1>
               <div className="statistics">
                 <div className="statistics-avarage">
                   <div className="statistics-avarage-item">
@@ -419,6 +420,19 @@ const HomeStyle = styled.div`
         flex-direction: column;
         justify-content: center;
       max-width: none;
+
+      h1 {
+        font-size: 30px;
+        font-family: "Raleway", sans-serif;
+        letter-spacing: 0.2em;
+        font-weight: 500;
+        font-style: normal;
+        color: ${(props) =>
+          props.theme ? props.theme.primaryColor : "#fa7d09"};
+        text-transform: uppercase;
+        margin-left: 20px;
+        margin-top:10px;
+      }
       .feedback-container {
         width: 100%;
         height: auto;
@@ -441,17 +455,6 @@ const HomeStyle = styled.div`
           }
         }
 
-        h1 {
-          font-size: 30px;
-          font-family: "Raleway", sans-serif;
-          letter-spacing: 0.2em;
-          font-weight: 500;
-          font-style: normal;
-          color: ${(props) =>
-            props.theme ? props.theme.primaryColor : "#fa7d09"};
-          text-transform: uppercase;
-          margin-left: 20px;
-        }
       }
 
       .line-graph {
@@ -464,6 +467,17 @@ const HomeStyle = styled.div`
         display: flex;
         flex-direction: row;
         margin-top: 20px;
+        h1 {
+          font-size: 30px;
+          font-family: "Raleway", sans-serif;
+          letter-spacing: 0.2em;
+          font-weight: 500;
+          font-style: normal;
+          color: ${(props) =>
+            props.theme ? props.theme.primaryColor : "#fa7d09"};
+          text-transform: uppercase;
+          margin-left: 20px;
+        }
         .statistics-avarage {
           width: 65%;
           height: 80%;
@@ -649,11 +663,9 @@ const HomeStyle = styled.div`
                 align-items:center;
       
                 .statistics-avarage-item {
-                  background: #2f2519;
                   width: 200px;
                   height: 300px;
                   margin-right: 10px;
-                  border: 2px solid #2f2519;
                   border-radius: 5px;
                   margin-bottom:15px;
                 }
