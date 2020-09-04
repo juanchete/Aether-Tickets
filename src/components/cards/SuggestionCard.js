@@ -26,11 +26,19 @@ export default function SuggestionCard({ color, color2, suggestion, theme }) {
   }, []);
 
   const changeAvailable = async (value) => {
-    try {
-      await db.collection("suggestions").doc(suggestion.id).update({
-        available: value,
+    const cate = await db
+      .collection("categories")
+      .doc(suggestion.category)
+      .get()
+      .then(async function (doc) {
+        if (doc.data().available) {
+          try {
+            await db.collection("suggestions").doc(suggestion.id).update({
+              available: value,
+            });
+          } catch (error) {}
+        }
       });
-    } catch (error) {}
   };
   return (
     <>
@@ -39,11 +47,13 @@ export default function SuggestionCard({ color, color2, suggestion, theme }) {
           <div className="card-title">
             <h2>{suggestion.name}</h2>
             <h3>{category[0].name}</h3>
+
             {suggestion.available ? (
               <AiFillMinusCircle
                 onClick={() => {
                   changeAvailable(false);
                 }}
+                disable={category[0].available ? false : true}
                 className="icon"
               />
             ) : (
@@ -51,6 +61,7 @@ export default function SuggestionCard({ color, color2, suggestion, theme }) {
                 onClick={() => {
                   changeAvailable(true);
                 }}
+                disable={category[0].available ? false : true}
                 className="icon"
               />
             )}
