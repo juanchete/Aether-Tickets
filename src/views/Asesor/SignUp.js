@@ -15,8 +15,7 @@ import Spinner from "../../components/Spinner";
 export default function SignUpAsesor({ theme }) {
   const firebase = useFirebaseApp();
 
-  const usuario = useUser();
-
+  
   const db = firebase.firestore();
 
   const [flag, setFlag] = useState(false);
@@ -45,18 +44,18 @@ export default function SignUpAsesor({ theme }) {
       // console.log(valores);
       const { email, password, name, lastName } = valores;
       try {
-        await firebase
+        const {user} = await firebase
           .auth()
           .createUserWithEmailAndPassword(email, password)
-          .then(
-            db.collection("asesores").doc(firebase.auth().currentUser.uid).set({
+         
+            await db.collection("asesores").doc(user.uid).set({
               name,
               email,
               lastName,
               role: "asesor",
               available: true,
             })
-          );
+         
 
         Swal.fire("Success!", "Sign up was succesful", "success");
         setSubmitted(false);
@@ -76,6 +75,7 @@ export default function SignUpAsesor({ theme }) {
 
         setFlag(true);
       } catch (error) {
+        console.log(error);
         Swal.fire("Failed!", error.message, "error");
         setSubmitted(false);
       }
