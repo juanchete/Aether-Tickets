@@ -153,7 +153,7 @@ export default function Settings({ theme, logo }) {
             <div
               className="content-color-item-grey"
               onClick={(event) => {
-                changeTheme(event, "#d6e0f0", "#f1f3f8", "#8d93ab", "#393b44");
+                changeTheme(event, "#66737F", "#A7ADBC", "#505B68", "#343D46");
               }}
             ></div>
             <div
@@ -489,11 +489,11 @@ const HomeStyle = styled.div`
           margin: 10px;
           border: 2px solid transparent;
           border-radius: 5px;
-          background: rgb(214, 224, 240);
+          background: rgb(102, 115, 127);
           background: linear-gradient(
             135deg,
-            rgba(214, 224, 240, 1) 50%,
-            rgba(57, 59, 68, 1) 50%
+            rgba(102, 115, 127, 1) 50%,
+            rgba(167, 173, 188, 1) 50%
           );
         }
         .content-color-item-pink {

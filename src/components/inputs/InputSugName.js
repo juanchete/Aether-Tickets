@@ -57,8 +57,7 @@ const Input = styled.div`
 
   input {
     height: 40px;
-    background: ${(props) =>
-      props.theme ? props.theme.secondaryColor : "#4a3f35"};
+    background: transparent;
     color: white;
     font-size: 18px;
     font-family: "Raleway", sans-serif;

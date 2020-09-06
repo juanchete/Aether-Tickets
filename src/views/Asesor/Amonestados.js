@@ -26,6 +26,7 @@ export default function Amonestados({ theme, logo }) {
     const db = firebase.firestore();
     return db
       .collection("tickets-not-answered")
+      .where("amonestado", "==", null)
       .orderBy("date", "desc")
       .onSnapshot((snapshot) => {
         const usuariosData = [];
@@ -76,56 +77,11 @@ export default function Amonestados({ theme, logo }) {
       <div className="home-view">
         <div className="home-view-title">
           <div style={{ display: "flex", flexDirection: "row" }}>
-            <h2>Admonished</h2>
+            <h2>Reprimand</h2>
             <h1>Asesors</h1>
           </div>
         </div>
-        <div className="filters">
-          <button
-            className="add-filter"
-            onClick={() => {
-              setFilterOpen(!filterOpen);
-            }}
-          >
-            <h2>Add Filter</h2>
-          </button>
-          {filterAmonestado ? (
-            <div
-              className="filter-applied"
-              onClick={() => {
-                setFilterAmonestado(null);
-                setFilter(null);
-                setFilterOpen(false);
-              }}
-            >
-              <IoIosCheckmarkCircle className="icon-check" />
-              <IoIosCloseCircle className="icon" />
-              <h2>{filterAmonestado}</h2>
-            </div>
-          ) : null}
-        </div>
-        <ul className="filter-options">
-          <li
-            className="filter-options-item"
-            onClick={() => {
-              setFilterAmonestado("Admonished");
-              setFilter(true);
-              setFilterOpen(false);
-            }}
-          >
-            <h2>Admonished</h2>
-          </li>
-          <li
-            className="filter-options-item"
-            onClick={() => {
-              setFilterAmonestado("Not Admonished");
-              setFilter(false);
-              setFilterOpen(false);
-            }}
-          >
-            <h2>Not Admonished</h2>
-          </li>
-        </ul>
+
         <ul className="labels">
           <li className="label-1">
             <h2>Name</h2>
@@ -144,7 +100,7 @@ export default function Amonestados({ theme, logo }) {
           </li>
           <li className="label">
             {" "}
-            <h2>Admonished</h2>
+            <h2>Reprimand</h2>
           </li>
         </ul>
         <div className="content">
@@ -183,7 +139,7 @@ const HomeStyle = styled.div`
     .content {
       width: 100%;
       height: auto;
-      margin-top: 170px;
+      margin-top: 120px;
     }
     .home-view-title {
       width: 70%;
@@ -423,7 +379,7 @@ const HomeStyle = styled.div`
       padding-left: 10px;
       padding-right: 10px;
       position: fixed;
-      margin-top: 130px;
+      margin-top: 80px;
       background: white;
       .label-1 {
         width: 16.66%;
@@ -470,7 +426,7 @@ const HomeStyle = styled.div`
       .content {
         width: 100%;
         height: auto;
-        margin-top: 260px;
+        margin-top: 220px;
       }
       .home-view-title {
         height: 80px;
@@ -481,8 +437,18 @@ const HomeStyle = styled.div`
         margin-top: 170px;
       }
       .labels {
-        margin-top: 220px;
+        margin-top: 170px;
         width: 100vw;
+
+        .label-1 {
+          display: none;
+        }
+        .label {
+          width: 25%;
+        }
+        .label-2 {
+          width: 25%;
+        }
       }
     }
   }

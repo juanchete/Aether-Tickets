@@ -153,7 +153,7 @@ export default function AllAsesors({ theme, logo }) {
           {!loading ? (
             <>
               {asesores.map((asesor) => (
-                <UserCard usuario={asesor} isAsesor={true} />
+                <UserCard usuario={asesor} isAsesor={true} theme={theme} />
               ))}
             </>
           ) : (

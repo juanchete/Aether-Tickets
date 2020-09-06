@@ -72,8 +72,8 @@ export default function TicketsByStatus({ filter, logo, theme }) {
         <div className="home-view">
           <div className="home-view-title">
             <div style={{ display: "flex", flexDirection: "row" }}>
-              <h2>Last </h2>
-              <h1>week's</h1>
+              <h2>Tickets </h2>
+              <h1>To Handle</h1>
             </div>
           </div>
 
@@ -96,8 +96,6 @@ export default function TicketsByStatus({ filter, logo, theme }) {
             <li className="label-1">
               <h2>Created At</h2>
             </li>
-
-            <li className="label-2"></li>
           </ul>
           <div className="content">
             {!loading ? (
@@ -158,7 +156,6 @@ const HomeStyle = styled.div`
         font-style: normal;
         color: ${(props) => (props.theme ? props.theme.thirdColor : "#2f2519")};
         text-transform: uppercase;
-        width: 100%;
       }
       h2 {
         font-size: 22px;
@@ -169,8 +166,7 @@ const HomeStyle = styled.div`
         color: ${(props) =>
           props.theme ? props.theme.primaryCColor : "#ff4301"};
         text-transform: uppercase;
-        width: 100%;
-        margin-right: 5px;
+        margin-right: 10px;
       }
     }
 
@@ -189,7 +185,8 @@ const HomeStyle = styled.div`
       background: white;
 
       .label {
-        width: 15%;
+        width: 16.66%;
+        overflow-x: hidden;
         h2 {
           font-size: 12px;
           font-family: "Raleway", sans-serif;
@@ -203,7 +200,8 @@ const HomeStyle = styled.div`
         }
       }
       .label-1 {
-        width: 15%;
+        width: 16.66%;
+        overflow-x: hidden;
         h2 {
           font-size: 12px;
           font-family: "Raleway", sans-serif;
@@ -217,7 +215,8 @@ const HomeStyle = styled.div`
         }
       }
       .label-2 {
-        width: 10%;
+        width: 16.66%;
+        overflow-x: hidden;
       }
     }
   }

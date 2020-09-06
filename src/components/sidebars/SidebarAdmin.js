@@ -486,7 +486,7 @@ export default function SidebarAdmin({
                       to="/asesores/admonished-asesors"
                       className="link-1"
                     >
-                      <h3>Reprimanded Asesors</h3>
+                      <h3>Reprimand Asesors</h3>
                     </NavLink>
                   </ul>
                 </div>
@@ -524,7 +524,7 @@ export default function SidebarAdmin({
                         to="/asesores/admonished-asesors"
                         className="link-1"
                       >
-                        <h3>Reprimanded Asesors</h3>
+                        <h3>Reprimand Asesors</h3>
                       </NavLink>
                     </ul>
                   </div>
@@ -720,7 +720,16 @@ export default function SidebarAdmin({
                       </li>
                     </ul>
                   ) : (
-                    <></>
+                    <ul className="nav-links">
+                      <li
+                        className="link-1"
+                        onClick={(event) => {
+                          logout();
+                        }}
+                      >
+                        <h3>Log Out</h3>
+                      </li>
+                    </ul>
                   )}
                 </div>
                 {open ? (

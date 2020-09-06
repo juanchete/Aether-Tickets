@@ -7,6 +7,7 @@ import Tags from "../Tags";
 import PopUp from "../PopUpUser";
 import { BsThreeDots } from "react-icons/bs";
 import { NavLink, withRouter } from "react-router-dom";
+import moment from "moment";
 
 export default function TicketCard({ color, color2, ticket, theme }) {
   const firebaseReact = useFirebaseApp();
@@ -91,13 +92,13 @@ export default function TicketCard({ color, color2, ticket, theme }) {
                 <Tags title={ticket.status} color="#29E2F3" theme={theme} />
               </NavLink>
               <NavLink className="data-1" to={path + ticket.id}>
-                <h2>CREATED AT</h2>
+                <h2>
+                  {" "}
+                  {moment(ticket.createdAt.toDate())
+                    .format("DD/MM/yyyy")
+                    .toString()}
+                </h2>
               </NavLink>
-              {ticket.status != "Solved" && ticket.status != "Unsolved" ? (
-                <li className="data-2">
-                  <PopUp ticket={ticket} theme={theme} />
-                </li>
-              ) : null}
             </ul>
           </Card>
         </>
@@ -118,7 +119,7 @@ const Card = styled.div`
     padding-right: 10px;
     list-style: none;
     .data-2 {
-      width: 10%;
+      width: 16.66%;
       overflow: hidden;
       padding-left: 5px;
       padding-right: 5px;
@@ -143,7 +144,8 @@ const Card = styled.div`
         font-family: "Raleway", sans-serif;
         font-weight: 500;
         font-style: normal;
-        color: ${(props) => (props.color ? props.color : "#ff4301")};
+        color: ${(props) =>
+          props.theme ? props.theme.primaryColor : "#fa7d09"};
         width: 100%;
         margin-right: 5px;
       }
@@ -190,7 +192,8 @@ const Card = styled.div`
         font-family: "Raleway", sans-serif;
         font-weight: 500;
         font-style: normal;
-        color: ${(props) => (props.color ? props.color : "#ff4301")};
+        color: ${(props) =>
+          props.theme ? props.theme.primaryColor : "#fa7d09"};
         width: 100%;
         margin-right: 5px;
       }

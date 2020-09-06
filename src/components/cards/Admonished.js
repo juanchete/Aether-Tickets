@@ -53,41 +53,39 @@ export default function AdmonishedCard({
       {!loading ? (
         <Card color={color} color2={color2} theme={theme}>
           <ul className="ticket-view">
-            <li className="data">
+            <li className="data-1">
               <h2>{asesor.name}</h2>
             </li>
-            <li className="data">
+            <li className="data-1">
               <h2>{asesor.lastName}</h2>
             </li>
-            <li className="data-1">
+            <li className="data">
               <h2>{asesor.email}</h2>
             </li>
-            <li className="data-1">
+            <li className="data">
               <h2 style={{ color: theme ? theme.primaryColor : "#fa7d09" }}>
                 {usuario.ticket.substring(0, 7)}
               </h2>
             </li>
-            <li className="data-1">
+            <li className="data">
               <h2>
                 {moment(usuario.date.toDate()).format("DD/MM/yyyy").toString()}
               </h2>
             </li>
             <li className="data-2">
-              {usuario.amonestado ? (
-                <IoIosCheckmarkCircle
-                  onClick={() => {
-                    changeAdmonished(false);
-                  }}
-                  className="icon"
-                />
-              ) : (
-                <IoIosCloseCircle
-                  onClick={() => {
-                    changeAdmonished(true);
-                  }}
-                  className="icon"
-                />
-              )}
+              <IoIosCheckmarkCircle
+                onClick={() => {
+                  changeAdmonished(true);
+                }}
+                className="icon"
+              />
+
+              <IoIosCloseCircle
+                onClick={() => {
+                  changeAdmonished(false);
+                }}
+                className="icon-1"
+              />
             </li>
           </ul>
         </Card>
@@ -113,11 +111,22 @@ const Card = styled.div`
     .data-2 {
       width: 10%;
       overflow: hidden;
+      display: flex;
+      flex-direction: row;
       padding-left: 5px;
       padding-right: 5px;
       .icon {
         width: 25px;
         height: 25px;
+        cursor: pointer;
+        color: ${(props) =>
+          props.theme ? props.theme.primaryColor : "#fa7d09"};
+      }
+      .icon-1 {
+        width: 25px;
+        height: 25px;
+        margin-left: 5px;
+        cursor: pointer;
         color: ${(props) =>
           props.theme ? props.theme.primaryColor : "#fa7d09"};
       }
@@ -215,5 +224,16 @@ const Card = styled.div`
     }
   }
   @media only screen and (max-width: 1100px) {
+    .ticket-view {
+      .data-1 {
+        display: none;
+      }
+      .data {
+        width: 25%;
+      }
+      .data-2 {
+        width: 25%;
+      }
+    }
   }
 `;
