@@ -280,17 +280,7 @@ export default function Home({ theme, logo }) {
           >
             <h2>Pending</h2>
           </li>
-          <li
-            className="filter-sub-item"
-            onClick={() => {
-              setFilterStatus("Closed");
-              setFilter("status", "Closed");
-              setSubSOpen(false);
-              setFilterOpen(false);
-            }}
-          >
-            <h2>Closed</h2>
-          </li>
+
           <li
             className="filter-sub-item"
             onClick={() => {

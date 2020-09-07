@@ -380,9 +380,6 @@ export default function SidebarAdmin({
                     <NavLink to="/tickets/pending" className="link-1">
                       <h3>Pending</h3>
                     </NavLink>
-                    <NavLink to="/tickets/closed" className="link-1">
-                      <h3>Closed</h3>
-                    </NavLink>
                     <NavLink to="/tickets/solved" className="link-1">
                       <h3>Solved</h3>
                     </NavLink>
@@ -435,9 +432,6 @@ export default function SidebarAdmin({
                       </NavLink>
                       <NavLink to="/tickets/pending" className="link-1">
                         <h3>Pending</h3>
-                      </NavLink>
-                      <NavLink to="/tickets/closed" className="link-1">
-                        <h3>Closed</h3>
                       </NavLink>
                       <NavLink to="/tickets/solved" className="link-1">
                         <h3>Solved</h3>

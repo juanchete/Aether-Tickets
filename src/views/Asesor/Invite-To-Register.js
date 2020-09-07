@@ -12,8 +12,8 @@ export default function InviteToRegister({ theme }) {
   const firebase = useFirebaseApp();
   const formik = useFormik({
     initialValues: {
-      email: "juan.lopez@correo.unimet.edu.ve",
-      confirm_email: "juan.lopez@correo.unimet.edu.ve",
+      email: "",
+      confirm_email: "",
     },
     validationSchema: Yup.object({
       email: Yup.string().email("Invalid Email").required("Required Field"),
@@ -39,7 +39,8 @@ export default function InviteToRegister({ theme }) {
           .auth()
           .sendSignInLinkToEmail(valores.email, actionCodeSettings)
           .then(console.log("completado"));
-
+        formik.values.email = "";
+        formik.values.confirm_email = "";
         Swal.fire(
           "Correcto",
           "Se envio la invitacion correctamente",

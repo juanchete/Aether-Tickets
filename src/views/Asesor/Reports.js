@@ -91,6 +91,32 @@ export default function AllAsesors({ theme, logo }) {
 
   useEffect(() => {
     setLoading(true);
+    setData({
+      labels: null,
+      datasets: [
+        {
+          label: "Tickets",
+          fill: "start",
+          lineTension: 0.1,
+          backgroundColor: theme ? theme.primaryColor : "#fa7d09",
+          borderColor: theme ? theme.primaryColor : "#fa7d09",
+          borderCapStyle: "butt",
+          borderDash: [],
+          borderDashOffset: 0.0,
+          borderJoinStyle: "miter",
+          pointBorderColor: theme ? theme.primaryColor : "#fa7d09",
+          pointBackgroundColor: theme ? theme.primaryColor : "#fa7d09",
+          pointBorderWidth: 1,
+          pointHoverRadius: 5,
+          pointHoverBackgroundColor: theme ? theme.primaryColor : "#fa7d09",
+          pointHoverBorderColor: theme ? theme.primaryColor : "#fa7d09",
+          pointHoverBorderWidth: 2,
+          pointRadius: 1,
+          pointHitRadius: 10,
+          data: null,
+        },
+      ],
+    });
 
     const db = firebase.firestore();
 
@@ -127,14 +153,24 @@ export default function AllAsesors({ theme, logo }) {
         });
         yearArray.sort();
         setYears(yearArray);
+      } else {
+        let yearItem;
+
+        const yearArray = [];
+
+        yearItem = new Date();
+        yearItem = yearItem.getFullYear();
+        setYear(yearItem);
+        getMonths(yearItem, null);
+
+        yearArray.push(yearItem);
+        setYears(yearArray);
       }
       setLoading(false);
     });
   }, []);
 
   const getMonths = (year, tickets) => {
-    console.log("year", year);
-    console.log("tickets", tickets);
     let yearToday = new Date();
     yearToday = yearToday.getFullYear();
     let month;
@@ -179,9 +215,9 @@ export default function AllAsesors({ theme, logo }) {
 
     if (tickets) {
       tickets.forEach((ticket) => {
-        yearItem = new Date(ticket.createdAt.toDate());
+        yearItem = new Date(ticket.updatedAt.toDate());
         yearItem = yearItem.getFullYear();
-        monthItem = new Date(ticket.createdAt.toDate());
+        monthItem = new Date(ticket.updatedAt.toDate());
         monthItem = monthItem.getMonth();
         if (yearItem === year) {
           data[monthItem] = data[monthItem] + 1;
