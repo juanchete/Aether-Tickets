@@ -758,7 +758,16 @@ export default function SidebarAdmin({
                         </li>
                       </ul>
                     ) : (
-                      <></>
+                      <ul className="nav-links">
+                        <li
+                          className="link-1"
+                          onClick={(event) => {
+                            logout();
+                          }}
+                        >
+                          <h3>Log Out</h3>
+                        </li>
+                      </ul>
                     )}
                   </div>
                 ) : null}

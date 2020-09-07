@@ -123,15 +123,7 @@ export default function LoginAsesores({ theme }) {
       <div className="container">
         <div className="container-login">
           <h1>Login</h1>
-          <button className="sign-in-google">
-            <img className="google-icon" src="google2.png" />
-            <h3>Sign in with google</h3>
-          </button>
-          <div className="sign-in-option">
-            <div className="line"></div>
-            <h3>or</h3>
-            <div className="line"></div>
-          </div>
+
           <form onSubmit={formik.handleSubmit}>
             <Input
               color={theme ? theme.thirdColor : "#2f2519"}
@@ -356,6 +348,7 @@ font-family: 'Raleway', sans-serif;
           width:100%;
           height:100%;
           align-items:center;
+          margin-top:50px;
 
           h4{
               font-family: 'Raleway', sans-serif;
@@ -414,6 +407,7 @@ font-family: 'Raleway', sans-serif;
   }
   .container-login {
       height:600px;
+    
   }
 }
 
@@ -435,6 +429,9 @@ font-family: 'Raleway', sans-serif;
     form {
       padding-right: 0.2rem;
       padding-left: 0.2rem;
+      .button-error{
+        margin-top:10px;
+      }
     }
   }
   .sign-in-option {
@@ -465,6 +462,9 @@ font-family: 'Raleway', sans-serif;
     form {
       padding-right: 0.2rem;
       padding-left: 0.2rem;
+      .button-error{
+        margin-top:10px;
+      }
     }
   }
   .sign-in-option {
@@ -485,6 +485,9 @@ font-family: 'Raleway', sans-serif;
       .remember-me{
         margin-bottom: 20px;
         margin-top: 20px;
+        .button-error{
+          margin-top:10px;
+        }
       }
     }
     .sign-in-google {

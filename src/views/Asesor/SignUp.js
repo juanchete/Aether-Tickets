@@ -15,8 +15,6 @@ import Spinner from "../../components/Spinner";
 export default function SignUpAsesor({ theme }) {
   const firebase = useFirebaseApp();
 
-  const usuario = useUser();
-
   const db = firebase.firestore();
 
   const [flag, setFlag] = useState(false);
@@ -45,18 +43,17 @@ export default function SignUpAsesor({ theme }) {
       // console.log(valores);
       const { email, password, name, lastName } = valores;
       try {
-        await firebase
+        const { user } = await firebase
           .auth()
-          .createUserWithEmailAndPassword(email, password)
-          .then(
-            db.collection("asesores").doc(firebase.auth().currentUser.uid).set({
-              name,
-              email,
-              lastName,
-              role: "asesor",
-              available: true,
-            })
-          );
+          .createUserWithEmailAndPassword(email, password);
+
+        await db.collection("asesores").doc(user.uid).set({
+          name,
+          email,
+          lastName,
+          role: "asesor",
+          available: true,
+        });
 
         Swal.fire("Success!", "Sign up was succesful", "success");
         setSubmitted(false);
@@ -76,6 +73,7 @@ export default function SignUpAsesor({ theme }) {
 
         setFlag(true);
       } catch (error) {
+        console.log(error);
         Swal.fire("Failed!", error.message, "error");
         setSubmitted(false);
       }
@@ -105,15 +103,7 @@ export default function SignUpAsesor({ theme }) {
       <div className="container">
         <div className="container-login">
           <h1>Sign Up</h1>
-          <button className="sign-in-google">
-            <img className="google-icon" src="google.png" />
-            <h3>Sign up with google</h3>
-          </button>
-          <div className="sign-in-option">
-            <div className="line"></div>
-            <h3>or</h3>
-            <div className="line"></div>
-          </div>
+
           <form onSubmit={formik.handleSubmit}>
             <div className="input-name">
               <Input
