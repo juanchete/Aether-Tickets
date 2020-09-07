@@ -20,13 +20,13 @@ var config = {
   },
 };
 
-// Take the text parameter passed to this HTTP endpoint and insert it into
-// Cloud Firestore under the path /messages/:documentId/original
+//Author: Juan Lopez
+// Def:Esta funcion consiste en agarrar los mensajes del email de aether y guardarlos en el chat de su ticket correspondiente
 exports.addMessage = functions.https.onRequest(async (req, res) => {
   try {
-    imaps.connect(config).then(function (connection) {
-      return connection.openBox('INBOX').then(function () {
-          var searchCriteria = ['UNSEEN'];
+    imaps.connect(config).then(function (connection) {       //Se conecta a IMAP para consumir los mensajes del email
+      return connection.openBox('INBOX').then(function () {   //Selecciona los emails que estan marcados como no vistos
+          var searchCriteria = ['UNSEEN'];               
           var fetchOptions = {
               bodies: ['HEADER', 'TEXT', ''],
           };
@@ -38,7 +38,7 @@ exports.addMessage = functions.https.onRequest(async (req, res) => {
                   simpleParser(idHeader+all.body, async (err, mail) => {
                       // access to the whole mail object
                       const prueba = mail.subject.split(": ");
-                      const flag = prueba.includes("Response of your ticket with id")
+                      const flag = prueba.includes("Response of your ticket with id")  //Comprueba si uno de los emails consite en una respuesta a uno de los tickets
                     
                     
                       const {value} = mail.from
@@ -46,10 +46,10 @@ exports.addMessage = functions.https.onRequest(async (req, res) => {
 
                
 
-                      if (flag == true) {
+                      if (flag == true) {           //Si se activa el flag, se procede a guardar email
 
                         // console.log(mail.textAsHtml);
-                        var mySubString = mail.textAsHtml.substring(
+                        var mySubString = mail.textAsHtml.substring(         //Se busca en el HTML del email, el parrafo donde se escribio el mensaje
                           mail.textAsHtml.indexOf("<p>") + 3, 
                           mail.textAsHtml.indexOf("</p>")
                       );
@@ -61,14 +61,14 @@ exports.addMessage = functions.https.onRequest(async (req, res) => {
                       // console.log(prueba[2])
                       // console.log(prueba);
 
-                        const usuarioData = await admin.firestore().collection('tickets').where('usuario.email','==',senderEmail.trim()).limit(1).get()
+                        const usuarioData = await admin.firestore().collection('tickets').where('usuario.email','==',senderEmail.trim()).limit(1).get() //Se procede a obtener los datos de la persona que lo encvio
 
 
                 const usuario = usuarioData.docs[0].data().usuario;
 
                 // console.log(usuario);
 
-                      await admin.firestore().collection('messages').add({
+                      await admin.firestore().collection('messages').add({  //Se procede a guardar el mensaje
                         content: mySubString,
                         contentHtml: `<p>${mySubString}</p>`,
                         date: new Date(),
@@ -85,7 +85,7 @@ exports.addMessage = functions.https.onRequest(async (req, res) => {
                             console.log('ready');
                     })
 
-                    connection.addFlags(item.attributes.uid, "\Seen", (err) => {
+                    connection.addFlags(item.attributes.uid, "\Seen", (err) => {  //Se marca como visto el email si se proceso con exito
                       if (err){
                           console.log('Problem marking message for deletion');
                           rej(err);
@@ -111,8 +111,9 @@ exports.addMessage = functions.https.onRequest(async (req, res) => {
   
   
   });
-
-  exports.emailGoodBye = functions.firestore
+//Author: Juan Lopez
+//Def: Este email consiste en enviarle al usuario un email si su email se cierra
+  exports.emailGoodBye = functions.firestore  
     .document('tickets/{userId}')
     .onUpdate((change, context) => {
       // Get an object representing the document
@@ -124,7 +125,7 @@ exports.addMessage = functions.https.onRequest(async (req, res) => {
       // access a particular field as you would any JS property
       const status = newValue.status;
 
-      if (status == 'Closed') {
+      if (status == 'Solved') {
         firebase.firestore().collection("mail").add({
           to: `juanlopezlmg@gmail.com`, //ticket.usuario.email
           message: {
