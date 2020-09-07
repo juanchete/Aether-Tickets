@@ -17,9 +17,8 @@ export default function AllAsesors({ theme, logo }) {
   const [asesores, setAsesores] = useState();
   const [loading, setLoading] = useState(true);
   const db = firebase.firestore();
-  const logout = async () => {
-    await firebase.auth().signOut();
-  };
+
+  //Lista de todos los asesores, cuando se hace click en uno de ellos, nos redirige  a los reportes individuales  de cada uno de ellos
 
   useEffect(() => {
     setLoading(true);
@@ -34,7 +33,7 @@ export default function AllAsesors({ theme, logo }) {
           snapshot.forEach((doc) =>
             asesoresData.push({ ...doc.data(), id: doc.id })
           );
-          console.log(asesoresData); // <------
+
           setAsesores(asesoresData);
           setLoading(false);
         })
@@ -55,7 +54,7 @@ export default function AllAsesors({ theme, logo }) {
             snapshot.forEach((doc) =>
               asesoresData.push({ ...doc.data(), id: doc.id })
             );
-            console.log(asesoresData); // <------
+
             setAsesores(asesoresData);
             setLoading(false);
           })
@@ -72,7 +71,7 @@ export default function AllAsesors({ theme, logo }) {
             snapshot.forEach((doc) =>
               asesoresData.push({ ...doc.data(), id: doc.id })
             );
-            console.log(asesoresData); // <------
+
             setAsesores(asesoresData);
             setLoading(false);
           })

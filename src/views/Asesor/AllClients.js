@@ -17,10 +17,8 @@ export default function AllAsesors({ theme, logo }) {
   const [usuarios, setUsuarios] = useState();
   const [loading, setLoading] = useState(true);
   const db = firebase.firestore();
-  const logout = async () => {
-    await firebase.auth().signOut();
-  };
 
+  //Se muestra la lista de todos los clientes registrados
   useEffect(() => {
     setLoading(true);
     const db = firebase.firestore();
@@ -37,6 +35,8 @@ export default function AllAsesors({ theme, logo }) {
         setLoading(false);
       });
   }, []);
+
+  //En esta funcion se filtran los clientes por su estado de habilitacion
 
   const setFilter = (filter) => {
     if (filter != null) {

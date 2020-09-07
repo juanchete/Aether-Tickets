@@ -17,9 +17,8 @@ export default function Amonestados({ theme, logo }) {
   const [usuarios, setUsuarios] = useState();
   const [loading, setLoading] = useState(true);
   const db = firebase.firestore();
-  const logout = async () => {
-    await firebase.auth().signOut();
-  };
+
+  //Nos traemos todas las faltas de los  asesores, para que el administrador decida si va a ser amonestado o no
 
   useEffect(() => {
     setLoading(true);

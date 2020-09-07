@@ -26,6 +26,8 @@ export default function AddCategory({
   const showMessage = (e) => {
     setMessageShow(!messageShow);
   };
+
+  //En esta vista se encuentra el formulario para crear una categoria, solo se necesita el nombre
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -70,6 +72,7 @@ export default function AddCategory({
   return (
     <>
       {type && message ? (
+        //Este componente es el mensaje que aparecera  luego de que se envie el formulario
         <Message
           show={messageShow}
           type={type}

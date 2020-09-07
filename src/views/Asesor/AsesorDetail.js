@@ -64,6 +64,7 @@ export default function AsesorDetail({ theme, logo }) {
   const [loading, setLoading] = useState(true);
   let { id } = useParams();
 
+  //Estos son los settings de los graficos
   let settings = {
     arrows: true,
     infinite: false,
@@ -84,6 +85,9 @@ export default function AsesorDetail({ theme, logo }) {
 
   useEffect(() => {
     setLoading(true);
+
+    //Se setea la data como nula para poder recolectarla cuando nos traigamos la informacion de la base de datos
+    //Se setea los  labels (meses) como nulos ya  que se necesita saber el año en que se encuentra para ver si todos esos meses ya pasaron
     setData({
       labels: null,
       datasets: [
@@ -125,13 +129,13 @@ export default function AsesorDetail({ theme, logo }) {
               snapshot.forEach((doc) =>
                 amonestadoData.push({ ...doc.data(), id: doc.id })
               );
-              console.log(amonestadoData); // <------
+              //Nos traemos todas las amonestaciones que estan registradas
               setAmonestado(amonestadoData);
             });
           setAsesor(doc.data());
           if (doc.data().tickets) {
             let yearItem;
-
+            //Aca se realiza una busqueda de todos los años en donde hay tickets, para asi poder configurar los graficosdependiendo del año
             const yearArray = [];
             doc.data().tickets.forEach((ticket) => {
               yearItem = new Date(ticket.updatedAt.toDate());
@@ -152,6 +156,7 @@ export default function AsesorDetail({ theme, logo }) {
             yearItem = new Date();
             yearItem = yearItem.getFullYear();
             setYear(yearItem);
+
             getMonths(yearItem, null);
 
             yearArray.push(yearItem);
@@ -170,6 +175,7 @@ export default function AsesorDetail({ theme, logo }) {
   }, []);
 
   const getMonths = (year, tickets) => {
+    //En esta  funcion se encuentran los meses que estan en el año, es decir, si el año que se pasa a la funcion es el año en el que nos encontramos, se guardaran solo hasta el mes actual
     let yearToday = new Date();
     yearToday = yearToday.getFullYear();
     let month;
@@ -203,6 +209,7 @@ export default function AsesorDetail({ theme, logo }) {
   };
 
   const getData = (months, year, tickets) => {
+    //Aca agrupamos los datos dependiendo del mes para lograr obtener la cantidad de tickets que hubo en cada uno de los meses especificados
     let nMonths = months + 1;
     let data = new Array(months.length);
     let monthItem;
@@ -227,10 +234,12 @@ export default function AsesorDetail({ theme, logo }) {
   };
 
   const handleYearChange = (year) => {
+    //Esta funcion permite hacer el cambio del año, se utiliza en los botones,y dependiendo de su valor se mostrara el grafico del año correspondiente
     setYear(year);
   };
 
   const getRating = (feedback) => {
+    //Nos muestra el rating promedio del asesor, si no tiene ningun rating se edvuelve 0
     if (feedback) {
       let rating = 0;
       for (let i = 0; i < feedback.length; i++) {
@@ -244,6 +253,7 @@ export default function AsesorDetail({ theme, logo }) {
   };
 
   const getAnswered = (tickets) => {
+    //Nos devuelve la cantidad de tickets que fueron solucionados por este asesor
     if (tickets) {
       let answered = 0;
       var newArray = tickets.filter(function (el) {
@@ -256,6 +266,7 @@ export default function AsesorDetail({ theme, logo }) {
   };
 
   const getDelegated = (tickets) => {
+    //Nos devuelve la cantidad de tickets que fueron delegados por este asesor
     if (tickets) {
       let answered = 0;
       var newArray = tickets.filter(function (el) {
@@ -268,6 +279,7 @@ export default function AsesorDetail({ theme, logo }) {
   };
 
   const getNotAnswered = (tickets) => {
+    //Nos devuelve la cantidad de tickets que no fueron respondidos por este asesor, en el plazo de tiempo correspondiente
     if (tickets) {
       let answered = 0;
       var newArray = tickets.filter(function (el) {

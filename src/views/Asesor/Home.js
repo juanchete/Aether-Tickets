@@ -22,7 +22,7 @@ export default function Home({ theme, logo }) {
   const logout = async () => {
     await firebase.auth().signOut();
   };
-
+  //Muestro todos los tickets que no estan cerrados
   useEffect(() => {
     setLoading(true);
     const db = firebase.firestore();
@@ -43,6 +43,8 @@ export default function Home({ theme, logo }) {
         setLoading(false);
       });
   }, []);
+
+  //Aca puedo aplicar dos filtros con  la prioridad y status
   const setFilter2 = (filterP, filterS) => {
     setLoading(true);
     const db = firebase.firestore();
@@ -65,10 +67,9 @@ export default function Home({ theme, logo }) {
         setLoading(false);
       });
   };
-
+  //Aca solo aplico un filtro, o por prioridades o por status
   const setFilter1 = (tipo, filter) => {
     if (tipo === "status" && filter) {
-      console.log("Entre  Statys");
       setLoading(true);
       const db = firebase.firestore();
       return db
@@ -82,12 +83,10 @@ export default function Home({ theme, logo }) {
             ticketData.push({ ...doc.data(), id: doc.id })
           );
 
-          console.log(ticketData); // <------
           setTickets(ticketData);
           setLoading(false);
         });
     } else if (tipo === "priority" && filter) {
-      console.log("Entre  Prios");
       setLoading(true);
       const db = firebase.firestore();
       return db
@@ -103,7 +102,6 @@ export default function Home({ theme, logo }) {
           ticketData = ticketData.filter(function (el) {
             return el.status != "Solved" && el.status != "Unsolved";
           });
-          console.log(ticketData); // <------
           setTickets(ticketData);
           setLoading(false);
         });
@@ -122,7 +120,6 @@ export default function Home({ theme, logo }) {
           ticketData = ticketData.filter(function (el) {
             return el.status != "Solved" && el.status != "Unsolved";
           });
-          console.log(ticketData); // <------
           setTickets(ticketData);
           setLoading(false);
         });

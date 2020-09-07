@@ -35,38 +35,28 @@ export default function Categories({ theme, logo }) {
     if (filter != null) {
       setLoading(true);
       const db = firebase.firestore();
-      return (
-        db
-          .collection("categories")
-          .where("available", "==", filter)
-          // .where("role", "==", "asesor")
-          .onSnapshot((snapshot) => {
-            const categoriesData = [];
-            snapshot.forEach((doc) =>
-              categoriesData.push({ ...doc.data(), id: doc.id })
-            );
-            console.log(categoriesData); // <------
-            setCategories(categoriesData);
-            setLoading(false);
-          })
-      );
+      return db
+        .collection("categories")
+        .where("available", "==", filter)
+        .onSnapshot((snapshot) => {
+          const categoriesData = [];
+          snapshot.forEach((doc) =>
+            categoriesData.push({ ...doc.data(), id: doc.id })
+          );
+          setCategories(categoriesData);
+          setLoading(false);
+        });
     } else {
       setLoading(true);
       const db = firebase.firestore();
-      return (
-        db
-          .collection("categories")
-          // .where("role", "==", "asesor")
-          .onSnapshot((snapshot) => {
-            const categoriesData = [];
-            snapshot.forEach((doc) =>
-              categoriesData.push({ ...doc.data(), id: doc.id })
-            );
-            console.log(categoriesData); // <------
-            setCategories(categoriesData);
-            setLoading(false);
-          })
-      );
+      return db.collection("categories").onSnapshot((snapshot) => {
+        const categoriesData = [];
+        snapshot.forEach((doc) =>
+          categoriesData.push({ ...doc.data(), id: doc.id })
+        );
+        setCategories(categoriesData);
+        setLoading(false);
+      });
     }
   };
   const user = useUser();

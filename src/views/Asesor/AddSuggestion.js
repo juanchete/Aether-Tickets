@@ -28,6 +28,8 @@ export default function AddSuggestion({
   const [message, setMessage] = useState();
   const [messageShow, setMessageShow] = React.useState(false);
   const [submitted, setSubmitted] = useState(false);
+
+  //En esta vista se crean las Suggestions de las categorias, se necesita especificar la categoria a la que pertenece
   const showMessage = (e) => {
     setMessageShow(!messageShow);
   };
@@ -35,6 +37,7 @@ export default function AddSuggestion({
     setLoading(true);
 
     const db = firebaseReact.firestore();
+    //Nos traemos las categorias existentes para desplegarlas en el Select
     return db
       .collection("categories")
       .orderBy("createdAt", "desc")
@@ -43,7 +46,6 @@ export default function AddSuggestion({
         snapshot.forEach((doc) =>
           categoryData.push({ ...doc.data(), id: doc.id })
         );
-        console.log(categoryData); // <------
         setCategories(categoryData);
         setLoading(false);
       });
