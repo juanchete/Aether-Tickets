@@ -7,8 +7,10 @@ import { useFirebaseApp } from "reactfire";
 import ButtonSubmit from "../../components/buttons/Button-Submit";
 import Input from "../../components/inputs/InputLogin";
 import Swal from "sweetalert2";
+import { Redirect } from "react-router";
 
 export default function InviteToRegister({ theme }) {
+  const [redirect, setredirect] = useState(false)
   const firebase = useFirebaseApp();
   const formik = useFormik({
     initialValues: {
@@ -46,13 +48,14 @@ export default function InviteToRegister({ theme }) {
           "Se envio la invitacion correctamente",
           "success"
         );
+        setredirect(true)
       } catch (error) {
         console.log(error);
       }
     },
   });
 
-  return (
+  return ( redirect? <Redirect to='/'/>:
     <StyledLogin theme={theme}>
       <div className="container">
         <div className="container-login">
